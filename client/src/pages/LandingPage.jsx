@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import PrintableQRCard from '../components/PrintableQRCard';
 import {
   Zap,
   QrCode,
@@ -20,14 +19,6 @@ import {
 
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState(null);
-
-  const demoRestaurant = {
-    name: 'Spice Garden',
-    slug: 'spice-garden',
-    cuisineType: 'North Indian & Fusion',
-    logo: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&auto=format&fit=crop&q=80',
-    primaryColor: '#F59E0B',
-  };
 
   const faqs = [
     {
@@ -57,73 +48,56 @@ export default function LandingPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative pt-12 pb-24 overflow-hidden border-b border-gray-800/60">
+      <section className="relative pt-16 pb-24 overflow-hidden border-b border-gray-800/60">
         {/* Background glow effects */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-500/10 rounded-full blur-[140px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Content */}
-            <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
-              <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-400 text-xs font-extrabold uppercase tracking-widest">
-                <Zap className="w-4 h-4 text-brand-500 fill-brand-500" />
-                <span>Next-Gen QR Menu Platform</span>
-              </div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
+          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-400 text-xs font-extrabold uppercase tracking-widest">
+            <Zap className="w-4 h-4 text-brand-500 fill-brand-500" />
+            <span>Next-Gen QR Menu Platform</span>
+          </div>
 
-              <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight font-sans leading-tight">
-                Flash<span className="gold-gradient-text">Menu</span> — <br />
-                <span className="text-white">Scan. See. Dine.</span>
-              </h1>
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight font-sans leading-tight">
+            Flash<span className="gold-gradient-text">Menu</span> — <br />
+            <span className="text-white">Scan. See. Dine.</span>
+          </h1>
 
-              <p className="text-lg sm:text-xl text-gray-300 max-w-2xl font-normal leading-relaxed">
-                Turn your restaurant menu into a fast, beautiful digital experience. Customers scan your table QR code and instantly view your menu on their phones — zero downloads or signups required.
-              </p>
+          <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto font-normal leading-relaxed">
+            Turn your restaurant menu into a fast, beautiful digital experience. Customers scan your table QR code and instantly view your menu on their phones — zero downloads or signups required.
+          </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4 pt-2">
-                <Link
-                  to="/signup"
-                  className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-400 hover:from-brand-400 hover:to-brand-300 text-black font-extrabold text-base shadow-xl shadow-brand-500/25 transition-all hover:scale-105"
-                >
-                  <span>Start Free Trial</span>
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 pt-2">
+            <Link
+              to="/signup"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-400 hover:from-brand-400 hover:to-brand-300 text-black font-extrabold text-base shadow-xl shadow-brand-500/25 transition-all hover:scale-105"
+            >
+              <span>Start Free Trial</span>
+              <ArrowRight className="w-5 h-5" />
+            </Link>
 
-                <Link
-                  to="/menu/spice-garden"
-                  className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-2xl bg-dark-card border border-gray-700 hover:border-brand-500/50 text-white font-bold text-base transition-all hover:bg-dark-hover"
-                >
-                  <QrCode className="w-5 h-5 text-brand-400" />
-                  <span>View Live Demo</span>
-                </Link>
-              </div>
+            <Link
+              to="/menu/spice-garden"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-2xl bg-dark-card border border-gray-700 hover:border-brand-500/50 text-white font-bold text-base transition-all hover:bg-dark-hover"
+            >
+              <QrCode className="w-5 h-5 text-brand-400" />
+              <span>View Live Demo</span>
+            </Link>
+          </div>
 
-              {/* Social Proof Stats */}
-              <div className="pt-8 border-t border-gray-800/80 grid grid-cols-3 gap-6 text-center lg:text-left">
-                <div>
-                  <h4 className="text-2xl sm:text-3xl font-extrabold text-white">100%</h4>
-                  <p className="text-xs text-gray-400 font-medium">No App Download</p>
-                </div>
-                <div>
-                  <h4 className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">&lt; 1s</h4>
-                  <p className="text-xs text-gray-400 font-medium">Lightning Scan Speed</p>
-                </div>
-                <div>
-                  <h4 className="text-2xl sm:text-3xl font-extrabold text-white">Instant</h4>
-                  <p className="text-xs text-gray-400 font-medium">Sold Out Toggle</p>
-                </div>
-              </div>
+          {/* Social Proof Stats */}
+          <div className="pt-10 border-t border-gray-800/80 grid grid-cols-3 gap-6 text-center max-w-2xl mx-auto">
+            <div>
+              <h4 className="text-2xl sm:text-3xl font-extrabold text-white">100%</h4>
+              <p className="text-xs text-gray-400 font-medium">No App Download</p>
             </div>
-
-            {/* Right Phone & QR Mockup */}
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-brand-500 to-amber-600 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition duration-1000"></div>
-                <PrintableQRCard
-                  restaurant={demoRestaurant}
-                  tableNumber="04"
-                  targetUrl={`${window.location.origin}/menu/spice-garden?table=4`}
-                />
-              </div>
+            <div>
+              <h4 className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">&lt; 1s</h4>
+              <p className="text-xs text-gray-400 font-medium">Lightning Scan Speed</p>
+            </div>
+            <div>
+              <h4 className="text-2xl sm:text-3xl font-extrabold text-white">Instant</h4>
+              <p className="text-xs text-gray-400 font-medium">Sold Out Toggle</p>
             </div>
           </div>
         </div>

@@ -13,7 +13,6 @@ import {
   LogOut,
   Zap,
   ExternalLink,
-  Crown,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -26,20 +25,14 @@ export default function DashboardSidebar({ closeMobileMenu }) {
     navigate('/login');
   };
 
-  const isPremium = restaurant?.subscriptionPlan === 'premium';
-
   const navItems = [
     { name: 'Overview', path: '/dashboard', icon: LayoutDashboard, exact: true },
     { name: 'Menu Items', path: '/dashboard/items', icon: UtensilsCrossed },
     { name: 'Categories', path: '/dashboard/categories', icon: FolderTree },
     { name: 'QR Codes', path: '/dashboard/qrcodes', icon: QrCode },
-    ...(isPremium
-      ? [
-          { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3 },
-          { name: 'Feedback & Calls', path: '/dashboard/feedback', icon: MessageSquare },
-          { name: 'Orders', path: '/dashboard/orders', icon: ShoppingBag },
-        ]
-      : []),
+    { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3 },
+    { name: 'Feedback & Calls', path: '/dashboard/feedback', icon: MessageSquare },
+    { name: 'Orders', path: '/dashboard/orders', icon: ShoppingBag },
     { name: 'Profile & Branding', path: '/dashboard/profile', icon: Store },
     { name: 'Subscription', path: '/dashboard/subscription', icon: CreditCard },
   ];
@@ -63,17 +56,8 @@ export default function DashboardSidebar({ closeMobileMenu }) {
       {restaurant && (
         <div className="p-4 mx-4 my-4 rounded-xl bg-dark-base border border-dark-border space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Active Plan</span>
-            {isPremium ? (
-              <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-black border border-amber-500/30 flex items-center space-x-1">
-                <Crown className="w-3 h-3 text-amber-400" />
-                <span>PREMIUM</span>
-              </span>
-            ) : (
-              <span className="px-2 py-0.5 rounded-full bg-gray-800 text-gray-300 text-[10px] font-bold border border-gray-700">
-                BASIC
-              </span>
-            )}
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Active Restaurant</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           </div>
           <p className="text-sm font-bold text-white truncate">{restaurant.name}</p>
           <a

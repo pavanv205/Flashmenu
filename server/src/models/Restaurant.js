@@ -26,7 +26,6 @@ const restaurantSchema = new mongoose.Schema(
       website: { type: String, default: '' },
     },
     isOpen: { type: Boolean, default: true },
-    subscriptionPlan: { type: String, enum: ['basic', 'premium'], default: 'basic' },
   },
   { timestamps: true }
 );

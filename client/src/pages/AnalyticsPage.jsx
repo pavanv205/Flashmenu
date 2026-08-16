@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { analyticsAPI } from '../services/api';
-import { Eye, Users, Calendar, TrendingUp } from 'lucide-react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, AreaChart, Area } from 'recharts';
+import { UtensilsCrossed, FolderTree, CheckCircle, XCircle } from 'lucide-react';
 
 export default function AnalyticsPage() {
   const [data, setData] = useState(null);
@@ -13,7 +12,7 @@ export default function AnalyticsPage() {
         const res = await analyticsAPI.getOverview();
         setData(res.data);
       } catch (error) {
-        console.error('Failed to load analytics:', error);
+        console.error('Failed to load menu summary:', error);
       } finally {
         setLoading(false);
       }
@@ -29,61 +28,73 @@ export default function AnalyticsPage() {
     );
   }
 
-  const { stats, viewsGraph, topItems } = data || {};
+  const { stats, topItems } = data || {};
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">Menu Scan & Visitor Analytics</h1>
-        <p className="text-xs text-gray-400">Deep insights into customer traffic, peak hours, and popular dishes</p>
+        <h1 className="text-2xl font-extrabold text-white">Menu & Catalog Overview</h1>
+        <p className="text-xs text-gray-400">Quick summary of active dishes, categories, and availability status</p>
       </div>
 
       {/* Summary KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-2">
           <div className="flex items-center justify-between text-gray-400">
-            <Eye className="w-5 h-5 text-amber-400" />
-            <span className="text-xs font-semibold uppercase">Total Menu Scans</span>
+            <UtensilsCrossed className="w-5 h-5 text-amber-400" />
+            <span className="text-xs font-semibold uppercase">Total Dishes</span>
           </div>
-          <p className="text-3xl font-black text-white">{stats?.totalViews || 0}</p>
+          <p className="text-3xl font-black text-white">{stats?.totalItems || 0}</p>
         </div>
 
         <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-2">
           <div className="flex items-center justify-between text-gray-400">
-            <Calendar className="w-5 h-5 text-emerald-400" />
-            <span className="text-xs font-semibold uppercase">Today's Visitors</span>
+            <FolderTree className="w-5 h-5 text-purple-400" />
+            <span className="text-xs font-semibold uppercase">Categories</span>
           </div>
-          <p className="text-3xl font-black text-emerald-400">{stats?.todayViews || 0}</p>
+          <p className="text-3xl font-black text-white">{stats?.totalCategories || 0}</p>
         </div>
 
         <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-2">
           <div className="flex items-center justify-between text-gray-400">
-            <Users className="w-5 h-5 text-cyan-400" />
-            <span className="text-xs font-semibold uppercase">Unique Diners</span>
+            <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <span className="text-xs font-semibold uppercase">Available Now</span>
           </div>
-          <p className="text-3xl font-black text-cyan-400">{stats?.uniqueVisitors || 0}</p>
+          <p className="text-3xl font-black text-emerald-400">{stats?.availableItems || 0}</p>
+        </div>
+
+        <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-2">
+          <div className="flex items-center justify-between text-gray-400">
+            <XCircle className="w-5 h-5 text-red-400" />
+            <span className="text-xs font-semibold uppercase">Sold Out</span>
+          </div>
+          <p className="text-3xl font-black text-red-400">{stats?.soldOutItems || 0}</p>
         </div>
       </div>
 
-      {/* Daily Scans Histogram */}
+      {/* Bestseller Dishes List */}
       <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
-        <h3 className="text-lg font-bold text-white">Daily Scan Volume</h3>
-        <div className="h-72 w-full pt-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={viewsGraph}>
-              <XAxis dataKey="date" stroke="#6B7280" fontSize={11} />
-              <YAxis stroke="#6B7280" fontSize={11} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#131B2E',
-                  borderColor: '#1F293D',
-                  borderRadius: '12px',
-                  color: '#FFF',
-                }}
-              />
-              <Bar dataKey="views" fill="#F59E0B" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+        <h3 className="text-lg font-bold text-white">Bestseller Dishes</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {topItems && topItems.length > 0 ? (
+            topItems.map((item) => (
+              <div key={item._id} className="p-4 rounded-2xl bg-dark-base border border-dark-border flex items-center space-x-3">
+                {item.image ? (
+                  <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover" />
+                ) : (
+                  <div className="w-12 h-12 rounded-xl bg-dark-hover flex items-center justify-center text-gray-500 font-bold text-xs">
+                    Food
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-xs font-bold text-white truncate">{item.name}</h4>
+                  <span className="text-xs text-amber-400 font-semibold">₹{item.price}</span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-xs text-gray-400">No items available.</p>
+          )}
         </div>
       </div>
     </div>

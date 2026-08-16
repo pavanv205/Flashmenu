@@ -1,36 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { analyticsAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
 import {
-  Eye,
-  Calendar,
-  Users,
   UtensilsCrossed,
   FolderTree,
   CheckCircle,
   XCircle,
-  Bell,
-  Star,
-  Check,
-  Crown,
-  Sparkles,
+  Plus,
+  QrCode,
+  Layers,
 } from 'lucide-react';
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
+import { Link } from 'react-router-dom';
 
 export default function DashboardOverview() {
   const { restaurant } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const isPremium = restaurant?.subscriptionPlan === 'premium';
-
   const fetchOverview = async () => {
     try {
       const res = await analyticsAPI.getOverview();
       setData(res.data);
     } catch (error) {
-      console.error('Failed to load overview analytics:', error);
+      console.error('Failed to load overview data:', error);
     } finally {
       setLoading(false);
     }
@@ -40,15 +32,6 @@ export default function DashboardOverview() {
     fetchOverview();
   }, []);
 
-  const handleResolveCall = async (id) => {
-    try {
-      await analyticsAPI.resolveWaiterCall(id);
-      fetchOverview();
-    } catch (error) {
-      console.error('Failed to resolve waiter call:', error);
-    }
-  };
-
   if (loading) {
     return (
       <div className="py-12 flex justify-center">
@@ -57,255 +40,164 @@ export default function DashboardOverview() {
     );
   }
 
-  const { stats, viewsGraph, topItems, recentFeedback, waiterCalls } = data || {
+  const { stats, topItems } = data || {
     stats: {},
-    viewsGraph: [],
     topItems: [],
-    recentFeedback: [],
-    waiterCalls: [],
   };
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Top Banner */}
+      {/* Top Welcome Banner */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-dark-card via-[#131B2E] to-dark-base border border-dark-border">
         <div>
-          <div className="flex items-center space-x-2 mb-1">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
-              Welcome back, <span className="gold-gradient-text">{restaurant?.name || 'Chef'}</span> 👋
-            </h1>
-            {isPremium ? (
-              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-black border border-amber-500/30 flex items-center space-x-1">
-                <Crown className="w-3.5 h-3.5 text-amber-400" />
-                <span>PREMIUM</span>
-              </span>
-            ) : (
-              <span className="px-2.5 py-0.5 rounded-full bg-gray-800 text-gray-300 text-[10px] font-bold border border-gray-700">
-                BASIC PLAN
-              </span>
-            )}
-          </div>
-          <p className="text-xs sm:text-sm text-gray-400">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+            Welcome back, <span className="gold-gradient-text">{restaurant?.name || 'Chef'}</span> 👋
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-400 mt-1">
             Manage your digital menu items, categories, and instant SOLD OUT availability.
           </p>
         </div>
-        <a
-          href={`/menu/${restaurant?.slug}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20"
-        >
-          View Live Menu
-        </a>
-      </div>
-
-      {/* Basic Restaurant Upgrade Notice Banner */}
-      {!isPremium && (
-        <div className="p-6 rounded-3xl bg-gradient-to-r from-amber-500/10 via-dark-card to-amber-500/5 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center space-x-2 text-amber-400 font-bold text-sm">
-              <Sparkles className="w-4 h-4" />
-              <span>You are currently on the Basic Restaurant Plan</span>
-            </div>
-            <p className="text-xs text-gray-300 max-w-xl">
-              Upgrade to <span className="text-amber-400 font-bold">Premium Restaurant</span> to unlock Daily Scan Analytics, Table Orders, Live Call Waiter, and Customer Reviews!
-            </p>
-          </div>
+        <div className="flex items-center space-x-3">
           <Link
-            to="/dashboard/subscription"
-            className="px-4 py-2 rounded-xl bg-amber-500 text-black font-extrabold text-xs shadow-md shadow-amber-500/20 hover:bg-amber-400 whitespace-nowrap"
+            to="/dashboard/items"
+            className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center space-x-1.5"
           >
-            Upgrade to Premium →
+            <Plus className="w-4 h-4" />
+            <span>Add Menu Item</span>
           </Link>
-        </div>
-      )}
-
-      {/* Live Waiter Calls Alert (Premium only) */}
-      {isPremium && waiterCalls && waiterCalls.length > 0 && (
-        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-3 animate-pulse-glow">
-          <div className="flex items-center space-x-2 text-amber-400 font-bold text-sm">
-            <Bell className="w-5 h-5" />
-            <span>Active Table Requests ({waiterCalls.length})</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {waiterCalls.map((call) => (
-              <div
-                key={call._id}
-                className="p-3 rounded-xl bg-dark-card border border-dark-border flex items-center justify-between text-xs"
-              >
-                <div>
-                  <span className="font-extrabold text-white">Table #{call.tableNumber}</span>
-                  <span className="block text-gray-400 capitalize">{call.type} requested</span>
-                </div>
-                <button
-                  onClick={() => handleResolveCall(call._id)}
-                  className="px-3 py-1.5 rounded-lg bg-emerald-500 text-black font-bold flex items-center space-x-1 hover:bg-emerald-400"
-                >
-                  <Check className="w-3.5 h-3.5" />
-                  <span>Done</span>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Key Stats Cards */}
-      <div className={`grid gap-4 ${isPremium ? 'grid-cols-2 md:grid-cols-4 lg:grid-cols-7' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6'}`}>
-        <div className="p-4 rounded-2xl bg-dark-card border border-dark-border space-y-2">
-          <div className="flex items-center justify-between text-gray-400">
-            <Eye className="w-4 h-4 text-amber-400" />
-            <span className="text-[10px] font-semibold uppercase">Total Views</span>
-          </div>
-          <p className="text-xl font-black text-white">{stats.totalViews}</p>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-dark-card border border-dark-border space-y-2">
-          <div className="flex items-center justify-between text-gray-400">
-            <Calendar className="w-4 h-4 text-emerald-400" />
-            <span className="text-[10px] font-semibold uppercase">Today's Scans</span>
-          </div>
-          <p className="text-xl font-black text-emerald-400">{stats.todayViews}</p>
-        </div>
-
-        {/* Unique Visitors / Diners - PREMIUM ONLY */}
-        {isPremium && (
-          <div className="p-4 rounded-2xl bg-dark-card border border-dark-border space-y-2">
-            <div className="flex items-center justify-between text-gray-400">
-              <Users className="w-4 h-4 text-cyan-400" />
-              <span className="text-[10px] font-semibold uppercase">Unique Diners</span>
-            </div>
-            <p className="text-xl font-black text-white">{stats.uniqueVisitors}</p>
-          </div>
-        )}
-
-        <div className="p-4 rounded-2xl bg-dark-card border border-dark-border space-y-2">
-          <div className="flex items-center justify-between text-gray-400">
-            <UtensilsCrossed className="w-4 h-4 text-brand-400" />
-            <span className="text-[10px] font-semibold uppercase">Menu Items</span>
-          </div>
-          <p className="text-xl font-black text-white">{stats.totalItems}</p>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-dark-card border border-dark-border space-y-2">
-          <div className="flex items-center justify-between text-gray-400">
-            <FolderTree className="w-4 h-4 text-purple-400" />
-            <span className="text-[10px] font-semibold uppercase">Categories</span>
-          </div>
-          <p className="text-xl font-black text-white">{stats.totalCategories}</p>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-dark-card border border-dark-border space-y-2">
-          <div className="flex items-center justify-between text-gray-400">
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
-            <span className="text-[10px] font-semibold uppercase">Available</span>
-          </div>
-          <p className="text-xl font-black text-emerald-400">{stats.availableItems}</p>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-dark-card border border-dark-border space-y-2">
-          <div className="flex items-center justify-between text-gray-400">
-            <XCircle className="w-4 h-4 text-red-400" />
-            <span className="text-[10px] font-semibold uppercase">Sold Out</span>
-          </div>
-          <p className="text-xl font-black text-red-400">{stats.soldOutItems}</p>
+          <a
+            href={`/menu/${restaurant?.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2.5 rounded-xl bg-dark-card border border-dark-border hover:border-amber-500/40 text-white font-bold text-xs transition-all flex items-center space-x-1.5"
+          >
+            <QrCode className="w-4 h-4 text-amber-400" />
+            <span>View Live Menu</span>
+          </a>
         </div>
       </div>
 
-      {/* Graph and Popular items section */}
+      {/* 4 Core Menu Management Stat Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="p-5 rounded-3xl bg-dark-card border border-dark-border space-y-2">
+          <div className="flex items-center justify-between text-gray-400">
+            <UtensilsCrossed className="w-5 h-5 text-amber-400" />
+            <span className="text-xs font-bold uppercase tracking-wider">Total Menu Items</span>
+          </div>
+          <p className="text-2xl font-black text-white">{stats.totalItems || 0}</p>
+        </div>
+
+        <div className="p-5 rounded-3xl bg-dark-card border border-dark-border space-y-2">
+          <div className="flex items-center justify-between text-gray-400">
+            <FolderTree className="w-5 h-5 text-purple-400" />
+            <span className="text-xs font-bold uppercase tracking-wider">Categories</span>
+          </div>
+          <p className="text-2xl font-black text-white">{stats.totalCategories || 0}</p>
+        </div>
+
+        <div className="p-5 rounded-3xl bg-dark-card border border-dark-border space-y-2">
+          <div className="flex items-center justify-between text-gray-400">
+            <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <span className="text-xs font-bold uppercase tracking-wider">Available Items</span>
+          </div>
+          <p className="text-2xl font-black text-emerald-400">{stats.availableItems || 0}</p>
+        </div>
+
+        <div className="p-5 rounded-3xl bg-dark-card border border-dark-border space-y-2">
+          <div className="flex items-center justify-between text-gray-400">
+            <XCircle className="w-5 h-5 text-red-400" />
+            <span className="text-xs font-bold uppercase tracking-wider">Sold Out Items</span>
+          </div>
+          <p className="text-2xl font-black text-red-400">{stats.soldOutItems || 0}</p>
+        </div>
+      </div>
+
+      {/* Quick Menu Actions & Popular Dishes Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Daily Scan Volume Graph - PREMIUM ONLY */}
-        {isPremium && (
-          <div className="lg:col-span-8 p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-bold text-white">Daily Scan Volume</h3>
-                <p className="text-xs text-gray-400">Customer views tracked over the past week</p>
+        {/* Quick Menu Actions */}
+        <div className="lg:col-span-6 p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
+          <h3 className="text-lg font-bold text-white">Quick Actions</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Link
+              to="/dashboard/items"
+              className="p-4 rounded-2xl bg-dark-base border border-dark-border hover:border-amber-500/40 transition-all space-y-2 group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-black transition-all">
+                <UtensilsCrossed className="w-4 h-4" />
               </div>
-            </div>
-            <div className="h-64 w-full pt-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={viewsGraph}>
-                  <defs>
-                    <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="date" stroke="#6B7280" fontSize={11} />
-                  <YAxis stroke="#6B7280" fontSize={11} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#131B2E',
-                      borderColor: '#1F293D',
-                      borderRadius: '12px',
-                      color: '#FFF',
-                    }}
-                  />
-                  <Area type="monotone" dataKey="views" stroke="#F59E0B" strokeWidth={3} fillOpacity={1} fill="url(#colorViews)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        )}
+              <h4 className="text-sm font-bold text-white">Menu Items</h4>
+              <p className="text-xs text-gray-400">Add dishes, set prices, and toggle instant SOLD OUT status.</p>
+            </Link>
 
-        {/* Most Viewed Items */}
-        <div className={isPremium ? 'lg:col-span-4 p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4' : 'lg:col-span-12 p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4'}>
-          <h3 className="text-lg font-bold text-white">Popular Menu Items</h3>
-          <div className={`grid gap-3 ${isPremium ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'}`}>
-            {topItems.map((item) => (
-              <div
-                key={item._id}
-                className="p-3 rounded-2xl bg-dark-base border border-dark-border flex items-center space-x-3"
-              >
-                {item.image ? (
-                  <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover" />
-                ) : (
-                  <div className="w-12 h-12 rounded-xl bg-dark-hover flex items-center justify-center text-gray-500 font-bold text-xs">
-                    Food
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-xs font-bold text-white truncate">{item.name}</h4>
-                  <span className="text-xs text-amber-400 font-semibold">{restaurant?.currency || '₹'}{item.price}</span>
-                </div>
-                {item.isBestseller && (
-                  <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-extrabold uppercase">
-                    Top
-                  </span>
-                )}
+            <Link
+              to="/dashboard/categories"
+              className="p-4 rounded-2xl bg-dark-base border border-dark-border hover:border-amber-500/40 transition-all space-y-2 group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-black transition-all">
+                <FolderTree className="w-4 h-4" />
               </div>
-            ))}
+              <h4 className="text-sm font-bold text-white">Categories</h4>
+              <p className="text-xs text-gray-400">Organize starters, biryanis, main course, and drinks.</p>
+            </Link>
+
+            <Link
+              to="/dashboard/qr-codes"
+              className="p-4 rounded-2xl bg-dark-base border border-dark-border hover:border-amber-500/40 transition-all space-y-2 group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-black transition-all">
+                <QrCode className="w-4 h-4" />
+              </div>
+              <h4 className="text-sm font-bold text-white">QR Code Generator</h4>
+              <p className="text-xs text-gray-400">Download printable QR cards for your tables.</p>
+            </Link>
+
+            <Link
+              to="/dashboard/profile"
+              className="p-4 rounded-2xl bg-dark-base border border-dark-border hover:border-amber-500/40 transition-all space-y-2 group"
+            >
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-black transition-all">
+                <Layers className="w-4 h-4" />
+              </div>
+              <h4 className="text-sm font-bold text-white">Restaurant Settings</h4>
+              <p className="text-xs text-gray-400">Update logo, cover image, and opening hours.</p>
+            </Link>
+          </div>
+        </div>
+
+        {/* Featured / Bestseller Dishes */}
+        <div className="lg:col-span-6 p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
+          <h3 className="text-lg font-bold text-white">Bestseller Dishes</h3>
+          <div className="space-y-3">
+            {topItems && topItems.length > 0 ? (
+              topItems.slice(0, 4).map((item) => (
+                <div
+                  key={item._id}
+                  className="p-3 rounded-2xl bg-dark-base border border-dark-border flex items-center space-x-3"
+                >
+                  {item.image ? (
+                    <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-xl bg-dark-hover flex items-center justify-center text-gray-500 font-bold text-xs">
+                      Food
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-xs font-bold text-white truncate">{item.name}</h4>
+                    <span className="text-xs text-amber-400 font-semibold">{restaurant?.currency || '₹'}{item.price}</span>
+                  </div>
+                  {item.isBestseller && (
+                    <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-extrabold uppercase">
+                      Bestseller
+                    </span>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="text-xs text-gray-400">No dishes added yet.</p>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Recent Feedback Feed - PREMIUM ONLY */}
-      {isPremium && (
-        <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
-          <h3 className="text-lg font-bold text-white">Recent Customer Reviews</h3>
-          {recentFeedback && recentFeedback.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {recentFeedback.map((fb) => (
-                <div key={fb._id} className="p-4 rounded-2xl bg-dark-base border border-dark-border space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1">
-                      {[...Array(fb.rating)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />
-                      ))}
-                    </div>
-                    <span className="text-xs text-gray-500">{fb.tableNumber ? `Table ${fb.tableNumber}` : 'Dine-in'}</span>
-                  </div>
-                  <p className="text-xs text-gray-300 italic">"{fb.comment || 'No comment provided'}"</p>
-                  <span className="block text-[11px] text-gray-500 font-medium">— {fb.customerName || 'Anonymous'}</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-xs text-gray-400">No customer feedback submitted yet.</p>
-          )}
-        </div>
-      )}
     </div>
   );
 }

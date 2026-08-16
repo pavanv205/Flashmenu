@@ -55,7 +55,7 @@ const registerUser = async (req, res) => {
         email: email,
       });
 
-      // Populate default categories and starter dishes for new restaurant
+      // Create main categories and starter items grouped by subCategory
       for (const catData of defaultCategories) {
         const c = await Category.create({
           restaurantId: restaurant._id,
@@ -67,6 +67,7 @@ const registerUser = async (req, res) => {
           const itemDocs = catData.items.map((item, idx) => ({
             restaurantId: restaurant._id,
             categoryId: c._id,
+            subCategory: item.subCategory || '',
             name: item.name,
             description: item.description || '',
             price: item.price,
@@ -154,6 +155,7 @@ const registerUser = async (req, res) => {
               _id: `item_${Date.now()}_${catIdx}_${itemIdx}`,
               restaurantId: restaurant._id,
               categoryId: c._id,
+              subCategory: item.subCategory || '',
               name: item.name,
               description: item.description || '',
               price: item.price,

@@ -123,6 +123,14 @@ export default function PublicMenuPage() {
     return matchesCategory && matchesSearch;
   });
 
+  // Group items by subCategory if present
+  const groupedItems = filteredItems.reduce((acc, item) => {
+    const sub = item.subCategory || 'DEFAULT';
+    if (!acc[sub]) acc[sub] = [];
+    acc[sub].push(item);
+    return acc;
+  }, {});
+
   const cartTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -238,127 +246,142 @@ export default function PublicMenuPage() {
         </div>
       </div>
 
-      {/* Food Items List */}
-      <div className="px-5 pt-4 space-y-4">
+      {/* Food Items List Grouped by Sub-Category */}
+      <div className="px-5 pt-4 space-y-6">
         {filteredItems.length === 0 ? (
           <div className="py-12 text-center text-gray-500 space-y-2">
             <Search className="w-10 h-10 mx-auto opacity-30" />
             <p className="text-xs">No food items matching your query.</p>
           </div>
         ) : (
-          filteredItems.map((item) => {
-            const inCart = cart.find((i) => i._id === item._id);
-            return (
-              <div
-                key={item._id}
-                className={`p-4 rounded-3xl bg-dark-card border transition-all flex space-x-3 relative overflow-hidden ${
-                  item.isAvailable
-                    ? 'border-dark-border hover:border-amber-500/40'
-                    : 'border-red-900/40 bg-red-950/10'
-                }`}
-              >
-                {/* Food Image */}
-                <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-dark-base flex-shrink-0">
-                  {item.image ? (
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-600 font-bold text-xs">
-                      No Image
-                    </div>
-                  )}
-
-                  {/* SOLD OUT Overlay */}
-                  {!item.isAvailable && (
-                    <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
-                      <span className="text-[10px] font-black text-red-400 uppercase tracking-widest border border-red-500/40 px-2 py-0.5 rounded-full bg-red-500/20">
-                        SOLD OUT
-                      </span>
-                    </div>
-                  )}
+          Object.entries(groupedItems).map(([subGroup, items]) => (
+            <div key={subGroup} className="space-y-3">
+              {subGroup !== 'DEFAULT' && (
+                <div className="pt-3 pb-1 border-b border-amber-500/30 flex items-center justify-between">
+                  <h2 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center space-x-2">
+                    <span>{subGroup}</span>
+                  </h2>
+                  <span className="text-[10px] font-bold text-gray-500 bg-dark-card px-2.5 py-0.5 rounded-full border border-dark-border">
+                    {items.length} items
+                  </span>
                 </div>
+              )}
 
-                {/* Details */}
-                <div className="flex-1 min-w-0 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center space-x-2 mb-1">
-                      {/* Dietary dot */}
-                      {item.vegType === 'veg' ? (
-                        <span className="w-3.5 h-3.5 rounded-sm border border-emerald-500 flex items-center justify-center p-0.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                        </span>
+              {items.map((item) => {
+                const inCart = cart.find((i) => i._id === item._id);
+                return (
+                  <div
+                    key={item._id}
+                    className={`p-4 rounded-3xl bg-dark-card border transition-all flex space-x-3 relative overflow-hidden ${
+                      item.isAvailable
+                        ? 'border-dark-border hover:border-amber-500/40'
+                        : 'border-red-900/40 bg-red-950/10'
+                    }`}
+                  >
+                    {/* Food Image */}
+                    <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-dark-base flex-shrink-0">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
+                        />
                       ) : (
-                        <span className="w-3.5 h-3.5 rounded-sm border border-red-500 flex items-center justify-center p-0.5">
-                          <span className="w-0 h-0 border-l-[2.5px] border-l-transparent border-r-[2.5px] border-r-transparent border-b-[5px] border-b-red-500"></span>
-                        </span>
-                      )}
-
-                      <h3 className="text-sm font-bold text-white truncate">{item.name}</h3>
-                    </div>
-
-                    <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">
-                      {item.description}
-                    </p>
-
-                    {/* Badges */}
-                    <div className="flex flex-wrap gap-1 mt-1.5">
-                      {item.isBestseller && (
-                        <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[9px] font-extrabold uppercase">
-                          Bestseller
-                        </span>
-                      )}
-                      {item.isChefSpecial && (
-                        <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[9px] font-extrabold uppercase">
-                          Chef Special
-                        </span>
-                      )}
-                      {item.spicyLevel > 0 && (
-                        <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[9px] font-extrabold flex items-center">
-                          <Flame className="w-2.5 h-2.5 mr-0.5" />
-                          <span>Spicy</span>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Price & Add Button */}
-                  <div className="flex items-center justify-between pt-2 border-t border-dark-border/60">
-                    <div className="flex items-baseline space-x-1.5">
-                      <span className="text-sm font-black text-amber-400">
-                        {restaurant.currency || '₹'}{item.discountPrice || item.price}
-                      </span>
-                      {item.discountPrice && (
-                        <span className="text-[10px] text-gray-500 line-through">
-                          {restaurant.currency || '₹'}{item.price}
-                        </span>
-                      )}
-                    </div>
-
-                    {item.isAvailable && (
-                      inCart ? (
-                        <div className="flex items-center space-x-2 bg-amber-500 text-black px-2 py-1 rounded-xl text-xs font-bold">
-                          <button onClick={() => updateCartQuantity(item._id, -1)} className="px-1 font-bold">-</button>
-                          <span>{inCart.quantity}</span>
-                          <button onClick={() => updateCartQuantity(item._id, 1)} className="px-1 font-bold">+</button>
+                        <div className="w-full h-full flex items-center justify-center text-gray-600 font-bold text-xs">
+                          No Image
                         </div>
-                      ) : (
-                        <button
-                          onClick={() => addToCart(item)}
-                          className="px-3 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30 text-xs font-bold transition-all flex items-center space-x-1"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>ADD</span>
-                        </button>
-                      )
-                    )}
+                      )}
+
+                      {/* SOLD OUT Overlay */}
+                      {!item.isAvailable && (
+                        <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
+                          <span className="text-[10px] font-black text-red-400 uppercase tracking-widest border border-red-500/40 px-2 py-0.5 rounded-full bg-red-500/20">
+                            SOLD OUT
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Details */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center space-x-2 mb-1">
+                          {/* Dietary dot */}
+                          {item.vegType === 'veg' ? (
+                            <span className="w-3.5 h-3.5 rounded-sm border border-emerald-500 flex items-center justify-center p-0.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            </span>
+                          ) : (
+                            <span className="w-3.5 h-3.5 rounded-sm border border-red-500 flex items-center justify-center p-0.5">
+                              <span className="w-0 h-0 border-l-[2.5px] border-l-transparent border-r-[2.5px] border-r-transparent border-b-[5px] border-b-red-500"></span>
+                            </span>
+                          )}
+
+                          <h3 className="text-sm font-bold text-white truncate">{item.name}</h3>
+                        </div>
+
+                        <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">
+                          {item.description}
+                        </p>
+
+                        {/* Badges */}
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {item.isBestseller && (
+                            <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[9px] font-extrabold uppercase">
+                              Bestseller
+                            </span>
+                          )}
+                          {item.isChefSpecial && (
+                            <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[9px] font-extrabold uppercase">
+                              Chef Special
+                            </span>
+                          )}
+                          {item.spicyLevel > 0 && (
+                            <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[9px] font-extrabold flex items-center">
+                              <Flame className="w-2.5 h-2.5 mr-0.5" />
+                              <span>Spicy</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Price & Add Button */}
+                      <div className="flex items-center justify-between pt-2 border-t border-dark-border/60">
+                        <div className="flex items-baseline space-x-1.5">
+                          <span className="text-sm font-black text-amber-400">
+                            {restaurant.currency || '₹'}{item.discountPrice || item.price}
+                          </span>
+                          {item.discountPrice && (
+                            <span className="text-[10px] text-gray-500 line-through">
+                              {restaurant.currency || '₹'}{item.price}
+                            </span>
+                          )}
+                        </div>
+
+                        {item.isAvailable && (
+                          inCart ? (
+                            <div className="flex items-center space-x-2 bg-amber-500 text-black px-2 py-1 rounded-xl text-xs font-bold">
+                              <button onClick={() => updateCartQuantity(item._id, -1)} className="px-1 font-bold">-</button>
+                              <span>{inCart.quantity}</span>
+                              <button onClick={() => updateCartQuantity(item._id, 1)} className="px-1 font-bold">+</button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => addToCart(item)}
+                              className="px-3 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30 text-xs font-bold transition-all flex items-center space-x-1"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>ADD</span>
+                            </button>
+                          )
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })
+                );
+              })}
+            </div>
+          ))
         )}
       </div>
 

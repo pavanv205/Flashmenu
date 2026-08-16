@@ -20,6 +20,7 @@ const restaurantSchema = new mongoose.Schema(
     secondaryColor: { type: String, default: '#111827' }, // Dark background
     currency: { type: String, default: '₹' },
     tableCount: { type: Number, default: 20 },
+    subscriptionPlan: { type: String, enum: ['basic', 'premium'], default: 'basic' },
     socialLinks: {
       instagram: { type: String, default: '' },
       facebook: { type: String, default: '' },

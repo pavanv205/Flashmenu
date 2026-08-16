@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { orderAPI } from '../services/api';
-import { ShoppingBag, Clock, CheckCircle, Crown, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Clock, CheckCircle, Crown, ArrowRight, Sparkles, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
@@ -47,25 +47,65 @@ export default function OrdersPage() {
     );
   }
 
+  // PREMIUM UPGRADE SCREEN FOR BASIC RESTAURANTS
   if (isBasicPlan) {
     return (
-      <div className="max-w-2xl mx-auto py-16 text-center space-y-6 bg-dark-card rounded-3xl border border-dark-border p-8 shadow-2xl">
-        <div className="w-16 h-16 rounded-3xl bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto border border-amber-500/30">
-          <Crown className="w-8 h-8 text-amber-400" />
+      <div className="max-w-2xl mx-auto py-12 px-4">
+        <div className="bg-gradient-to-b from-dark-card to-[#162238] border-2 border-amber-500 rounded-3xl p-8 sm:p-10 shadow-2xl text-center space-y-6 relative overflow-hidden gold-glow">
+          {/* Top Badge */}
+          <div className="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-black uppercase tracking-wider">
+            <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
+            <span>Premium Feature Upgrade</span>
+          </div>
+
+          <div className="space-y-3">
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">
+              Unlock Live Table Ordering
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
+              Allow your customers to browse food and place live kitchen orders directly from their phone camera scan!
+            </p>
+          </div>
+
+          {/* Feature Checklist */}
+          <div className="bg-dark-base/80 rounded-2xl p-5 border border-dark-border max-w-md mx-auto text-left space-y-3">
+            <div className="flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Real-Time Digital Kitchen Order Management</span>
+            </div>
+            <div className="flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Table-Specific QR Codes (Table 1 to 50)</span>
+            </div>
+            <div className="flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Instant Call Waiter & Customer Review Tools</span>
+            </div>
+            <div className="flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>24/7 Priority Support & Full Analytics</span>
+            </div>
+          </div>
+
+          {/* Pricing Info */}
+          <div className="pt-2">
+            <div className="text-2xl font-black text-white">
+              ₹999 <span className="text-xs text-gray-400 font-normal">/ month</span>
+            </div>
+            <p className="text-[11px] text-amber-400 font-semibold mt-0.5">Cancel or switch plans anytime</p>
+          </div>
+
+          <div className="pt-2">
+            <Link
+              to="/dashboard/subscription"
+              className="inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-sm transition-all shadow-xl shadow-amber-500/25 hover:scale-105"
+            >
+              <Sparkles className="w-4 h-4 text-black fill-black" />
+              <span>Upgrade to Premium Restaurant</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
-        <div className="space-y-2">
-          <h2 className="text-2xl font-extrabold text-white">Live Ordering is a Premium Feature</h2>
-          <p className="text-xs sm:text-sm text-gray-400 max-w-md mx-auto leading-relaxed">
-            Upgrade your restaurant to <strong className="text-amber-400">Premium Restaurant</strong> to allow diners to place live table orders directly from their phones!
-          </p>
-        </div>
-        <Link
-          to="/dashboard/subscription"
-          className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs shadow-xl shadow-amber-500/20"
-        >
-          <span>Upgrade to Premium Plan</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
       </div>
     );
   }

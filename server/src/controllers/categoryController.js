@@ -12,10 +12,10 @@ const getCategories = async (req, res) => {
       const categories = await Category.find({ restaurantId: restaurant._id }).sort({ order: 1 });
       return res.json(categories);
     } else {
-      const restaurant = mockStore.restaurants.find((r) => r.ownerId === req.user._id);
+      const restaurant = mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id));
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const categories = mockStore.categories
-        .filter((c) => c.restaurantId === restaurant._id)
+        .filter((c) => String(c.restaurantId) === String(restaurant._id))
         .sort((a, b) => a.order - b.order);
       return res.json(categories);
     }
@@ -31,12 +31,14 @@ const createCategory = async (req, res) => {
 
     if (getIsConnected()) {
       const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
+      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const count = await Category.countDocuments({ restaurantId: restaurant._id });
       const category = await Category.create({ restaurantId: restaurant._id, name, order: count + 1 });
       return res.status(201).json(category);
     } else {
-      const restaurant = mockStore.restaurants.find((r) => r.ownerId === req.user._id);
-      const count = mockStore.categories.filter((c) => c.restaurantId === restaurant._id).length;
+      const restaurant = mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id));
+      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+      const count = mockStore.categories.filter((c) => String(c.restaurantId) === String(restaurant._id)).length;
       const category = {
         _id: `cat_${Date.now()}`,
         restaurantId: restaurant._id,
@@ -64,7 +66,7 @@ const updateCategory = async (req, res) => {
       await category.save();
       return res.json(category);
     } else {
-      const category = mockStore.categories.find((c) => c._id === id);
+      const category = mockStore.categories.find((c) => String(c._id) === String(id));
       if (!category) return res.status(404).json({ message: 'Category not found' });
       if (name) category.name = name;
       return res.json(category);
@@ -82,8 +84,8 @@ const deleteCategory = async (req, res) => {
       await Category.deleteOne({ _id: id });
       return res.json({ message: 'Category deleted' });
     } else {
-      mockStore.categories = mockStore.categories.filter((c) => c._id !== id);
-      mockStore.menuItems = mockStore.menuItems.filter((i) => i.categoryId !== id);
+      mockStore.categories = mockStore.categories.filter((c) => String(c._id) !== String(id));
+      mockStore.menuItems = mockStore.menuItems.filter((i) => String(i.categoryId) !== String(id));
       return res.json({ message: 'Category deleted' });
     }
   } catch (error) {
@@ -101,7 +103,7 @@ const reorderCategories = async (req, res) => {
       await Category.bulkWrite(bulkOps);
     } else {
       items.forEach((item) => {
-        const cat = mockStore.categories.find((c) => c._id === item.id);
+        const cat = mockStore.categories.find((c) => String(c._id) === String(item.id));
         if (cat) cat.order = item.order;
       });
     }

@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const mockStore = require('../config/mockStore');
+const { getIsConnected } = require('../config/db');
 
 const protect = async (req, res, next) => {
   let token;
@@ -13,7 +15,13 @@ const protect = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'flashmenu_secret_key');
-    req.user = await User.findById(decoded.id).select('-password');
+
+    if (getIsConnected()) {
+      req.user = await User.findById(decoded.id).select('-password');
+    } else {
+      req.user = mockStore.users.find((u) => String(u._id) === String(decoded.id));
+    }
+
     if (!req.user) {
       return res.status(401).json({ message: 'User no longer exists' });
     }

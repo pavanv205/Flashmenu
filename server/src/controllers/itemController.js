@@ -11,10 +11,10 @@ const getMenuItems = async (req, res) => {
       const items = await MenuItem.find({ restaurantId: restaurant._id }).sort({ order: 1 });
       return res.json(items);
     } else {
-      const restaurant = mockStore.restaurants.find((r) => r.ownerId === req.user._id);
+      const restaurant = mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id));
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const items = mockStore.menuItems
-        .filter((i) => i.restaurantId === restaurant._id)
+        .filter((i) => String(i.restaurantId) === String(restaurant._id))
         .sort((a, b) => a.order - b.order);
       return res.json(items);
     }
@@ -27,10 +27,12 @@ const createMenuItem = async (req, res) => {
   try {
     if (getIsConnected()) {
       const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
+      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const item = await MenuItem.create({ restaurantId: restaurant._id, ...req.body });
       return res.status(201).json(item);
     } else {
-      const restaurant = mockStore.restaurants.find((r) => r.ownerId === req.user._id);
+      const restaurant = mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id));
+      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const item = {
         _id: `item_${Date.now()}`,
         restaurantId: restaurant._id,
@@ -56,7 +58,7 @@ const updateMenuItem = async (req, res) => {
       await item.save();
       return res.json(item);
     } else {
-      const item = mockStore.menuItems.find((i) => i._id === id);
+      const item = mockStore.menuItems.find((i) => String(i._id) === String(id));
       if (!item) return res.status(404).json({ message: 'Item not found' });
       Object.assign(item, req.body);
       return res.json(item);
@@ -76,7 +78,7 @@ const toggleAvailability = async (req, res) => {
       await item.save();
       return res.json(item);
     } else {
-      const item = mockStore.menuItems.find((i) => i._id === id);
+      const item = mockStore.menuItems.find((i) => String(i._id) === String(id));
       if (!item) return res.status(404).json({ message: 'Item not found' });
       item.isAvailable = !item.isAvailable;
       return res.json(item);
@@ -99,7 +101,7 @@ const duplicateMenuItem = async (req, res) => {
       });
       return res.status(201).json(copy);
     } else {
-      const item = mockStore.menuItems.find((i) => i._id === id);
+      const item = mockStore.menuItems.find((i) => String(i._id) === String(id));
       if (!item) return res.status(404).json({ message: 'Item not found' });
       const copy = { ...item, _id: `item_${Date.now()}`, name: `${item.name} (Copy)` };
       mockStore.menuItems.push(copy);
@@ -117,7 +119,7 @@ const deleteMenuItem = async (req, res) => {
       await MenuItem.deleteOne({ _id: id });
       return res.json({ message: 'Item deleted' });
     } else {
-      mockStore.menuItems = mockStore.menuItems.filter((i) => i._id !== id);
+      mockStore.menuItems = mockStore.menuItems.filter((i) => String(i._id) !== String(id));
       return res.json({ message: 'Item deleted' });
     }
   } catch (error) {
@@ -135,7 +137,7 @@ const reorderMenuItems = async (req, res) => {
       await MenuItem.bulkWrite(bulkOps);
     } else {
       items.forEach((item) => {
-        const m = mockStore.menuItems.find((i) => i._id === item.id);
+        const m = mockStore.menuItems.find((i) => String(i._id) === String(item.id));
         if (m) m.order = item.order;
       });
     }

@@ -25,6 +25,8 @@ export default function DashboardSidebar({ closeMobileMenu }) {
     navigate('/login');
   };
 
+  const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
+
   const navItems = [
     { name: 'Overview', path: '/dashboard', icon: LayoutDashboard, exact: true },
     { name: 'Menu Items', path: '/dashboard/items', icon: UtensilsCrossed },
@@ -32,7 +34,7 @@ export default function DashboardSidebar({ closeMobileMenu }) {
     { name: 'QR Codes', path: '/dashboard/qrcodes', icon: QrCode },
     { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3 },
     { name: 'Feedback & Calls', path: '/dashboard/feedback', icon: MessageSquare },
-    { name: 'Orders', path: '/dashboard/orders', icon: ShoppingBag },
+    ...(!isBasicPlan ? [{ name: 'Orders', path: '/dashboard/orders', icon: ShoppingBag }] : []),
     { name: 'Profile & Branding', path: '/dashboard/profile', icon: Store },
     { name: 'Subscription', path: '/dashboard/subscription', icon: CreditCard },
   ];

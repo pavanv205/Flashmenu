@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { orderAPI } from '../services/api';
-import { ShoppingBag, Clock, CheckCircle } from 'lucide-react';
+import { ShoppingBag, Clock, CheckCircle, Crown, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 export default function OrdersPage() {
   const { restaurant } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
   const fetchOrders = async () => {
     try {
@@ -20,8 +23,12 @@ export default function OrdersPage() {
   };
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    if (!isBasicPlan) {
+      fetchOrders();
+    } else {
+      setLoading(false);
+    }
+  }, [isBasicPlan]);
 
   const handleStatusChange = async (id, status) => {
     try {
@@ -36,6 +43,29 @@ export default function OrdersPage() {
     return (
       <div className="py-12 flex justify-center">
         <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (isBasicPlan) {
+    return (
+      <div className="max-w-2xl mx-auto py-16 text-center space-y-6 bg-dark-card rounded-3xl border border-dark-border p-8 shadow-2xl">
+        <div className="w-16 h-16 rounded-3xl bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto border border-amber-500/30">
+          <Crown className="w-8 h-8 text-amber-400" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-extrabold text-white">Live Ordering is a Premium Feature</h2>
+          <p className="text-xs sm:text-sm text-gray-400 max-w-md mx-auto leading-relaxed">
+            Upgrade your restaurant to <strong className="text-amber-400">Premium Restaurant</strong> to allow diners to place live table orders directly from their phones!
+          </p>
+        </div>
+        <Link
+          to="/dashboard/subscription"
+          className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs shadow-xl shadow-amber-500/20"
+        >
+          <span>Upgrade to Premium Plan</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
     );
   }

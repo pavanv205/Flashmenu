@@ -22,6 +22,8 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
+    const cleanEmail = email.toLowerCase().trim();
+
     const defaultCategories = [
       { name: '🥗 Salads', order: 1 },
       { name: '🍲 Soups', order: 2 },
@@ -140,7 +142,7 @@ const registerUser = async (req, res) => {
     ];
 
     if (getIsConnected()) {
-      const userExists = await User.findOne({ email });
+      const userExists = await User.findOne({ email: { $regex: new RegExp('^' + cleanEmail + '$', 'i') } });
       if (userExists) {
         return res.status(400).json({ message: 'Email already registered' });
       }
@@ -156,7 +158,7 @@ const registerUser = async (req, res) => {
 
       const user = await User.create({
         name,
-        email,
+        email: cleanEmail,
         password: hashedPassword,
         phone: phone || '',
       });
@@ -168,7 +170,7 @@ const registerUser = async (req, res) => {
         city: city || '',
         address: address || '',
         phone: phone || '',
-        email: email,
+        email: cleanEmail,
       });
 
       const createdCategoriesMap = {};
@@ -207,7 +209,7 @@ const registerUser = async (req, res) => {
       });
     } else {
       // In-Memory Fallback
-      const existing = mockStore.users.find((u) => u.email === email);
+      const existing = mockStore.users.find((u) => u.email.toLowerCase().trim() === cleanEmail);
       if (existing) {
         return res.status(400).json({ message: 'Email already registered' });
       }
@@ -223,7 +225,7 @@ const registerUser = async (req, res) => {
       const user = {
         _id: `user_${Date.now()}`,
         name,
-        email,
+        email: cleanEmail,
         password: hashedPassword,
         phone: phone || '',
         role: 'owner',
@@ -238,7 +240,7 @@ const registerUser = async (req, res) => {
         city: city || '',
         address: address || '',
         phone: phone || '',
-        email,
+        email: cleanEmail,
         cuisineType: 'Multi-Cuisine',
         openingHours: '10:00 AM - 11:00 PM',
         primaryColor: '#F59E0B',
@@ -296,8 +298,14 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Please enter email and password' });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+
     if (getIsConnected()) {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email: { $regex: new RegExp('^' + cleanEmail + '$', 'i') } });
       if (!user) {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
@@ -325,7 +333,7 @@ const loginUser = async (req, res) => {
           : null,
       });
     } else {
-      const user = mockStore.users.find((u) => u.email === email);
+      const user = mockStore.users.find((u) => u.email.toLowerCase().trim() === cleanEmail);
       if (!user) {
         return res.status(401).json({ message: 'Invalid email or password' });
       }

@@ -5,6 +5,18 @@ export const getSubCategory = (item) => {
 
   const name = (item.name || '').toLowerCase();
 
+  // Biryanis Sub-Categories Classification
+  if (name.includes('biryani')) {
+    if (name.includes('mutton')) {
+      return '🐐 MUTTON BIRYANI';
+    }
+    if (name.includes('chicken') || name.includes('kodi')) {
+      return '🍗 CHICKEN BIRYANI';
+    }
+    return '🥦 VEG BIRYANI';
+  }
+
+  // Starters Sub-Categories Classification
   if (name.includes('fish') || name.includes('chepa') || name.includes('apollo')) {
     return '🐟 FISH STARTERS';
   }

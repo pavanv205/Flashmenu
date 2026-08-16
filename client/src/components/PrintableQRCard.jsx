@@ -20,28 +20,28 @@ export default function PrintableQRCard({ restaurant, tableNumber, targetUrl }) 
       />
 
       {/* Restaurant Header */}
-      <div className="flex flex-col items-center space-y-3 mb-6 pt-2">
+      <div className="flex flex-col items-center text-center mb-6 pt-2">
         {restaurant.logo ? (
           <img
             src={restaurant.logo}
             alt={restaurant.name}
-            className="w-16 h-16 rounded-2xl object-cover border-2 border-white/20 shadow-md"
+            className="w-16 h-16 rounded-2xl object-cover border-2 border-white/20 shadow-md mb-3"
           />
         ) : (
           <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
+            className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg mb-3"
             style={{ backgroundColor: primaryColor }}
           >
             <Zap className="w-8 h-8 text-black fill-black" />
           </div>
         )}
 
-        <div>
-          <h2 className="text-2xl font-black text-white tracking-tight">{restaurant.name}</h2>
-          <p className="text-xs text-amber-400 font-semibold tracking-wide uppercase mt-0.5">
-            {restaurant.cuisineType || 'Digital Menu'}
-          </p>
-        </div>
+        <h2 className="text-xl font-extrabold text-white leading-tight tracking-tight px-2">
+          {restaurant.name}
+        </h2>
+        <span className="text-xs text-amber-400 font-extrabold tracking-wider uppercase mt-1.5 block">
+          {restaurant.cuisineType || 'DIGITAL MENU'}
+        </span>
       </div>
 
       {/* Table Number Badge */}

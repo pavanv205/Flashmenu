@@ -1,6 +1,6 @@
 function createSlug(text) {
-  return text
-    .toString()
+  if (!text) return `rest-${Date.now()}`;
+  return String(text)
     .toLowerCase()
     .trim()
     .replace(/[\s\W-]+/g, '-') // Replace spaces and non-word chars with -

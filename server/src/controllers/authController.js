@@ -23,7 +23,7 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
-    const normalizedEmail = String(email).toLowerCase().trim();
+    const normalizedEmail = String(email || '').toLowerCase().trim();
 
     if (getIsConnected()) {
       const userExists = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
@@ -41,7 +41,7 @@ const registerUser = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, salt);
 
       const user = await User.create({
-        name: name.trim(),
+        name: String(name).trim(),
         email: normalizedEmail,
         password: hashedPassword,
         phone: phone ? String(phone).trim() : '',
@@ -49,7 +49,7 @@ const registerUser = async (req, res) => {
 
       const restaurant = await Restaurant.create({
         ownerId: user._id,
-        name: restaurantName.trim(),
+        name: String(restaurantName).trim(),
         slug,
         city: city ? String(city).trim() : '',
         address: address ? String(address).trim() : '',
@@ -100,13 +100,15 @@ const registerUser = async (req, res) => {
       });
     } else {
       // In-Memory Fallback
-      const existing = mockStore.users.find((u) => u.email.toLowerCase().trim() === normalizedEmail);
+      const existing = mockStore.users.find(
+        (u) => u && u.email && String(u.email).toLowerCase().trim() === normalizedEmail
+      );
       if (existing) {
         return res.status(400).json({ message: 'Email already registered' });
       }
 
       let slug = createSlug(restaurantName);
-      if (mockStore.restaurants.some((r) => r.slug === slug)) {
+      if (mockStore.restaurants.some((r) => r && r.slug && String(r.slug).toLowerCase() === slug)) {
         slug = `${slug}-${Math.floor(1000 + Math.random() * 9000)}`;
       }
 
@@ -115,7 +117,7 @@ const registerUser = async (req, res) => {
 
       const user = {
         _id: `user_${Date.now()}`,
-        name: name.trim(),
+        name: String(name).trim(),
         email: normalizedEmail,
         password: hashedPassword,
         phone: phone ? String(phone).trim() : '',
@@ -126,7 +128,7 @@ const registerUser = async (req, res) => {
       const restaurant = {
         _id: `rest_${Date.now()}`,
         ownerId: user._id,
-        name: restaurantName.trim(),
+        name: String(restaurantName).trim(),
         slug,
         city: city ? String(city).trim() : '',
         address: address ? String(address).trim() : '',
@@ -200,7 +202,7 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Please enter both email and password' });
     }
 
-    const normalizedEmail = String(email).toLowerCase().trim();
+    const normalizedEmail = String(email || '').toLowerCase().trim();
 
     if (getIsConnected()) {
       const user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
@@ -231,7 +233,9 @@ const loginUser = async (req, res) => {
           : null,
       });
     } else {
-      const user = mockStore.users.find((u) => u.email.toLowerCase().trim() === normalizedEmail);
+      const user = mockStore.users.find(
+        (u) => u && u.email && String(u.email).toLowerCase().trim() === normalizedEmail
+      );
       if (!user) {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
@@ -241,7 +245,7 @@ const loginUser = async (req, res) => {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
-      const restaurant = mockStore.restaurants.find((r) => String(r.ownerId) === String(user._id));
+      const restaurant = mockStore.restaurants.find((r) => r && String(r.ownerId) === String(user._id));
       const token = generateToken(user._id, restaurant?._id || '', restaurant?.slug || '');
 
       return res.json({
@@ -271,9 +275,9 @@ const getMe = async (req, res) => {
       const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
       return res.json({ user, restaurant });
     } else {
-      const user = mockStore.users.find((u) => String(u._id) === String(req.user._id)) || req.user;
+      const user = mockStore.users.find((u) => u && String(u._id) === String(req.user._id)) || req.user;
       const restaurant =
-        mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id)) || req.restaurant;
+        mockStore.restaurants.find((r) => r && String(r.ownerId) === String(req.user._id)) || req.restaurant;
       return res.json({ user, restaurant });
     }
   } catch (error) {

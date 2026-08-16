@@ -22,6 +22,15 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
+    const defaultCategories = [
+      { name: 'Starters', order: 1 },
+      { name: 'Biryanis', order: 2 },
+      { name: 'Main Course', order: 3 },
+      { name: 'Breads', order: 4 },
+      { name: 'Desserts', order: 5 },
+      { name: 'Drinks', order: 6 },
+    ];
+
     if (getIsConnected()) {
       const userExists = await User.findOne({ email });
       if (userExists) {
@@ -54,15 +63,19 @@ const registerUser = async (req, res) => {
         email: email,
       });
 
-      const starterCategory = await Category.create({
-        restaurantId: restaurant._id,
-        name: 'Starters',
-        order: 1,
-      });
+      const createdCategories = [];
+      for (const cat of defaultCategories) {
+        const c = await Category.create({
+          restaurantId: restaurant._id,
+          name: cat.name,
+          order: cat.order,
+        });
+        createdCategories.push(c);
+      }
 
       await MenuItem.create({
         restaurantId: restaurant._id,
-        categoryId: starterCategory._id,
+        categoryId: createdCategories[0]._id,
         name: 'Crispy Garlic Bread',
         description: 'Toasted baguette with fresh garlic butter, parsley, and melted mozzarella.',
         price: 180,
@@ -129,19 +142,23 @@ const registerUser = async (req, res) => {
       };
       mockStore.restaurants.push(restaurant);
 
-      const starterCat = {
-        _id: `cat_${Date.now()}`,
-        restaurantId: restaurant._id,
-        name: 'Starters',
-        order: 1,
-        isActive: true,
-      };
-      mockStore.categories.push(starterCat);
+      const createdCats = [];
+      defaultCategories.forEach((cat, idx) => {
+        const c = {
+          _id: `cat_${Date.now()}_${idx}`,
+          restaurantId: restaurant._id,
+          name: cat.name,
+          order: cat.order,
+          isActive: true,
+        };
+        mockStore.categories.push(c);
+        createdCats.push(c);
+      });
 
       mockStore.menuItems.push({
         _id: `item_${Date.now()}`,
         restaurantId: restaurant._id,
-        categoryId: starterCat._id,
+        categoryId: createdCats[0]._id,
         name: 'Crispy Garlic Bread',
         description: 'Toasted baguette with fresh garlic butter, parsley, and melted mozzarella.',
         price: 180,

@@ -34,7 +34,12 @@ export default function QRCodesPage() {
       const dataUrl = await toPng(cardNode, {
         cacheBust: true,
         pixelRatio: 2,
-        backgroundColor: '#0F172A',
+        width: 380,
+        height: cardNode.offsetHeight,
+        style: {
+          transform: 'none',
+          margin: '0 auto',
+        },
       });
       const downloadLink = document.createElement('a');
       downloadLink.href = dataUrl;

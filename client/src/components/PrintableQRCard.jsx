@@ -10,7 +10,8 @@ export default function PrintableQRCard({ restaurant, tableNumber, targetUrl }) 
   return (
     <div
       id="printable-qr-card"
-      className="w-full max-w-sm mx-auto rounded-3xl p-8 text-center shadow-2xl relative overflow-hidden bg-gradient-to-b from-gray-900 via-[#0D1322] to-black border-2 border-amber-500/40"
+      style={{ width: '380px', boxSizing: 'border-box' }}
+      className="max-w-full mx-auto rounded-3xl p-8 text-center shadow-2xl relative overflow-hidden bg-[#0F172A] border-2 border-amber-500"
     >
       {/* Decorative Top Accent */}
       <div
@@ -53,24 +54,12 @@ export default function PrintableQRCard({ restaurant, tableNumber, targetUrl }) 
       )}
 
       {/* QR Code Container */}
-      <div className="bg-white p-6 rounded-2xl inline-block shadow-2xl border-4 border-amber-500/30 mb-6 relative group">
+      <div className="bg-white p-6 rounded-2xl inline-block shadow-2xl border-4 border-amber-500/30 mb-6 relative">
         <QRCodeSVG
           value={targetUrl}
           size={180}
           level="H"
           includeMargin={false}
-          imageSettings={
-            restaurant.logo
-              ? {
-                  src: restaurant.logo,
-                  x: undefined,
-                  y: undefined,
-                  height: 36,
-                  width: 36,
-                  excavate: true,
-                }
-              : undefined
-          }
         />
       </div>
 

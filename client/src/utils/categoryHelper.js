@@ -16,6 +16,31 @@ export const getSubCategory = (item) => {
     return '🥦 VEG BIRYANI';
   }
 
+  // Main Course Sub-Categories Classification
+  if (
+    name.includes('curry') ||
+    name.includes('pappu') ||
+    name.includes('sambar') ||
+    name.includes('pulihora') ||
+    name.includes('vankaya') ||
+    name.includes('pulusu') ||
+    name.includes('makhani') ||
+    name.includes('butter chicken') ||
+    name.includes('kadhai')
+  ) {
+    if (
+      item.vegType === 'non-veg' ||
+      name.includes('chicken') ||
+      name.includes('mutton') ||
+      name.includes('fish') ||
+      name.includes('egg') ||
+      name.includes('prawn')
+    ) {
+      return '🍗 NON VEG MAIN COURSE';
+    }
+    return '🥦 VEG MAIN COURSE';
+  }
+
   // Starters Sub-Categories Classification
   if (name.includes('fish') || name.includes('chepa') || name.includes('apollo')) {
     return '🐟 FISH STARTERS';

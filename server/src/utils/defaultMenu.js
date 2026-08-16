@@ -162,9 +162,22 @@ const defaultCategories = [
     name: 'Main Course',
     order: 3,
     items: [
-      { name: 'Butter Chicken Grand Style', price: 360, vegType: 'non-veg', isBestseller: true },
-      { name: 'Dal Makhani Signature', price: 260, vegType: 'veg', isBestseller: true },
-      { name: 'Kadhai Paneer Special', price: 290, vegType: 'veg' },
+      // 🥦 VEG MAIN COURSE
+      { name: 'Veg Biryani', price: 240, vegType: 'veg', subCategory: '🥦 VEG MAIN COURSE' },
+      { name: 'Pulihora (Tamarind Rice)', price: 180, vegType: 'veg', isBestseller: true, subCategory: '🥦 VEG MAIN COURSE' },
+      { name: 'Tomato Pappu with Rice', price: 190, vegType: 'veg', isBestseller: true, subCategory: '🥦 VEG MAIN COURSE' },
+      { name: 'Gutti Vankaya with Rice', price: 220, vegType: 'veg', isChefSpecial: true, subCategory: '🥦 VEG MAIN COURSE' },
+      { name: 'Sambar Rice', price: 170, vegType: 'veg', subCategory: '🥦 VEG MAIN COURSE' },
+      { name: 'Dal Makhani Signature', price: 260, vegType: 'veg', isBestseller: true, subCategory: '🥦 VEG MAIN COURSE' },
+      { name: 'Kadhai Paneer Special', price: 290, vegType: 'veg', subCategory: '🥦 VEG MAIN COURSE' },
+
+      // 🍗 NON VEG MAIN COURSE
+      { name: 'Chicken Curry', price: 290, vegType: 'non-veg', isBestseller: true, subCategory: '🍗 NON VEG MAIN COURSE' },
+      { name: 'Chicken Fry', price: 300, vegType: 'non-veg', isBestseller: true, subCategory: '🍗 NON VEG MAIN COURSE' },
+      { name: 'Mutton Curry', price: 420, vegType: 'non-veg', isBestseller: true, spicyLevel: 2, subCategory: '🍗 NON VEG MAIN COURSE' },
+      { name: 'Fish Pulusu', price: 350, vegType: 'non-veg', isBestseller: true, spicyLevel: 2, subCategory: '🍗 NON VEG MAIN COURSE' },
+      { name: 'Egg Curry', price: 210, vegType: 'egg', subCategory: '🍗 NON VEG MAIN COURSE' },
+      { name: 'Butter Chicken Grand Style', price: 360, vegType: 'non-veg', isBestseller: true, subCategory: '🍗 NON VEG MAIN COURSE' },
     ],
   },
   {

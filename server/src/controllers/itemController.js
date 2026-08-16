@@ -2,6 +2,7 @@ const MenuItem = require('../models/MenuItem');
 const Restaurant = require('../models/Restaurant');
 const mockStore = require('../config/mockStore');
 const { getIsConnected } = require('../config/db');
+const { ensureDefaultMenuForRestaurant } = require('../utils/seedHelper');
 
 const getMenuItems = async (req, res) => {
   try {
@@ -12,6 +13,9 @@ const getMenuItems = async (req, res) => {
         : mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id)));
 
     if (!restaurant) return res.status(404).json({ message: 'Restaurant profile not found' });
+
+    // Auto-repair seed if menu items are empty
+    await ensureDefaultMenuForRestaurant(restaurant._id);
 
     if (getIsConnected()) {
       const items = await MenuItem.find({ restaurantId: restaurant._id }).sort({ order: 1 });

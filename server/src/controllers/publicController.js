@@ -7,6 +7,7 @@ const CallWaiter = require('../models/CallWaiter');
 const Order = require('../models/Order');
 const mockStore = require('../config/mockStore');
 const { getIsConnected } = require('../config/db');
+const { ensureDefaultMenuForRestaurant } = require('../utils/seedHelper');
 const crypto = require('crypto');
 
 const getPublicMenu = async (req, res) => {
@@ -17,6 +18,9 @@ const getPublicMenu = async (req, res) => {
     if (getIsConnected()) {
       const restaurant = await Restaurant.findOne({ slug });
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+
+      // Auto-repair seed if menu items/categories are empty
+      await ensureDefaultMenuForRestaurant(restaurant._id);
 
       const categories = await Category.find({ restaurantId: restaurant._id, isActive: true }).sort({ order: 1 });
       const menuItems = await MenuItem.find({ restaurantId: restaurant._id }).sort({ order: 1 });
@@ -50,12 +54,15 @@ const getPublicMenu = async (req, res) => {
       const restaurant = mockStore.restaurants.find((r) => r.slug === slug);
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
+      // Auto-repair seed if menu items/categories are empty
+      await ensureDefaultMenuForRestaurant(restaurant._id);
+
       const categories = mockStore.categories
-        .filter((c) => c.restaurantId === restaurant._id && c.isActive !== false)
+        .filter((c) => String(c.restaurantId) === String(restaurant._id) && c.isActive !== false)
         .sort((a, b) => a.order - b.order);
 
       const menuItems = mockStore.menuItems
-        .filter((i) => i.restaurantId === restaurant._id)
+        .filter((i) => String(i.restaurantId) === String(restaurant._id))
         .sort((a, b) => a.order - b.order);
 
       mockStore.menuViews.push({

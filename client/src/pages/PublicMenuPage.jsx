@@ -445,37 +445,39 @@ export default function PublicMenuPage() {
         )}
       </div>
 
-      {/* Floating Bottom Bar (Call Waiter & Order Cart) */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40 flex items-center space-x-3">
-        <button
-          onClick={() => setIsWaiterModalOpen(true)}
-          className="flex-1 py-3 px-4 rounded-2xl bg-dark-card border border-amber-500/40 text-amber-400 font-extrabold text-xs shadow-2xl flex items-center justify-center space-x-2 backdrop-blur-md"
-        >
-          <Bell className="w-4 h-4 animate-bounce" />
-          <span>Call Waiter</span>
-        </button>
-
-        <button
-          onClick={() => setIsFeedbackModalOpen(true)}
-          className="p-3 rounded-2xl bg-dark-card border border-dark-border text-gray-300 font-bold text-xs"
-          title="Rate & Review"
-        >
-          <Star className="w-5 h-5 text-amber-400" />
-        </button>
-
-        {cartTotalCount > 0 && (
+      {/* Floating Bottom Bar (Call Waiter & Order Cart) - PREMIUM ONLY */}
+      {restaurant?.subscriptionPlan === 'premium' && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40 flex items-center space-x-3">
           <button
-            onClick={() => setIsCartOpen(true)}
-            className="flex-1 py-3 px-4 rounded-2xl bg-amber-500 text-black font-black text-xs shadow-2xl flex items-center justify-between gold-glow"
+            onClick={() => setIsWaiterModalOpen(true)}
+            className="flex-1 py-3 px-4 rounded-2xl bg-dark-card border border-amber-500/40 text-amber-400 font-extrabold text-xs shadow-2xl flex items-center justify-center space-x-2 backdrop-blur-md"
           >
-            <div className="flex items-center space-x-2">
-              <ShoppingBag className="w-4 h-4" />
-              <span>{cartTotalCount} Item(s)</span>
-            </div>
-            <span>View Tray &rarr;</span>
+            <Bell className="w-4 h-4 animate-bounce" />
+            <span>Call Waiter</span>
           </button>
-        )}
-      </div>
+
+          <button
+            onClick={() => setIsFeedbackModalOpen(true)}
+            className="p-3 rounded-2xl bg-dark-card border border-dark-border text-gray-300 font-bold text-xs"
+            title="Rate & Review"
+          >
+            <Star className="w-5 h-5 text-amber-400" />
+          </button>
+
+          {cartTotalCount > 0 && (
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="flex-1 py-3 px-4 rounded-2xl bg-amber-500 text-black font-black text-xs shadow-2xl flex items-center justify-between gold-glow"
+            >
+              <div className="flex items-center space-x-2">
+                <ShoppingBag className="w-4 h-4" />
+                <span>{cartTotalCount} Item(s)</span>
+              </div>
+              <span>View Tray &rarr;</span>
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Modals & Drawers */}
       <CallWaiterModal

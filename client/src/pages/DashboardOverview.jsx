@@ -20,7 +20,7 @@ export default function DashboardOverview() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const isBasicPlan = restaurant?.subscriptionPlan === 'basic';
+  const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
   const fetchOverview = async () => {
     try {

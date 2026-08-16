@@ -9,7 +9,7 @@ export default function AnalyticsPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const isBasicPlan = restaurant?.subscriptionPlan === 'basic';
+  const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
   useEffect(() => {
     const loadAnalytics = async () => {

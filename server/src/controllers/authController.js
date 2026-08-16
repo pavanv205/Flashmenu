@@ -17,13 +17,14 @@ const generateToken = (id, restaurantId = '', slug = '') => {
 
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, phone, restaurantName, city, address } = req.body;
+    const { name, email, password, phone, restaurantName, city, address, subscriptionPlan } = req.body;
 
     if (!name || !email || !password || !restaurantName) {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
     const normalizedEmail = String(email).toLowerCase().trim();
+    const plan = subscriptionPlan === 'premium' ? 'premium' : 'basic';
 
     if (getIsConnected()) {
       const userExists = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
@@ -55,6 +56,7 @@ const registerUser = async (req, res) => {
         address: address ? String(address).trim() : '',
         phone: phone ? String(phone).trim() : '',
         email: normalizedEmail,
+        subscriptionPlan: plan,
       });
 
       // Create main categories and starter items grouped by subCategory
@@ -96,6 +98,7 @@ const registerUser = async (req, res) => {
           _id: restaurant._id,
           name: restaurant.name,
           slug: restaurant.slug,
+          subscriptionPlan: restaurant.subscriptionPlan || plan,
         },
       });
     } else {
@@ -138,6 +141,7 @@ const registerUser = async (req, res) => {
         currency: '₹',
         tableCount: 20,
         isOpen: true,
+        subscriptionPlan: plan,
       };
       mockStore.restaurants.push(restaurant);
 
@@ -184,6 +188,7 @@ const registerUser = async (req, res) => {
           _id: restaurant._id,
           name: restaurant.name,
           slug: restaurant.slug,
+          subscriptionPlan: restaurant.subscriptionPlan || plan,
         },
       });
     }
@@ -227,6 +232,7 @@ const loginUser = async (req, res) => {
               _id: restaurant._id,
               name: restaurant.name,
               slug: restaurant.slug,
+              subscriptionPlan: restaurant.subscriptionPlan || 'basic',
             }
           : null,
       });
@@ -255,6 +261,7 @@ const loginUser = async (req, res) => {
               _id: restaurant._id,
               name: restaurant.name,
               slug: restaurant.slug,
+              subscriptionPlan: restaurant.subscriptionPlan || 'basic',
             }
           : null,
       });

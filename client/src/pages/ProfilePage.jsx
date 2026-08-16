@@ -71,13 +71,11 @@ export default function ProfilePage() {
     }
   };
 
-  const colorPresets = ['#F59E0B', '#EF4444', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899'];
-
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
       <div>
         <h1 className="text-2xl font-extrabold text-white">Restaurant Profile & Custom Branding</h1>
-        <p className="text-xs text-gray-400">Configure logo, cover banner, contact details, and brand colors</p>
+        <p className="text-xs text-gray-400">Configure logo, cover banner, and contact details</p>
       </div>
 
       {success && (
@@ -168,11 +166,11 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Media & Branding */}
+        {/* Media */}
         <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
           <h3 className="text-base font-bold text-white flex items-center space-x-2">
             <Palette className="w-4 h-4 text-amber-400" />
-            <span>Images & Custom Color Branding</span>
+            <span>Images & Branding</span>
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -201,45 +199,6 @@ export default function ProfilePage() {
                 value={formData.coverImage}
                 onChange={handleChange}
                 className="w-full px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                Primary Brand Color Accent
-              </label>
-              <div className="flex items-center space-x-3">
-                <input
-                  type="color"
-                  name="primaryColor"
-                  value={formData.primaryColor}
-                  onChange={handleChange}
-                  className="w-10 h-10 rounded-xl bg-transparent border-0 cursor-pointer"
-                />
-                <div className="flex space-x-2">
-                  {colorPresets.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, primaryColor: color })}
-                      className="w-7 h-7 rounded-full border-2 border-white/20 hover:scale-110 transition-transform"
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                Currency Symbol
-              </label>
-              <input
-                type="text"
-                name="currency"
-                value={formData.currency}
-                onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm font-bold"
               />
             </div>
           </div>

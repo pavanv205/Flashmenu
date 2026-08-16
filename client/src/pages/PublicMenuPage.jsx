@@ -18,6 +18,7 @@ import {
   CheckCircle2,
   XCircle,
   MessageSquare,
+  Layers,
 } from 'lucide-react';
 
 export default function PublicMenuPage() {
@@ -33,6 +34,7 @@ export default function PublicMenuPage() {
 
   // UI state
   const [activeCategory, setActiveCategory] = useState('all');
+  const [activeSubCategory, setActiveSubCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Modals
@@ -61,6 +63,11 @@ export default function PublicMenuPage() {
     };
     fetchMenu();
   }, [restaurantSlug, tableParam]);
+
+  const handleCategorySelect = (catId) => {
+    setActiveCategory(catId);
+    setActiveSubCategory('all');
+  };
 
   const addToCart = (item) => {
     setCart((prev) => {
@@ -113,8 +120,8 @@ export default function PublicMenuPage() {
 
   const primaryColor = restaurant.primaryColor || '#F59E0B';
 
-  // Filter items
-  const filteredItems = menuItems.filter((item) => {
+  // Filter items by main category and search
+  const categoryItems = menuItems.filter((item) => {
     const matchesCategory =
       activeCategory === 'all' || (item.categoryId._id || item.categoryId) === activeCategory;
     const matchesSearch =
@@ -123,7 +130,16 @@ export default function PublicMenuPage() {
     return matchesCategory && matchesSearch;
   });
 
-  // Group items by subCategory if present
+  const availableSubCategories = Array.from(
+    new Set(categoryItems.map((i) => i.subCategory).filter(Boolean))
+  );
+
+  const filteredItems =
+    activeSubCategory === 'all'
+      ? categoryItems
+      : categoryItems.filter((i) => i.subCategory === activeSubCategory);
+
+  // Group items by subCategory if viewing all sub-categories
   const groupedItems = filteredItems.reduce((acc, item) => {
     const sub = item.subCategory || 'DEFAULT';
     if (!acc[sub]) acc[sub] = [];
@@ -205,7 +221,7 @@ export default function PublicMenuPage() {
       </div>
 
       {/* Sticky Search & Category Bar */}
-      <div className="sticky top-0 z-30 bg-[#0A0E17]/95 backdrop-blur-md pt-4 pb-2 px-5 border-b border-gray-800/80 space-y-3 mt-4">
+      <div className="sticky top-0 z-30 bg-[#0A0E17]/95 backdrop-blur-md pt-4 pb-2 px-5 border-b border-gray-800/80 space-y-2 mt-4">
         {/* Search input */}
         <div className="relative">
           <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-3" />
@@ -221,7 +237,7 @@ export default function PublicMenuPage() {
         {/* Categories horizontal scroll pills */}
         <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar py-1">
           <button
-            onClick={() => setActiveCategory('all')}
+            onClick={() => handleCategorySelect('all')}
             className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
               activeCategory === 'all'
                 ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
@@ -233,7 +249,7 @@ export default function PublicMenuPage() {
           {categories.map((cat) => (
             <button
               key={cat._id}
-              onClick={() => setActiveCategory(cat._id)}
+              onClick={() => handleCategorySelect(cat._id)}
               className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                 activeCategory === cat._id
                   ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
@@ -244,6 +260,38 @@ export default function PublicMenuPage() {
             </button>
           ))}
         </div>
+
+        {/* Sub-Category horizontal scroll pills */}
+        {availableSubCategories.length > 0 && (
+          <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-2 pb-1 border-t border-gray-800/60">
+            <button
+              onClick={() => setActiveSubCategory('all')}
+              className={`px-3 py-1 rounded-full text-[11px] font-extrabold whitespace-nowrap transition-all ${
+                activeSubCategory === 'all'
+                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                  : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
+              }`}
+            >
+              All ({categoryItems.length})
+            </button>
+            {availableSubCategories.map((sub) => {
+              const count = categoryItems.filter((i) => i.subCategory === sub).length;
+              return (
+                <button
+                  key={sub}
+                  onClick={() => setActiveSubCategory(sub)}
+                  className={`px-3 py-1 rounded-full text-[11px] font-extrabold whitespace-nowrap transition-all ${
+                    activeSubCategory === sub
+                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                      : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
+                  }`}
+                >
+                  {sub} ({count})
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Food Items List Grouped by Sub-Category */}
@@ -256,7 +304,7 @@ export default function PublicMenuPage() {
         ) : (
           Object.entries(groupedItems).map(([subGroup, items]) => (
             <div key={subGroup} className="space-y-3">
-              {subGroup !== 'DEFAULT' && (
+              {subGroup !== 'DEFAULT' && activeSubCategory === 'all' && (
                 <div className="pt-3 pb-1 border-b border-amber-500/30 flex items-center justify-between">
                   <h2 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center space-x-2">
                     <span>{subGroup}</span>

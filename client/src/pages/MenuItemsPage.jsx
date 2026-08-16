@@ -14,12 +14,15 @@ import {
   CheckCircle2,
   XCircle,
   Image,
+  UtensilsCrossed,
+  Layers,
 } from 'lucide-react';
 
 export default function MenuItemsPage() {
   const { restaurant } = useAuth();
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedSubCategory, setSelectedSubCategory] = useState('all');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,6 +31,7 @@ export default function MenuItemsPage() {
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({
     categoryId: '',
+    subCategory: '',
     name: '',
     description: '',
     price: '',
@@ -58,11 +62,17 @@ export default function MenuItemsPage() {
     fetchData();
   }, []);
 
+  const handleCategorySelect = (catId) => {
+    setSelectedCategory(catId);
+    setSelectedSubCategory('all');
+  };
+
   const handleOpenModal = (item = null) => {
     if (item) {
       setEditingItem(item);
       setFormData({
         categoryId: item.categoryId._id || item.categoryId,
+        subCategory: item.subCategory || '',
         name: item.name,
         description: item.description || '',
         price: item.price,
@@ -79,6 +89,7 @@ export default function MenuItemsPage() {
       setEditingItem(null);
       setFormData({
         categoryId: categories.length > 0 ? categories[0]._id : '',
+        subCategory: '',
         name: '',
         description: '',
         price: '',
@@ -163,10 +174,19 @@ export default function MenuItemsPage() {
     }
   };
 
-  const filteredItems =
+  const categoryItems =
     selectedCategory === 'all'
       ? items
       : items.filter((item) => (item.categoryId._id || item.categoryId) === selectedCategory);
+
+  const availableSubCategories = Array.from(
+    new Set(categoryItems.map((i) => i.subCategory).filter(Boolean))
+  );
+
+  const filteredItems =
+    selectedSubCategory === 'all'
+      ? categoryItems
+      : categoryItems.filter((i) => i.subCategory === selectedSubCategory);
 
   if (loading) {
     return (
@@ -194,33 +214,73 @@ export default function MenuItemsPage() {
       </div>
 
       {/* Category filter tabs */}
-      <div className="flex items-center space-x-2 overflow-x-auto pb-2 no-scrollbar border-b border-dark-border">
-        <button
-          onClick={() => setSelectedCategory('all')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-            selectedCategory === 'all'
-              ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
-              : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
-          }`}
-        >
-          All Items ({items.length})
-        </button>
-        {categories.map((cat) => {
-          const count = items.filter((i) => (i.categoryId._id || i.categoryId) === cat._id).length;
-          return (
+      <div className="space-y-3">
+        <div className="flex items-center space-x-2 overflow-x-auto pb-2 no-scrollbar border-b border-dark-border">
+          <button
+            onClick={() => handleCategorySelect('all')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              selectedCategory === 'all'
+                ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
+                : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
+            }`}
+          >
+            All Items ({items.length})
+          </button>
+          {categories.map((cat) => {
+            const count = items.filter((i) => (i.categoryId._id || i.categoryId) === cat._id).length;
+            return (
+              <button
+                key={cat._id}
+                onClick={() => handleCategorySelect(cat._id)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                  selectedCategory === cat._id
+                    ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
+                    : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
+                }`}
+              >
+                {cat.name} ({count})
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Sub-Category filter options if present */}
+        {availableSubCategories.length > 0 && (
+          <div className="flex items-center space-x-2 overflow-x-auto py-1 no-scrollbar bg-dark-base/50 p-2 rounded-2xl border border-dark-border/60">
+            <span className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider px-2 flex items-center space-x-1 whitespace-nowrap">
+              <Layers className="w-3.5 h-3.5" />
+              <span>Sub Sections:</span>
+            </span>
+
             <button
-              key={cat._id}
-              onClick={() => setSelectedCategory(cat._id)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                selectedCategory === cat._id
-                  ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
+              onClick={() => setSelectedSubCategory('all')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                selectedSubCategory === 'all'
+                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
                   : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
               }`}
             >
-              {cat.name} ({count})
+              All ({categoryItems.length})
             </button>
-          );
-        })}
+
+            {availableSubCategories.map((sub) => {
+              const subCount = categoryItems.filter((i) => i.subCategory === sub).length;
+              return (
+                <button
+                  key={sub}
+                  onClick={() => setSelectedSubCategory(sub)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                    selectedSubCategory === sub
+                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                      : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
+                  }`}
+                >
+                  {sub} ({subCount})
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Drag and drop item list */}
@@ -312,6 +372,11 @@ export default function MenuItemsPage() {
 
                             <div className="flex-1 min-w-0">
                               <h3 className="text-sm font-bold text-white truncate">{item.name}</h3>
+                              {item.subCategory && (
+                                <span className="inline-block text-[10px] font-extrabold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20 mb-1">
+                                  {item.subCategory}
+                                </span>
+                              )}
                               <p className="text-xs text-gray-400 line-clamp-2 mt-0.5 leading-relaxed">
                                 {item.description || 'No description'}
                               </p>
@@ -421,6 +486,19 @@ export default function MenuItemsPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
+                    Sub-Section (e.g. 🥗 VEG STARTERS)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 🥗 VEG STARTERS or 🍗 NON VEG STARTERS"
+                    value={formData.subCategory}
+                    onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
                     Item Name *
                   </label>
                   <input
@@ -445,20 +523,6 @@ export default function MenuItemsPage() {
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500 font-bold"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                    Discount Price (Optional)
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    placeholder="220"
-                    value={formData.discountPrice}
-                    onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>

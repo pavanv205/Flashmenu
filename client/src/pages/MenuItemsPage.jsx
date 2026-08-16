@@ -255,7 +255,7 @@ export default function MenuItemsPage() {
         </div>
 
         {/* Sub-Category filter options */}
-        {availableSubCategories.length > 0 && (
+        {selectedCategory !== 'all' && availableSubCategories.length > 0 && (
           <div className="flex items-center space-x-2 overflow-x-auto py-2 px-3 no-scrollbar bg-amber-500/5 rounded-2xl border border-amber-500/30 shadow-inner">
             <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest flex items-center space-x-1.5 whitespace-nowrap mr-1">
               <Layers className="w-3.5 h-3.5" />

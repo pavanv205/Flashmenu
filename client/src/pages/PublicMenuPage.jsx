@@ -274,7 +274,7 @@ export default function PublicMenuPage() {
         </div>
 
         {/* Sub-Category horizontal scroll pills */}
-        {availableSubCategories.length > 0 && (
+        {activeCategory !== 'all' && availableSubCategories.length > 0 && (
           <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-2 pb-1 border-t border-gray-800/60">
             <button
               onClick={() => setActiveSubCategory('all')}

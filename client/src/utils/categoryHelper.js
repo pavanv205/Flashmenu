@@ -1,35 +1,12 @@
-export const getSubCategory = (item) => {
-  if (item.subCategory && item.subCategory.trim()) {
-    return item.subCategory;
-  }
-
+export const getSubCategory = (item, categoryName = '') => {
   const name = (item.name || '').toLowerCase();
+  const cat = (categoryName || '').toLowerCase();
 
-  // Biryanis Sub-Categories Classification
-  if (name.includes('biryani')) {
-    if (name.includes('mutton')) {
-      return '🐐 MUTTON BIRYANI';
-    }
-    if (name.includes('chicken') || name.includes('kodi')) {
-      return '🍗 CHICKEN BIRYANI';
-    }
-    return '🥦 VEG BIRYANI';
-  }
-
-  // Main Course Sub-Categories Classification
-  if (
-    name.includes('curry') ||
-    name.includes('pappu') ||
-    name.includes('sambar') ||
-    name.includes('pulihora') ||
-    name.includes('vankaya') ||
-    name.includes('pulusu') ||
-    name.includes('makhani') ||
-    name.includes('butter chicken') ||
-    name.includes('kadhai')
-  ) {
+  // If item is specifically in Main Course category
+  if (cat.includes('main') || cat.includes('course')) {
     if (
       item.vegType === 'non-veg' ||
+      item.vegType === 'egg' ||
       name.includes('chicken') ||
       name.includes('mutton') ||
       name.includes('fish') ||
@@ -41,7 +18,23 @@ export const getSubCategory = (item) => {
     return '🥦 VEG MAIN COURSE';
   }
 
-  // Starters Sub-Categories Classification
+  // If item is in Biryani category
+  if (cat.includes('biryani')) {
+    if (name.includes('mutton')) {
+      return '🐐 MUTTON BIRYANI';
+    }
+    if (name.includes('chicken') || name.includes('kodi')) {
+      return '🍗 CHICKEN BIRYANI';
+    }
+    return '🥦 VEG BIRYANI';
+  }
+
+  // If item has explicit subCategory saved
+  if (item.subCategory && item.subCategory.trim()) {
+    return item.subCategory;
+  }
+
+  // Starters Category Classification
   if (name.includes('fish') || name.includes('chepa') || name.includes('apollo')) {
     return '🐟 FISH STARTERS';
   }

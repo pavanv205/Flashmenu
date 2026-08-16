@@ -174,14 +174,20 @@ export default function MenuItemsPage() {
     }
   };
 
+  const selectedCategoryObj = categories.find((c) => c._id === selectedCategory);
+  const currentCategoryName = selectedCategoryObj ? selectedCategoryObj.name : '';
+
   const categoryItems = (
     selectedCategory === 'all'
       ? items
       : items.filter((item) => (item.categoryId._id || item.categoryId) === selectedCategory)
-  ).map((item) => ({
-    ...item,
-    computedSubCategory: getSubCategory(item),
-  }));
+  ).map((item) => {
+    const itemCatName = item.categoryId?.name || currentCategoryName;
+    return {
+      ...item,
+      computedSubCategory: getSubCategory(item, itemCatName),
+    };
+  });
 
   const availableSubCategories = Array.from(
     new Set(categoryItems.map((i) => i.computedSubCategory).filter(Boolean))

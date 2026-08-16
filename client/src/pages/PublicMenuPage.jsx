@@ -121,6 +121,9 @@ export default function PublicMenuPage() {
 
   const primaryColor = restaurant.primaryColor || '#F59E0B';
 
+  const activeCategoryObj = categories.find((c) => c._id === activeCategory);
+  const activeCategoryName = activeCategoryObj ? activeCategoryObj.name : '';
+
   // Filter items by main category and search
   const categoryItems = menuItems
     .filter((item) => {
@@ -131,10 +134,13 @@ export default function PublicMenuPage() {
         (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
       return matchesCategory && matchesSearch;
     })
-    .map((item) => ({
-      ...item,
-      computedSubCategory: getSubCategory(item),
-    }));
+    .map((item) => {
+      const itemCatName = item.categoryId?.name || activeCategoryName;
+      return {
+        ...item,
+        computedSubCategory: getSubCategory(item, itemCatName),
+      };
+    });
 
   const availableSubCategories = Array.from(
     new Set(categoryItems.map((i) => i.computedSubCategory).filter(Boolean))

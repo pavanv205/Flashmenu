@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { analyticsAPI } from '../services/api';
-import { MessageSquare, Star, Bell, Check } from 'lucide-react';
+import { MessageSquare, Star, Bell, Check, Crown, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 export default function FeedbackPage() {
+  const { restaurant } = useAuth();
   const [feedbacks, setFeedbacks] = useState([]);
   const [waiterCalls, setWaiterCalls] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
   const loadData = async () => {
     try {
@@ -21,8 +26,12 @@ export default function FeedbackPage() {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (!isBasicPlan) {
+      loadData();
+    } else {
+      setLoading(false);
+    }
+  }, [isBasicPlan]);
 
   const handleResolve = async (id) => {
     try {
@@ -37,6 +46,69 @@ export default function FeedbackPage() {
     return (
       <div className="py-12 flex justify-center">
         <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // PREMIUM UPGRADE SCREEN FOR BASIC RESTAURANTS
+  if (isBasicPlan) {
+    return (
+      <div className="max-w-2xl mx-auto py-12 px-4">
+        <div className="bg-gradient-to-b from-dark-card to-[#162238] border-2 border-amber-500 rounded-3xl p-8 sm:p-10 shadow-2xl text-center space-y-6 relative overflow-hidden gold-glow">
+          {/* Top Badge */}
+          <div className="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-black uppercase tracking-wider">
+            <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
+            <span>Premium Feature Upgrade</span>
+          </div>
+
+          <div className="space-y-3">
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">
+              Feedback & Live Waiter Calls
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
+              Upgrade your restaurant to <strong className="text-amber-400">Premium Restaurant</strong> to receive instant table waiter calls and private customer ratings!
+            </p>
+          </div>
+
+          {/* Feature Checklist */}
+          <div className="bg-dark-base/80 rounded-2xl p-5 border border-dark-border max-w-md mx-auto text-left space-y-3">
+            <div className="flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Real-Time Waiter Assistance & Bill Request Alerts</span>
+            </div>
+            <div className="flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Private Customer Ratings & Food Reviews Feed</span>
+            </div>
+            <div className="flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Live Kitchen Order Management</span>
+            </div>
+            <div className="flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>24/7 Priority Support & Full Analytics</span>
+            </div>
+          </div>
+
+          {/* Pricing Info */}
+          <div className="pt-2">
+            <div className="text-2xl font-black text-white">
+              ₹999 <span className="text-xs text-gray-400 font-normal">/ month</span>
+            </div>
+            <p className="text-[11px] text-amber-400 font-semibold mt-0.5">Cancel or switch plans anytime</p>
+          </div>
+
+          <div className="pt-2">
+            <Link
+              to="/dashboard/subscription"
+              className="inline-flex items-center justify-center space-x-2 px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-sm transition-all shadow-xl shadow-amber-500/25 hover:scale-105"
+            >
+              <Sparkles className="w-4 h-4 text-black fill-black" />
+              <span>Upgrade to Premium Restaurant</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }

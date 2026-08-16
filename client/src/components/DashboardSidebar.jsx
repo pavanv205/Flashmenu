@@ -34,7 +34,7 @@ export default function DashboardSidebar({ closeMobileMenu }) {
     { name: 'QR Codes', path: '/dashboard/qrcodes', icon: QrCode },
     { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3 },
     { name: 'Feedback & Calls', path: '/dashboard/feedback', icon: MessageSquare },
-    ...(!isBasicPlan ? [{ name: 'Orders', path: '/dashboard/orders', icon: ShoppingBag }] : []),
+    { name: 'Orders', path: '/dashboard/orders', icon: ShoppingBag, badge: isBasicPlan ? 'PRO' : null },
     { name: 'Profile & Branding', path: '/dashboard/profile', icon: Store },
     { name: 'Subscription', path: '/dashboard/subscription', icon: CreditCard },
   ];
@@ -83,15 +83,22 @@ export default function DashboardSidebar({ closeMobileMenu }) {
             end={item.exact}
             onClick={closeMobileMenu}
             className={({ isActive }) =>
-              `flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+              `flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                 isActive
                   ? 'bg-brand-500 text-black font-bold shadow-md shadow-brand-500/20'
                   : 'text-gray-400 hover:text-white hover:bg-dark-hover'
               }`
             }
           >
-            <item.icon className="w-5 h-5" />
-            <span>{item.name}</span>
+            <div className="flex items-center space-x-3">
+              <item.icon className="w-5 h-5" />
+              <span>{item.name}</span>
+            </div>
+            {item.badge && (
+              <span className="text-[9px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded uppercase tracking-wider shadow">
+                {item.badge}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>

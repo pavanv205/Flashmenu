@@ -3,10 +3,12 @@ import { useAuth } from '../context/AuthContext';
 import PrintableQRCard from '../components/PrintableQRCard';
 import { QrCode, Download, Printer, Table, ExternalLink, Crown, Sparkles, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { toPng } from 'html-to-image';
 
 export default function QRCodesPage() {
   const { restaurant } = useAuth();
   const [selectedTable, setSelectedTable] = useState('');
+  const [downloading, setDownloading] = useState(false);
 
   if (!restaurant) return null;
 
@@ -23,33 +25,28 @@ export default function QRCodesPage() {
     window.print();
   };
 
-  const handleDownloadPNG = () => {
-    const svgElement = document.querySelector('#printable-qr-card svg');
-    if (!svgElement) return;
+  const handleDownloadPNG = async () => {
+    const cardNode = document.getElementById('printable-qr-card');
+    if (!cardNode) return;
+    setDownloading(true);
 
-    const svgData = new XMLSerializer().serializeToString(svgElement);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-
-    img.onload = () => {
-      canvas.width = img.width + 80;
-      canvas.height = img.height + 80;
-      if (ctx) {
-        ctx.fillStyle = '#0F172A';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 40, 40);
-        const pngUrl = canvas.toDataURL('image/png');
-        const downloadLink = document.createElement('a');
-        downloadLink.href = pngUrl;
-        downloadLink.download = `${restaurant.slug}-qr-table-${activeTable || 'master'}.png`;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-      }
-    };
-
-    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+    try {
+      const dataUrl = await toPng(cardNode, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: '#0F172A',
+      });
+      const downloadLink = document.createElement('a');
+      downloadLink.href = dataUrl;
+      downloadLink.download = `${restaurant.slug}-qr-card-${activeTable || 'master'}.png`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    } catch (err) {
+      console.error('Failed to download QR card PNG:', err);
+    } finally {
+      setDownloading(false);
+    }
   };
 
   return (
@@ -65,10 +62,11 @@ export default function QRCodesPage() {
         <div className="flex items-center space-x-3">
           <button
             onClick={handleDownloadPNG}
-            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-dark-card border border-dark-border text-white hover:border-amber-500 font-bold text-xs transition-all"
+            disabled={downloading}
+            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-dark-card border border-dark-border text-white hover:border-amber-500 font-bold text-xs transition-all disabled:opacity-50"
           >
             <Download className="w-4 h-4 text-amber-400" />
-            <span>Download PNG</span>
+            <span>{downloading ? 'Generating PNG...' : 'Download PNG'}</span>
           </button>
           <button
             onClick={handlePrint}

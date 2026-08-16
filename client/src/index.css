@@ -43,3 +43,36 @@
 .animate-pulse-glow {
   animation: pulseGlow 3s infinite ease-in-out;
 }
+
+/* Print Styles: Only show the Printable QR Card */
+@media print {
+  body {
+    background: #0F172A !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  #printable-qr-card,
+  #printable-qr-card * {
+    visibility: visible !important;
+  }
+
+  #printable-qr-card {
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 380px !important;
+    max-width: 90% !important;
+    margin: 0 !important;
+    padding: 32px !important;
+    box-shadow: none !important;
+    border: 2px solid #F59E0B !important;
+    background: #0F172A !important;
+    color: #FFFFFF !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

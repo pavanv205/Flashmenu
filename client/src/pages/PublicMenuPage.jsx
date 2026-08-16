@@ -4,6 +4,7 @@ import { publicAPI } from '../services/api';
 import CallWaiterModal from '../components/CallWaiterModal';
 import FeedbackModal from '../components/FeedbackModal';
 import OrderDrawer from '../components/OrderDrawer';
+import { getSubCategory } from '../utils/categoryHelper';
 import {
   Zap,
   Search,
@@ -121,27 +122,32 @@ export default function PublicMenuPage() {
   const primaryColor = restaurant.primaryColor || '#F59E0B';
 
   // Filter items by main category and search
-  const categoryItems = menuItems.filter((item) => {
-    const matchesCategory =
-      activeCategory === 'all' || (item.categoryId._id || item.categoryId) === activeCategory;
-    const matchesSearch =
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  });
+  const categoryItems = menuItems
+    .filter((item) => {
+      const matchesCategory =
+        activeCategory === 'all' || (item.categoryId._id || item.categoryId) === activeCategory;
+      const matchesSearch =
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesCategory && matchesSearch;
+    })
+    .map((item) => ({
+      ...item,
+      computedSubCategory: getSubCategory(item),
+    }));
 
   const availableSubCategories = Array.from(
-    new Set(categoryItems.map((i) => i.subCategory).filter(Boolean))
+    new Set(categoryItems.map((i) => i.computedSubCategory).filter(Boolean))
   );
 
   const filteredItems =
     activeSubCategory === 'all'
       ? categoryItems
-      : categoryItems.filter((i) => i.subCategory === activeSubCategory);
+      : categoryItems.filter((i) => i.computedSubCategory === activeSubCategory);
 
   // Group items by subCategory if viewing all sub-categories
   const groupedItems = filteredItems.reduce((acc, item) => {
-    const sub = item.subCategory || 'DEFAULT';
+    const sub = item.computedSubCategory || 'DEFAULT';
     if (!acc[sub]) acc[sub] = [];
     acc[sub].push(item);
     return acc;
@@ -266,24 +272,24 @@ export default function PublicMenuPage() {
           <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-2 pb-1 border-t border-gray-800/60">
             <button
               onClick={() => setActiveSubCategory('all')}
-              className={`px-3 py-1 rounded-full text-[11px] font-extrabold whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
                 activeSubCategory === 'all'
-                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
-                  : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
+                  ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
+                  : 'bg-dark-card text-gray-300 hover:text-white border border-dark-border'
               }`}
             >
               All ({categoryItems.length})
             </button>
             {availableSubCategories.map((sub) => {
-              const count = categoryItems.filter((i) => i.subCategory === sub).length;
+              const count = categoryItems.filter((i) => i.computedSubCategory === sub).length;
               return (
                 <button
                   key={sub}
                   onClick={() => setActiveSubCategory(sub)}
-                  className={`px-3 py-1 rounded-full text-[11px] font-extrabold whitespace-nowrap transition-all ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
                     activeSubCategory === sub
-                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
-                      : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
+                      ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
+                      : 'bg-dark-card text-gray-300 hover:text-white border border-dark-border'
                   }`}
                 >
                   {sub} ({count})

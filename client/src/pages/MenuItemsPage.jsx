@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { categoryAPI, itemAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { getSubCategory } from '../utils/categoryHelper';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import {
   Plus,
@@ -156,7 +157,6 @@ export default function MenuItemsPage() {
     const [moved] = reorderedItems.splice(result.source.index, 1);
     reorderedItems.splice(result.destination.index, 0, moved);
 
-    // Update local state immediately for snappy UX
     const newItemsMap = reorderedItems.map((item, idx) => ({
       id: item._id,
       order: idx + 1,
@@ -174,19 +174,23 @@ export default function MenuItemsPage() {
     }
   };
 
-  const categoryItems =
+  const categoryItems = (
     selectedCategory === 'all'
       ? items
-      : items.filter((item) => (item.categoryId._id || item.categoryId) === selectedCategory);
+      : items.filter((item) => (item.categoryId._id || item.categoryId) === selectedCategory)
+  ).map((item) => ({
+    ...item,
+    computedSubCategory: getSubCategory(item),
+  }));
 
   const availableSubCategories = Array.from(
-    new Set(categoryItems.map((i) => i.subCategory).filter(Boolean))
+    new Set(categoryItems.map((i) => i.computedSubCategory).filter(Boolean))
   );
 
   const filteredItems =
     selectedSubCategory === 'all'
       ? categoryItems
-      : categoryItems.filter((i) => i.subCategory === selectedSubCategory);
+      : categoryItems.filter((i) => i.computedSubCategory === selectedSubCategory);
 
   if (loading) {
     return (
@@ -244,35 +248,35 @@ export default function MenuItemsPage() {
           })}
         </div>
 
-        {/* Sub-Category filter options if present */}
+        {/* Sub-Category filter options */}
         {availableSubCategories.length > 0 && (
-          <div className="flex items-center space-x-2 overflow-x-auto py-1 no-scrollbar bg-dark-base/50 p-2 rounded-2xl border border-dark-border/60">
-            <span className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider px-2 flex items-center space-x-1 whitespace-nowrap">
+          <div className="flex items-center space-x-2 overflow-x-auto py-2 px-3 no-scrollbar bg-amber-500/5 rounded-2xl border border-amber-500/30 shadow-inner">
+            <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest flex items-center space-x-1.5 whitespace-nowrap mr-1">
               <Layers className="w-3.5 h-3.5" />
               <span>Sub Sections:</span>
             </span>
 
             <button
               onClick={() => setSelectedSubCategory('all')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap ${
                 selectedSubCategory === 'all'
-                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
-                  : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
+                  ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
+                  : 'bg-dark-card text-gray-300 hover:text-white border border-dark-border'
               }`}
             >
               All ({categoryItems.length})
             </button>
 
             {availableSubCategories.map((sub) => {
-              const subCount = categoryItems.filter((i) => i.subCategory === sub).length;
+              const subCount = categoryItems.filter((i) => i.computedSubCategory === sub).length;
               return (
                 <button
                   key={sub}
                   onClick={() => setSelectedSubCategory(sub)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap ${
                     selectedSubCategory === sub
-                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
-                      : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
+                      ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
+                      : 'bg-dark-card text-gray-300 hover:text-white border border-dark-border'
                   }`}
                 >
                   {sub} ({subCount})
@@ -372,12 +376,12 @@ export default function MenuItemsPage() {
 
                             <div className="flex-1 min-w-0">
                               <h3 className="text-sm font-bold text-white truncate">{item.name}</h3>
-                              {item.subCategory && (
-                                <span className="inline-block text-[10px] font-extrabold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20 mb-1">
-                                  {item.subCategory}
+                              {item.computedSubCategory && (
+                                <span className="inline-block text-[10px] font-black text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/30 mt-0.5 mb-1">
+                                  {item.computedSubCategory}
                                 </span>
                               )}
-                              <p className="text-xs text-gray-400 line-clamp-2 mt-0.5 leading-relaxed">
+                              <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">
                                 {item.description || 'No description'}
                               </p>
 

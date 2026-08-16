@@ -7,6 +7,7 @@ const MenuItem = require('../models/MenuItem');
 const mockStore = require('../config/mockStore');
 const { createSlug } = require('../utils/slugify');
 const { getIsConnected } = require('../config/db');
+const { defaultCategories } = require('../utils/defaultMenu');
 
 const generateToken = (id, restaurantId = '', slug = '') => {
   return jwt.sign({ id, restaurantId, slug }, process.env.JWT_SECRET || 'flashmenu_secret_key', {
@@ -22,127 +23,8 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
-    const cleanEmail = String(email).toLowerCase().trim();
-
-    const defaultCategories = [
-      { name: '🥗 Salads', order: 1 },
-      { name: '🍲 Soups', order: 2 },
-      { name: '🥟 Starters', order: 3 },
-      { name: '🍗 Tandoori / Kebabs', order: 4 },
-      { name: '🍛 Biryani', order: 5 },
-      { name: '🍚 Rice & Pulao', order: 6 },
-      { name: '🍜 Noodles', order: 7 },
-      { name: '🍝 Pasta', order: 8 },
-      { name: '🍕 Pizza', order: 9 },
-      { name: '🍔 Burgers', order: 10 },
-      { name: '🌯 Wraps & Rolls', order: 11 },
-      { name: '🍛 Main Course', order: 12 },
-      { name: '🫓 Indian Breads', order: 13 },
-      { name: '🍱 Combos / Thalis', order: 14 },
-      { name: '🥘 Chinese', order: 15 },
-      { name: '🍨 Desserts', order: 16 },
-      { name: '🥤 Soft Drinks', order: 17 },
-      { name: '☕ Tea & Coffee', order: 18 },
-      { name: '🧃 Juices & Shakes', order: 19 },
-      { name: '🥛 Lassi & Milkshakes', order: 20 },
-      { name: '🍹 Mocktails', order: 21 },
-      { name: '👶 Kids Menu', order: 22 },
-      { name: '⭐ Specials', order: 23 },
-      { name: '📦 Takeaway / Combos', order: 24 },
-    ];
-
-    const defaultStarters = [
-      {
-        name: 'Chicken 65',
-        description: 'Classic Andhra-style deep-fried chicken marinated in curry leaves, green chillies & yoghurt.',
-        price: 290,
-        image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=500&auto=format&fit=crop&q=80',
-        vegType: 'non-veg',
-        spicyLevel: 2,
-        isBestseller: true,
-        order: 1,
-      },
-      {
-        name: 'Apollo Fish',
-        description: 'Popular Hyderabadi boneless fish cubes tossed in spicy garlic soy sauce with curry leaves.',
-        price: 340,
-        image: 'https://images.unsplash.com/photo-1545247181-516773cae754?w=500&auto=format&fit=crop&q=80',
-        vegType: 'non-veg',
-        spicyLevel: 2,
-        isBestseller: true,
-        isChefSpecial: true,
-        order: 2,
-      },
-      {
-        name: 'Paneer Majestic',
-        description: 'Fried cottage cheese strips coated in yoghurt, mint & green chilli sauce.',
-        price: 280,
-        image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=500&auto=format&fit=crop&q=80',
-        vegType: 'veg',
-        spicyLevel: 2,
-        isBestseller: true,
-        order: 3,
-      },
-      {
-        name: 'Kodi Vepudu (Andhra Chicken Fry)',
-        description: 'Spicy Guntur chicken fry roasted with cracked black pepper & roasted Guntur chillies.',
-        price: 310,
-        image: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=500&auto=format&fit=crop&q=80',
-        vegType: 'non-veg',
-        spicyLevel: 3,
-        isBestseller: true,
-        order: 4,
-      },
-      {
-        name: 'Chilli Chicken',
-        description: 'Indo-Chinese boneless chicken tossed with bell peppers, onion petals & green chillies.',
-        price: 290,
-        image: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=500&auto=format&fit=crop&q=80',
-        vegType: 'non-veg',
-        spicyLevel: 2,
-        order: 5,
-      },
-      {
-        name: 'Royyala Vepudu (Prawns Fry)',
-        description: 'Succulent prawns roasted in spicy Andhra masala with shallots & fresh curry leaves.',
-        price: 380,
-        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500&auto=format&fit=crop&q=80',
-        vegType: 'non-veg',
-        spicyLevel: 3,
-        isChefSpecial: true,
-        order: 6,
-      },
-      {
-        name: 'Paneer 65',
-        description: 'Crispy fried paneer cubes tossed with red chillies, curry leaves and South Indian spices.',
-        price: 270,
-        image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&auto=format&fit=crop&q=80',
-        vegType: 'veg',
-        spicyLevel: 2,
-        order: 7,
-      },
-      {
-        name: 'Crispy Corn',
-        description: 'Golden fried sweet corn kernels tossed with crushed pepper, spring onions & lemon butter.',
-        price: 250,
-        image: 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=500&auto=format&fit=crop&q=80',
-        vegType: 'veg',
-        spicyLevel: 1,
-        order: 8,
-      },
-      {
-        name: 'Gobi 65',
-        description: 'Cauliflower florets marinated in spiced batter and deep-fried to golden perfection.',
-        price: 230,
-        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80',
-        vegType: 'veg',
-        spicyLevel: 2,
-        order: 9,
-      },
-    ];
-
     if (getIsConnected()) {
-      const userExists = await User.findOne({ email: { $regex: new RegExp('^' + cleanEmail + '$', 'i') } });
+      const userExists = await User.findOne({ email });
       if (userExists) {
         return res.status(400).json({ message: 'Email already registered' });
       }
@@ -158,7 +40,7 @@ const registerUser = async (req, res) => {
 
       const user = await User.create({
         name,
-        email: cleanEmail,
+        email,
         password: hashedPassword,
         phone: phone || '',
       });
@@ -170,27 +52,33 @@ const registerUser = async (req, res) => {
         city: city || '',
         address: address || '',
         phone: phone || '',
-        email: cleanEmail,
+        email: email,
       });
 
-      const createdCategoriesMap = {};
-      for (const cat of defaultCategories) {
+      // Populate default categories and starter dishes for new restaurant
+      for (const catData of defaultCategories) {
         const c = await Category.create({
           restaurantId: restaurant._id,
-          name: cat.name,
-          order: cat.order,
+          name: catData.name,
+          order: catData.order,
         });
-        createdCategoriesMap[cat.name] = c._id;
-      }
 
-      // Add default starters to Starters category
-      const startersCategoryId = createdCategoriesMap['🥟 Starters'] || Object.values(createdCategoriesMap)[0];
-      for (const starter of defaultStarters) {
-        await MenuItem.create({
-          restaurantId: restaurant._id,
-          categoryId: startersCategoryId,
-          ...starter,
-        });
+        if (catData.items && catData.items.length > 0) {
+          const itemDocs = catData.items.map((item, idx) => ({
+            restaurantId: restaurant._id,
+            categoryId: c._id,
+            name: item.name,
+            description: item.description || '',
+            price: item.price,
+            vegType: item.vegType || 'veg',
+            spicyLevel: item.spicyLevel || 0,
+            isBestseller: Boolean(item.isBestseller),
+            isChefSpecial: Boolean(item.isChefSpecial),
+            isAvailable: true,
+            order: idx + 1,
+          }));
+          await MenuItem.insertMany(itemDocs);
+        }
       }
 
       const token = generateToken(user._id, restaurant._id, restaurant.slug);
@@ -209,7 +97,7 @@ const registerUser = async (req, res) => {
       });
     } else {
       // In-Memory Fallback
-      const existing = mockStore.users.find((u) => String(u.email || '').toLowerCase().trim() === cleanEmail);
+      const existing = mockStore.users.find((u) => u.email === email);
       if (existing) {
         return res.status(400).json({ message: 'Email already registered' });
       }
@@ -225,7 +113,7 @@ const registerUser = async (req, res) => {
       const user = {
         _id: `user_${Date.now()}`,
         name,
-        email: cleanEmail,
+        email,
         password: hashedPassword,
         phone: phone || '',
         role: 'owner',
@@ -240,7 +128,7 @@ const registerUser = async (req, res) => {
         city: city || '',
         address: address || '',
         phone: phone || '',
-        email: cleanEmail,
+        email,
         cuisineType: 'Multi-Cuisine',
         openingHours: '10:00 AM - 11:00 PM',
         primaryColor: '#F59E0B',
@@ -250,28 +138,34 @@ const registerUser = async (req, res) => {
       };
       mockStore.restaurants.push(restaurant);
 
-      const createdCatsMap = {};
-      defaultCategories.forEach((cat, idx) => {
+      defaultCategories.forEach((catData, catIdx) => {
         const c = {
-          _id: `cat_${Date.now()}_${idx}`,
+          _id: `cat_${Date.now()}_${catIdx}`,
           restaurantId: restaurant._id,
-          name: cat.name,
-          order: cat.order,
+          name: catData.name,
+          order: catData.order,
           isActive: true,
         };
         mockStore.categories.push(c);
-        createdCatsMap[cat.name] = c._id;
-      });
 
-      const startersCatId = createdCatsMap['🥟 Starters'] || Object.values(createdCatsMap)[0];
-      defaultStarters.forEach((starter, idx) => {
-        mockStore.menuItems.push({
-          _id: `item_${Date.now()}_${idx}`,
-          restaurantId: restaurant._id,
-          categoryId: startersCatId,
-          isAvailable: true,
-          ...starter,
-        });
+        if (catData.items && catData.items.length > 0) {
+          catData.items.forEach((item, itemIdx) => {
+            mockStore.menuItems.push({
+              _id: `item_${Date.now()}_${catIdx}_${itemIdx}`,
+              restaurantId: restaurant._id,
+              categoryId: c._id,
+              name: item.name,
+              description: item.description || '',
+              price: item.price,
+              vegType: item.vegType || 'veg',
+              spicyLevel: item.spicyLevel || 0,
+              isBestseller: Boolean(item.isBestseller),
+              isChefSpecial: Boolean(item.isChefSpecial),
+              isAvailable: true,
+              order: itemIdx + 1,
+            });
+          });
+        }
       });
 
       const token = generateToken(user._id, restaurant._id, restaurant.slug);
@@ -298,14 +192,8 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Please enter email and password' });
-    }
-
-    const cleanEmail = String(email).toLowerCase().trim();
-
     if (getIsConnected()) {
-      const user = await User.findOne({ email: { $regex: new RegExp('^' + cleanEmail + '$', 'i') } });
+      const user = await User.findOne({ email });
       if (!user) {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
@@ -333,7 +221,7 @@ const loginUser = async (req, res) => {
           : null,
       });
     } else {
-      const user = mockStore.users.find((u) => String(u.email || '').toLowerCase().trim() === cleanEmail);
+      const user = mockStore.users.find((u) => u.email === email);
       if (!user) {
         return res.status(401).json({ message: 'Invalid email or password' });
       }

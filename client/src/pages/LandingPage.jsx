@@ -15,6 +15,7 @@ import {
   ChevronDown,
   Sparkles,
   ShieldCheck,
+  Crown,
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -31,7 +32,7 @@ export default function LandingPage() {
     },
     {
       q: 'Can I generate unique QR codes for each table?',
-      a: 'Yes! FlashMenu allows you to create table-specific QR codes (e.g., Table 1 to 50). When scanned, the customer menu knows their exact table number.',
+      a: 'Yes! Premium Restaurant plan allows you to create table-specific QR codes (e.g., Table 1 to 50). When scanned, the customer menu knows their exact table number.',
     },
     {
       q: 'How fast does the menu load on customer phones?',
@@ -39,7 +40,7 @@ export default function LandingPage() {
     },
     {
       q: 'Can customers request a waiter or water from their phone?',
-      a: 'Yes, FlashMenu includes a built-in "Call Waiter" feature where customers can tap to request water, their bill, or staff assistance directly from their table.',
+      a: 'Yes, Premium Restaurant plan includes a built-in "Call Waiter" feature where customers can tap to request water, their bill, or staff assistance directly from their table.',
     },
   ];
 
@@ -200,70 +201,63 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
+      {/* Pricing Section - Basic Restaurant vs Premium Restaurant */}
       <section id="pricing" className="py-20 bg-[#0E1420] border-b border-gray-800/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
             <h2 className="text-xs font-extrabold text-brand-400 uppercase tracking-widest">Flexible Plans</h2>
             <h3 className="text-3xl sm:text-4xl font-extrabold text-white">Simple, Transparent Pricing</h3>
+            <p className="text-xs sm:text-sm text-gray-400">Choose the perfect digital menu plan for your restaurant</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Free */}
-            <div className="p-8 rounded-3xl bg-dark-card border border-dark-border space-y-6 flex flex-col justify-between">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Basic Restaurant */}
+            <div className="p-8 rounded-3xl bg-dark-card border border-dark-border space-y-6 flex flex-col justify-between hover:border-gray-700 transition-all">
               <div className="space-y-4">
-                <h4 className="text-xl font-bold text-white">Free Starter</h4>
+                <div className="inline-flex items-center space-x-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                  <Zap className="w-4 h-4 text-amber-400" />
+                  <span>Free Forever</span>
+                </div>
+                <h4 className="text-2xl font-extrabold text-white">Basic Restaurant</h4>
                 <div className="text-3xl font-black text-white">₹0 <span className="text-xs text-gray-400 font-normal">/ forever</span></div>
-                <p className="text-xs text-gray-400">Perfect for small cafes and food trucks getting started with digital menus.</p>
+                <p className="text-xs text-gray-400">Essential digital QR menu for cafes and food outlets.</p>
                 <ul className="space-y-3 text-xs text-gray-300 pt-4 border-t border-dark-border">
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> <span>1 Restaurant Menu</span></li>
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> <span>Up to 30 Menu Items</span></li>
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> <span>Standard Master QR Code</span></li>
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> <span>Instant Sold-Out Toggle</span></li>
+                  <li className="flex items-center space-x-3"><CheckCircle className="w-4 h-4 text-amber-400 shrink-0" /> <span>Unlimited Food Categories & Menu Items</span></li>
+                  <li className="flex items-center space-x-3"><CheckCircle className="w-4 h-4 text-amber-400 shrink-0" /> <span>High-Resolution Table QR Code Generator</span></li>
+                  <li className="flex items-center space-x-3"><CheckCircle className="w-4 h-4 text-amber-400 shrink-0" /> <span>Instant SOLD OUT & Availability Toggles</span></li>
+                  <li className="flex items-center space-x-3"><CheckCircle className="w-4 h-4 text-amber-400 shrink-0" /> <span>Fast Mobile Customer Menu View</span></li>
                 </ul>
               </div>
-              <Link to="/signup" className="w-full py-3 rounded-xl bg-dark-hover border border-dark-border text-center font-bold text-sm text-white hover:border-brand-500">
+              <Link to="/signup" className="w-full py-3.5 rounded-xl bg-dark-hover border border-dark-border text-center font-extrabold text-xs text-white hover:border-brand-500 transition-all">
                 Get Started Free
               </Link>
             </div>
 
-            {/* Pro */}
-            <div className="p-8 rounded-3xl bg-gradient-to-b from-dark-card to-[#172238] border-2 border-brand-500 space-y-6 flex flex-col justify-between relative gold-glow">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-brand-500 text-black text-[11px] font-black uppercase tracking-wider">
-                Most Popular
+            {/* Premium Restaurant */}
+            <div className="p-8 rounded-3xl bg-gradient-to-b from-dark-card via-[#141E33] to-dark-card border-2 border-brand-500 space-y-6 flex flex-col justify-between relative gold-glow">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-brand-500 text-black text-[11px] font-black uppercase tracking-wider flex items-center space-x-1">
+                <Sparkles className="w-3.5 h-3.5 fill-black" />
+                <span>Most Popular</span>
               </div>
               <div className="space-y-4">
-                <h4 className="text-xl font-bold text-white">Pro Restaurant</h4>
-                <div className="text-3xl font-black text-white">₹999 <span className="text-xs text-gray-400 font-normal">/ month</span></div>
-                <p className="text-xs text-gray-300">Complete suite for growing restaurants, bars, and fine dining establishments.</p>
-                <ul className="space-y-3 text-xs text-gray-200 pt-4 border-t border-dark-border">
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-brand-400" /> <span>Unlimited Menu Items & Categories</span></li>
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-brand-400" /> <span>Table-Specific QR Codes (1..50)</span></li>
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-brand-400" /> <span>Real-time Menu Analytics</span></li>
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-brand-400" /> <span>Call Waiter & Feedback System</span></li>
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-brand-400" /> <span>Custom Branding & Colors</span></li>
+                <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
+                  <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
+                  <span>Pro Experience</span>
+                </div>
+                <h4 className="text-2xl font-extrabold text-white">Premium Restaurant</h4>
+                <div className="text-3xl font-black text-amber-400">₹999 <span className="text-xs text-gray-400 font-normal">/ month</span></div>
+                <p className="text-xs text-gray-300">Complete suite with live table ordering, waiter calls & analytics.</p>
+                <ul className="space-y-3 text-xs text-amber-300 pt-4 border-t border-dark-border">
+                  <li className="flex items-center space-x-3"><CheckCircle className="w-4 h-4 text-amber-400 shrink-0" /> <span>Everything in Basic Plan</span></li>
+                  <li className="flex items-center space-x-3"><CheckCircle className="w-4 h-4 text-amber-400 shrink-0" /> <span>Real-Time Table Ordering & Kitchen Display</span></li>
+                  <li className="flex items-center space-x-3"><CheckCircle className="w-4 h-4 text-amber-400 shrink-0" /> <span>Instant Call Waiter & Bill Request Alerts</span></li>
+                  <li className="flex items-center space-x-3"><CheckCircle className="w-4 h-4 text-amber-400 shrink-0" /> <span>Private Customer Reviews & Ratings Feed</span></li>
+                  <li className="flex items-center space-x-3"><CheckCircle className="w-4 h-4 text-amber-400 shrink-0" /> <span>Daily Scan Volume & Peak Hour Analytics</span></li>
+                  <li className="flex items-center space-x-3"><CheckCircle className="w-4 h-4 text-amber-400 shrink-0" /> <span>Table 1 to 50 Customized QR Code Packs</span></li>
                 </ul>
               </div>
-              <Link to="/signup" className="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-400 text-center font-extrabold text-sm text-black shadow-lg shadow-brand-500/20">
-                Start Pro Trial
-              </Link>
-            </div>
-
-            {/* Business */}
-            <div className="p-8 rounded-3xl bg-dark-card border border-dark-border space-y-6 flex flex-col justify-between">
-              <div className="space-y-4">
-                <h4 className="text-xl font-bold text-white">Enterprise / Chain</h4>
-                <div className="text-3xl font-black text-white">₹2,499 <span className="text-xs text-gray-400 font-normal">/ month</span></div>
-                <p className="text-xs text-gray-400">Multi-branch management with advanced analytics and dedicated support.</p>
-                <ul className="space-y-3 text-xs text-gray-300 pt-4 border-t border-dark-border">
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> <span>Multiple Restaurant Locations</span></li>
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> <span>Online Table Ordering System</span></li>
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> <span>Dedicated Account Manager</span></li>
-                  <li className="flex items-center space-x-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> <span>POS & ERP API Integration</span></li>
-                </ul>
-              </div>
-              <Link to="/signup" className="w-full py-3 rounded-xl bg-dark-hover border border-dark-border text-center font-bold text-sm text-white hover:border-brand-500">
-                Contact Sales
+              <Link to="/signup" className="w-full py-3.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-center font-extrabold text-xs text-black shadow-lg shadow-brand-500/20 transition-all">
+                Start Free Trial
               </Link>
             </div>
           </div>

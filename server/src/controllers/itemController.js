@@ -5,14 +5,18 @@ const { getIsConnected } = require('../config/db');
 
 const getMenuItems = async (req, res) => {
   try {
+    const restaurant =
+      req.restaurant ||
+      (getIsConnected()
+        ? await Restaurant.findOne({ ownerId: req.user._id })
+        : mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id)));
+
+    if (!restaurant) return res.status(404).json({ message: 'Restaurant profile not found' });
+
     if (getIsConnected()) {
-      const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const items = await MenuItem.find({ restaurantId: restaurant._id }).sort({ order: 1 });
       return res.json(items);
     } else {
-      const restaurant = mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id));
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const items = mockStore.menuItems
         .filter((i) => String(i.restaurantId) === String(restaurant._id))
         .sort((a, b) => a.order - b.order);
@@ -25,14 +29,18 @@ const getMenuItems = async (req, res) => {
 
 const createMenuItem = async (req, res) => {
   try {
+    const restaurant =
+      req.restaurant ||
+      (getIsConnected()
+        ? await Restaurant.findOne({ ownerId: req.user._id })
+        : mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id)));
+
+    if (!restaurant) return res.status(404).json({ message: 'Restaurant profile not found' });
+
     if (getIsConnected()) {
-      const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const item = await MenuItem.create({ restaurantId: restaurant._id, ...req.body });
       return res.status(201).json(item);
     } else {
-      const restaurant = mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id));
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const item = {
         _id: `item_${Date.now()}`,
         restaurantId: restaurant._id,

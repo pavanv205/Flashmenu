@@ -6,14 +6,18 @@ const { getIsConnected } = require('../config/db');
 
 const getCategories = async (req, res) => {
   try {
+    const restaurant =
+      req.restaurant ||
+      (getIsConnected()
+        ? await Restaurant.findOne({ ownerId: req.user._id })
+        : mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id)));
+
+    if (!restaurant) return res.status(404).json({ message: 'Restaurant profile not found' });
+
     if (getIsConnected()) {
-      const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const categories = await Category.find({ restaurantId: restaurant._id }).sort({ order: 1 });
       return res.json(categories);
     } else {
-      const restaurant = mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id));
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const categories = mockStore.categories
         .filter((c) => String(c.restaurantId) === String(restaurant._id))
         .sort((a, b) => a.order - b.order);
@@ -27,17 +31,21 @@ const getCategories = async (req, res) => {
 const createCategory = async (req, res) => {
   try {
     const { name } = req.body;
-    if (!name) return res.status(400).json({ message: 'Category name required' });
+    if (!name) return res.status(400).json({ message: 'Category name is required' });
+
+    const restaurant =
+      req.restaurant ||
+      (getIsConnected()
+        ? await Restaurant.findOne({ ownerId: req.user._id })
+        : mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id)));
+
+    if (!restaurant) return res.status(404).json({ message: 'Restaurant profile not found' });
 
     if (getIsConnected()) {
-      const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const count = await Category.countDocuments({ restaurantId: restaurant._id });
       const category = await Category.create({ restaurantId: restaurant._id, name, order: count + 1 });
       return res.status(201).json(category);
     } else {
-      const restaurant = mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id));
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
       const count = mockStore.categories.filter((c) => String(c.restaurantId) === String(restaurant._id)).length;
       const category = {
         _id: `cat_${Date.now()}`,

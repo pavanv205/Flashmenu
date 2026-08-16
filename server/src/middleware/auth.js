@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Restaurant = require('../models/Restaurant');
 const mockStore = require('../config/mockStore');
 const { getIsConnected } = require('../config/db');
 
@@ -18,8 +19,36 @@ const protect = async (req, res, next) => {
 
     if (getIsConnected()) {
       req.user = await User.findById(decoded.id).select('-password');
+      if (req.user) {
+        req.restaurant = await Restaurant.findOne({ ownerId: req.user._id });
+      }
     } else {
-      req.user = mockStore.users.find((u) => String(u._id) === String(decoded.id));
+      let user = mockStore.users.find((u) => String(u._id) === String(decoded.id));
+      if (!user) {
+        user = { _id: decoded.id, name: 'Owner', role: 'owner' };
+        mockStore.users.push(user);
+      }
+      req.user = user;
+
+      let restaurant = mockStore.restaurants.find(
+        (r) => String(r.ownerId) === String(decoded.id) || (decoded.restaurantId && String(r._id) === String(decoded.restaurantId))
+      );
+
+      if (!restaurant && decoded.restaurantId) {
+        restaurant = {
+          _id: decoded.restaurantId,
+          ownerId: decoded.id,
+          name: 'My Restaurant',
+          slug: decoded.slug || 'my-restaurant',
+          primaryColor: '#F59E0B',
+          secondaryColor: '#0F172A',
+          currency: '₹',
+          tableCount: 20,
+          isOpen: true,
+        };
+        mockStore.restaurants.push(restaurant);
+      }
+      req.restaurant = restaurant;
     }
 
     if (!req.user) {

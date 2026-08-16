@@ -50,7 +50,7 @@ export default function CategoriesPage() {
       setIsModalOpen(false);
       fetchCategories();
     } catch (error) {
-      alert('Error saving category');
+      alert(error.response?.data?.message || 'Error saving category');
     }
   };
 

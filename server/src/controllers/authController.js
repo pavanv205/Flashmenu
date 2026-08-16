@@ -22,7 +22,7 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
-    const cleanEmail = email.toLowerCase().trim();
+    const cleanEmail = String(email).toLowerCase().trim();
 
     const defaultCategories = [
       { name: '🥗 Salads', order: 1 },
@@ -209,7 +209,7 @@ const registerUser = async (req, res) => {
       });
     } else {
       // In-Memory Fallback
-      const existing = mockStore.users.find((u) => u.email.toLowerCase().trim() === cleanEmail);
+      const existing = mockStore.users.find((u) => String(u.email || '').toLowerCase().trim() === cleanEmail);
       if (existing) {
         return res.status(400).json({ message: 'Email already registered' });
       }
@@ -302,7 +302,7 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Please enter email and password' });
     }
 
-    const cleanEmail = email.toLowerCase().trim();
+    const cleanEmail = String(email).toLowerCase().trim();
 
     if (getIsConnected()) {
       const user = await User.findOne({ email: { $regex: new RegExp('^' + cleanEmail + '$', 'i') } });
@@ -333,7 +333,7 @@ const loginUser = async (req, res) => {
           : null,
       });
     } else {
-      const user = mockStore.users.find((u) => u.email.toLowerCase().trim() === cleanEmail);
+      const user = mockStore.users.find((u) => String(u.email || '').toLowerCase().trim() === cleanEmail);
       if (!user) {
         return res.status(401).json({ message: 'Invalid email or password' });
       }

@@ -202,6 +202,9 @@ const defaultCategories = [
     order: 6,
     items: [
       { name: 'Mango Lassi Delight', price: 130, vegType: 'veg', isBestseller: true },
+      { name: 'Sprite', price: 50, vegType: 'veg' },
+      { name: 'Thums Up', price: 50, vegType: 'veg', isBestseller: true },
+      { name: 'Coca-Cola', price: 50, vegType: 'veg' },
     ],
   },
 ];

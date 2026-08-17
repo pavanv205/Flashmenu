@@ -6,7 +6,7 @@ const Category = require('../models/Category');
 const MenuItem = require('../models/MenuItem');
 const mockStore = require('../config/mockStore');
 const { createSlug } = require('../utils/slugify');
-const { getIsConnected } = require('../config/db');
+const { connectDB, getIsConnected } = require('../config/db');
 const { defaultCategories } = require('../utils/defaultMenu');
 
 const generateToken = (id, restaurantId = '', slug = '') => {
@@ -25,6 +25,8 @@ const registerUser = async (req, res) => {
 
     const normalizedEmail = String(email || '').toLowerCase().trim();
     const plan = subscriptionPlan === 'premium' ? 'premium' : 'basic';
+
+    await connectDB();
 
     if (getIsConnected()) {
       const userExists = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
@@ -209,6 +211,8 @@ const loginUser = async (req, res) => {
 
     const normalizedEmail = String(email || '').toLowerCase().trim();
 
+    await connectDB();
+
     if (getIsConnected()) {
       const user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
       if (!user) {
@@ -243,7 +247,10 @@ const loginUser = async (req, res) => {
         (u) => u && u.email && String(u.email).toLowerCase().trim() === normalizedEmail
       );
       if (!user) {
-        return res.status(401).json({ message: 'Invalid email or password' });
+        return res.status(401).json({
+          message:
+            'Invalid email or password. Note: Make sure 0.0.0.0/0 (Allow Access From Anywhere) is whitelisted in MongoDB Atlas Network Access.',
+        });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
@@ -277,6 +284,7 @@ const loginUser = async (req, res) => {
 
 const getMe = async (req, res) => {
   try {
+    await connectDB();
     if (getIsConnected()) {
       const user = await User.findById(req.user._id).select('-password');
       const restaurant = await Restaurant.findOne({ ownerId: req.user._id });

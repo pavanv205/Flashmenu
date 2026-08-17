@@ -247,10 +247,7 @@ const loginUser = async (req, res) => {
         (u) => u && u.email && String(u.email).toLowerCase().trim() === normalizedEmail
       );
       if (!user) {
-        return res.status(401).json({
-          message:
-            'Invalid email or password. Note: Make sure 0.0.0.0/0 (Allow Access From Anywhere) is whitelisted in MongoDB Atlas Network Access.',
-        });
+        return res.status(401).json({ message: 'Invalid email or password' });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);

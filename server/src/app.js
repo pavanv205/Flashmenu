@@ -9,8 +9,15 @@ dotenv.config();
 
 const app = express();
 
-// Connect DB
-connectDB();
+// Middleware to ensure DB connection on serverless cold starts
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    // Continue even if DB connection fails (fallback handlers handle getIsConnected)
+  }
+  next();
+});
 
 // Security middleware
 app.use(helmet({ crossOriginResourcePolicy: false }));

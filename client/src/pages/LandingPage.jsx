@@ -201,6 +201,118 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 border-b border-gray-800/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <h2 className="text-xs font-extrabold text-amber-400 uppercase tracking-widest">Simple Transparent Pricing</h2>
+            <h3 className="text-3xl sm:text-4xl font-extrabold text-white">Choose Your Restaurant Plan</h3>
+            <p className="text-xs sm:text-sm text-gray-400">
+              No hidden fees. Full digital menu setup with instant QR code ordering.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* FIRST HALF: 6 MONTHS PLAN ₹2499 */}
+            <div className="bg-dark-card border border-dark-border p-8 rounded-3xl relative hover:border-amber-500/50 transition-all flex flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
+                  <Zap className="w-4 h-4 text-amber-400" />
+                  <span>Half-Year Pass</span>
+                </div>
+                <h4 className="text-2xl font-extrabold text-white">6 Months Plan</h4>
+                <p className="text-xs text-gray-400">Half-year full access to all digital menu & table features.</p>
+                <div className="pt-2">
+                  <span className="text-4xl font-black text-white">₹2,499</span>
+                  <span className="text-xs text-gray-400 ml-2 font-medium">/ 6 Months</span>
+                </div>
+
+                <ul className="space-y-3 text-xs text-gray-300 pt-4 border-t border-dark-border">
+                  <li className="flex items-center space-x-2.5">
+                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>1 Digital Restaurant Menu</span>
+                  </li>
+                  <li className="flex items-center space-x-2.5">
+                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Unlimited Dishes & Categories</span>
+                  </li>
+                  <li className="flex items-center space-x-2.5">
+                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Table 1 to 25 QR Code Generator</span>
+                  </li>
+                  <li className="flex items-center space-x-2.5">
+                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Instant SOLD OUT Toggle Switch</span>
+                  </li>
+                  <li className="flex items-center space-x-2.5">
+                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Live Table Ordering & Kitchen Display</span>
+                  </li>
+                </ul>
+              </div>
+
+              <Link
+                to="/signup"
+                className="w-full py-3.5 rounded-2xl bg-dark-base hover:bg-dark-hover border border-dark-border text-white font-extrabold text-xs transition-all text-center block"
+              >
+                Get Started with 6 Months Plan &rarr;
+              </Link>
+            </div>
+
+            {/* SECOND HALF: ONE-TIME PLAN ₹9999 */}
+            <div className="bg-gradient-to-b from-dark-card via-[#162238] to-dark-card border-2 border-amber-500 p-8 rounded-3xl relative gold-glow flex flex-col justify-between space-y-6">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-500 text-black text-[11px] font-black uppercase tracking-wider flex items-center space-x-1 shadow-lg">
+                <Crown className="w-3.5 h-3.5 text-black fill-black" />
+                <span>Best Value &bull; One Time</span>
+              </div>
+
+              <div className="space-y-4 pt-1">
+                <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>Lifetime Access</span>
+                </div>
+                <h4 className="text-2xl font-extrabold text-white">One-Time Plan</h4>
+                <p className="text-xs text-gray-300">Pay once, use forever with zero recurring monthly or annual fees.</p>
+                <div className="pt-2">
+                  <span className="text-4xl font-black text-amber-400">₹9,999</span>
+                  <span className="text-xs text-gray-400 ml-2 font-medium">/ One-Time</span>
+                </div>
+
+                <ul className="space-y-3 text-xs text-gray-200 pt-4 border-t border-amber-500/20">
+                  <li className="flex items-center space-x-2.5">
+                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Everything in 6 Months Plan</span>
+                  </li>
+                  <li className="flex items-center space-x-2.5">
+                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Lifetime Unlimited Access (Zero Monthly Fees)</span>
+                  </li>
+                  <li className="flex items-center space-x-2.5">
+                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Full Kitchen Order History & Real-Time Call Waiter</span>
+                  </li>
+                  <li className="flex items-center space-x-2.5">
+                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Unlimited Table QR Codes Generator</span>
+                  </li>
+                  <li className="flex items-center space-x-2.5">
+                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Priority VIP Setup & Dedicated Support</span>
+                  </li>
+                </ul>
+              </div>
+
+              <Link
+                to="/signup"
+                className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all text-center block shadow-lg shadow-amber-500/20"
+              >
+                Get One-Time Lifetime Access &rarr;
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section id="faq" className="py-20 border-b border-gray-800/60">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

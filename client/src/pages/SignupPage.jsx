@@ -277,7 +277,7 @@ export default function SignupPage() {
 
           {/* 2 Plan Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* PLAN 1: BASIC RESTAURANT */}
+            {/* PLAN 1: 6 MONTHS PLAN ₹2499 */}
             <div
               className={`p-6 sm:p-8 rounded-3xl border transition-all flex flex-col justify-between space-y-6 relative ${
                 selectedPlan === 'basic'
@@ -287,22 +287,22 @@ export default function SignupPage() {
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-gray-800 text-gray-300 flex items-center justify-center">
-                    <Store className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+                    <Zap className="w-5 h-5 text-amber-400" />
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-gray-800 text-gray-300 text-[11px] font-bold">
-                    Standard
+                  <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-[11px] font-bold border border-amber-500/30">
+                    Half-Year Pass
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-bold text-white">Basic Restaurant</h3>
-                  <p className="text-xs text-gray-400 mt-1">Essential digital menu setup for cafes & small dining spots.</p>
+                  <h3 className="text-xl font-bold text-white">6 Months Plan</h3>
+                  <p className="text-xs text-gray-400 mt-1">Half-year full access to all digital menu & table features.</p>
                 </div>
 
                 <div className="pt-2">
-                  <span className="text-3xl font-black text-white">₹0</span>
-                  <span className="text-xs text-gray-400 ml-1.5 font-medium">/ forever</span>
+                  <span className="text-3xl font-black text-white">₹2,499</span>
+                  <span className="text-xs text-gray-400 ml-1.5 font-medium">/ 6 Months</span>
                 </div>
 
                 <ul className="space-y-3 text-xs text-gray-300 pt-4 border-t border-dark-border">
@@ -312,19 +312,23 @@ export default function SignupPage() {
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span>Unlimited Dishes & Categories</span>
+                    <span>Unlimited Food Categories & Menu Items</span>
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span>Standard Master Table QR Code</span>
+                    <span>Master & Table-Specific QR Codes (Table 1..25)</span>
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span>Instant SOLD OUT Toggle Switch</span>
+                    <span>Instant SOLD OUT & Availability Toggle</span>
                   </li>
-                  <li className="flex items-start space-x-2.5 text-gray-500">
-                    <span className="w-4 h-4 text-center font-bold">✕</span>
-                    <span>Table-Specific QR Codes (Table 1..50)</span>
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Real-Time Table Ordering & Kitchen Display</span>
+                  </li>
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>6 Months Priority Updates & Customer Support</span>
                   </li>
                 </ul>
               </div>
@@ -333,12 +337,12 @@ export default function SignupPage() {
                 onClick={() => handleFinishOnboarding('basic')}
                 className="w-full py-3.5 rounded-2xl bg-dark-card hover:bg-dark-hover border border-dark-border text-white font-extrabold text-xs transition-all flex items-center justify-center space-x-2"
               >
-                <span>Select Basic Restaurant</span>
+                <span>Select 6 Months Plan (₹2,499)</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
-            {/* PLAN 2: PREMIUM RESTAURANT */}
+            {/* PLAN 2: ONE-TIME PLAN ₹9999 */}
             <div
               className={`p-6 sm:p-8 rounded-3xl border-2 transition-all flex flex-col justify-between space-y-6 relative ${
                 selectedPlan === 'premium'
@@ -349,7 +353,7 @@ export default function SignupPage() {
               {/* Badge */}
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-500 text-black text-[11px] font-black uppercase tracking-wider flex items-center space-x-1 shadow-lg">
                 <Crown className="w-3.5 h-3.5 text-black fill-black" />
-                <span>Recommended</span>
+                <span>Best Value &bull; One Time</span>
               </div>
 
               <div className="space-y-4 pt-1">
@@ -358,51 +362,55 @@ export default function SignupPage() {
                     <Sparkles className="w-5 h-5 text-amber-400" />
                   </div>
                   <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-[11px] font-bold border border-amber-500/30">
-                    Full Suite
+                    Lifetime Access
                   </span>
                 </div>
 
                 <div>
                   <h3 className="text-xl font-bold text-white flex items-center space-x-2">
-                    <span>Premium Restaurant</span>
+                    <span>One-Time Plan</span>
                   </h3>
-                  <p className="text-xs text-gray-300 mt-1">Complete QR platform for busy restaurants & fine dining.</p>
+                  <p className="text-xs text-gray-300 mt-1">Pay once, use forever with zero recurring monthly or annual fees.</p>
                 </div>
 
                 <div className="pt-2">
-                  <span className="text-3xl font-black text-white">₹999</span>
-                  <span className="text-xs text-gray-400 ml-1.5 font-medium">/ month</span>
+                  <span className="text-3xl font-black text-amber-400">₹9,999</span>
+                  <span className="text-xs text-gray-400 ml-1.5 font-medium">/ One-Time</span>
                 </div>
 
                 <ul className="space-y-3 text-xs text-gray-200 pt-4 border-t border-amber-500/20">
                   <li className="flex items-start space-x-2.5">
                     <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <span>Everything in Basic Plan</span>
+                    <span>Everything in 6 Months Plan</span>
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <span>Table-Specific QR Codes (Table 1 to 50)</span>
+                    <span>Lifetime Unlimited Access (No Monthly/Annual Fees)</span>
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <span>Real-Time Call Waiter Notifications</span>
+                    <span>Full Kitchen Order History & Real-Time Call Waiter</span>
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <span>Customer Feedback & Rating System</span>
+                    <span>Unlimited Table QR Codes Generator</span>
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <span>Priority 24/7 Support & Analytics</span>
+                    <span>Real-Time Customer Feedback & Star Ratings Feed</span>
+                  </li>
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                    <span>Priority VIP Setup & Dedicated 24/7 Support</span>
                   </li>
                 </ul>
               </div>
 
               <button
                 onClick={() => handleFinishOnboarding('premium')}
-                className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all shadow-xl shadow-amber-500/25 flex items-center justify-center space-x-2"
+                className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2"
               >
-                <span>Select Premium Restaurant</span>
+                <span>Select One-Time Plan (₹9,999)</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

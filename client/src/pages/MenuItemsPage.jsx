@@ -27,6 +27,7 @@ export default function MenuItemsPage() {
   const [selectedSubCategory, setSelectedSubCategory] = useState('all');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [confirmTargetItem, setConfirmTargetItem] = useState(null);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -346,7 +347,7 @@ export default function MenuItemsPage() {
 
                               {/* Instant Availability Toggle Switch */}
                               <button
-                                onClick={() => handleToggleAvailable(item._id)}
+                                onClick={() => setConfirmTargetItem(item)}
                                 className={`px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider flex items-center space-x-1.5 transition-all ${
                                   item.isAvailable
                                     ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-black'
@@ -650,6 +651,64 @@ export default function MenuItemsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Availability / Sold Out Confirmation Modal Popup */}
+      {confirmTargetItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-dark-card border-2 border-dark-border rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 text-center gold-glow">
+            <div
+              className={`w-16 h-16 rounded-full mx-auto flex items-center justify-center border-2 ${
+                confirmTargetItem.isAvailable
+                  ? 'bg-red-500/20 text-red-400 border-red-500/40'
+                  : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+              }`}
+            >
+              {confirmTargetItem.isAvailable ? (
+                <XCircle className="w-8 h-8" />
+              ) : (
+                <CheckCircle2 className="w-8 h-8" />
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-extrabold text-white">
+                {confirmTargetItem.isAvailable ? 'Mark Item as SOLD OUT?' : 'Mark Item as AVAILABLE?'}
+              </h3>
+              <p className="text-xs text-gray-300 leading-relaxed">
+                Are you sure you want to change the status of <strong className="text-amber-400">"{confirmTargetItem.name}"</strong> to{' '}
+                <strong className={confirmTargetItem.isAvailable ? 'text-red-400 font-bold' : 'text-emerald-400 font-bold'}>
+                  {confirmTargetItem.isAvailable ? 'SOLD OUT' : 'AVAILABLE'}
+                </strong>?
+              </p>
+            </div>
+
+            <div className="flex space-x-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setConfirmTargetItem(null)}
+                className="flex-1 py-3 rounded-2xl bg-dark-base border border-dark-border text-gray-300 hover:text-white font-bold text-xs transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  const targetId = confirmTargetItem._id;
+                  setConfirmTargetItem(null);
+                  await handleToggleAvailable(targetId);
+                }}
+                className={`flex-1 py-3 rounded-2xl font-black text-xs transition-all shadow-lg ${
+                  confirmTargetItem.isAvailable
+                    ? 'bg-red-500 hover:bg-red-400 text-white shadow-red-500/20'
+                    : 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-emerald-500/20'
+                }`}
+              >
+                {confirmTargetItem.isAvailable ? 'Yes, Mark Sold Out' : 'Yes, Mark Available'}
+              </button>
+            </div>
           </div>
         </div>
       )}

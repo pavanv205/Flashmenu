@@ -5,6 +5,7 @@ import CallWaiterModal from '../components/CallWaiterModal';
 import FeedbackModal from '../components/FeedbackModal';
 import OrderDrawer from '../components/OrderDrawer';
 import { getSubCategory } from '../utils/categoryHelper';
+import { getOptimizedImageUrl } from '../utils/imageHelper';
 import {
   Zap,
   Search,
@@ -342,9 +343,13 @@ export default function PublicMenuPage() {
                     <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-dark-base flex-shrink-0">
                       {item.image ? (
                         <img
-                          src={item.image}
+                          src={getOptimizedImageUrl(item.image, 400)}
                           alt={item.name}
+                          loading="lazy"
                           className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
+                          onError={(e) => {
+                            e.target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80';
+                          }}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-600 font-bold text-xs">

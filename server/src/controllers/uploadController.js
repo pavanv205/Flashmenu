@@ -1,15 +1,17 @@
-const cloudinary = require('../config/cloudinary');
 const multer = require('multer');
+const { uploadImageBuffer } = require('../services/cloudinaryService');
+const Restaurant = require('../models/Restaurant');
 
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
+    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/avif'];
+    if (allowedMimeTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed!'), false);
+      cb(new Error('Only JPG, PNG, WebP, and AVIF image files are allowed!'), false);
     }
   },
 });
@@ -17,20 +19,33 @@ const upload = multer({
 const uploadImage = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ message: 'Please upload an image file' });
+      return res.status(400).json({ message: 'Please select an image file to upload' });
     }
 
-    const b64 = Buffer.from(req.file.buffer).toString('base64');
-    const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+    const type = req.query.type || req.body.type || 'menu-items'; // 'logo', 'cover', 'menu-items', 'categories'
+    let restaurantId = req.user?.restaurantId;
 
-    const result = await cloudinary.uploader.upload(dataURI, {
-      folder: 'flashmenu',
-      transformation: [{ width: 1000, height: 1000, crop: 'limit', quality: 'auto', fetch_format: 'auto' }],
-    });
+    if (!restaurantId && req.user?._id) {
+      const rest = await Restaurant.findOne({ ownerId: req.user._id });
+      if (rest) restaurantId = rest._id.toString();
+    }
+
+    const folderPath = restaurantId
+      ? `flashmenu/restaurants/${restaurantId}/${type}`
+      : `flashmenu/general/${type}`;
+
+    const uploadResult = await uploadImageBuffer(req.file.buffer, req.file.mimetype, folderPath);
 
     return res.json({
-      url: result.secure_url,
-      publicId: result.public_id,
+      success: true,
+      image: {
+        url: uploadResult.url,
+        publicId: uploadResult.publicId,
+        width: uploadResult.width,
+        height: uploadResult.height,
+        format: uploadResult.format,
+        bytes: uploadResult.bytes,
+      },
     });
   } catch (error) {
     console.error('Cloudinary Upload Error:', error);

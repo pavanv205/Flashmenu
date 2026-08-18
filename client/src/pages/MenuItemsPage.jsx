@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { categoryAPI, itemAPI, uploadAPI } from '../services/api';
+import { categoryAPI, itemAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { getSubCategory } from '../utils/categoryHelper';
+import ImageUploader from '../components/ImageUploader';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import {
   Plus,
@@ -14,10 +15,9 @@ import {
   Sparkles,
   CheckCircle2,
   XCircle,
-  Image,
+  Image as ImageIcon,
   UtensilsCrossed,
   Layers,
-  Upload,
 } from 'lucide-react';
 
 export default function MenuItemsPage() {
@@ -27,7 +27,6 @@ export default function MenuItemsPage() {
   const [selectedSubCategory, setSelectedSubCategory] = useState('all');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,6 +39,7 @@ export default function MenuItemsPage() {
     price: '',
     discountPrice: '',
     image: '',
+    imagePublicId: '',
     vegType: 'veg',
     spicyLevel: 0,
     isBestseller: false,
@@ -70,24 +70,6 @@ export default function MenuItemsPage() {
     setSelectedSubCategory('all');
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const data = new FormData();
-    data.append('image', file);
-    setUploadingImage(true);
-
-    try {
-      const res = await uploadAPI.uploadImage(data);
-      setFormData((prev) => ({ ...prev, image: res.data.url }));
-    } catch (error) {
-      alert(error.response?.data?.message || 'Failed to upload image to Cloudinary');
-    } finally {
-      setUploadingImage(false);
-    }
-  };
-
   const handleOpenModal = (item = null) => {
     if (item) {
       setEditingItem(item);
@@ -99,6 +81,7 @@ export default function MenuItemsPage() {
         price: item.price,
         discountPrice: item.discountPrice || '',
         image: item.image || '',
+        imagePublicId: item.imagePublicId || '',
         vegType: item.vegType || 'veg',
         spicyLevel: item.spicyLevel || 0,
         isBestseller: item.isBestseller || false,
@@ -116,6 +99,7 @@ export default function MenuItemsPage() {
         price: '',
         discountPrice: '',
         image: '',
+        imagePublicId: '',
         vegType: 'veg',
         spicyLevel: 0,
         isBestseller: false,
@@ -396,7 +380,7 @@ export default function MenuItemsPage() {
                               />
                             ) : (
                               <div className="w-20 h-20 rounded-2xl bg-dark-base border border-dark-border flex items-center justify-center text-gray-600">
-                                <Image className="w-8 h-8" />
+                                <ImageIcon className="w-8 h-8" />
                               </div>
                             )}
 
@@ -570,31 +554,19 @@ export default function MenuItemsPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                  Food Image
-                </label>
-                <div className="flex items-center space-x-2 mb-2">
-                  <input
-                    type="text"
-                    placeholder="https://images.unsplash.com/... or upload file"
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    className="flex-1 px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
-                  />
-                  <label className="px-4 py-2.5 rounded-xl bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-black border border-amber-500/40 text-xs font-extrabold cursor-pointer transition-all shrink-0 flex items-center space-x-1.5">
-                    <Upload className="w-4 h-4" />
-                    <span>{uploadingImage ? 'Uploading...' : 'Upload Photo'}</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      disabled={uploadingImage}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-              </div>
+              {/* Reusable ImageUploader */}
+              <ImageUploader
+                label="Food Dish Photo"
+                imageUrl={formData.image}
+                imagePublicId={formData.imagePublicId}
+                assetType="menu-items"
+                onUploadSuccess={(url, publicId) => {
+                  setFormData((prev) => ({ ...prev, image: url, imagePublicId: publicId }));
+                }}
+                onRemove={() => {
+                  setFormData((prev) => ({ ...prev, image: '', imagePublicId: '' }));
+                }}
+              />
 
               <div className="grid grid-cols-2 gap-4">
                 <div>

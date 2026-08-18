@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { restaurantAPI, uploadAPI } from '../services/api';
-import { Store, Palette, Save, CheckCircle2, Upload } from 'lucide-react';
+import { restaurantAPI } from '../services/api';
+import ImageUploader from '../components/ImageUploader';
+import { Store, Palette, Save, CheckCircle2 } from 'lucide-react';
 
 export default function ProfilePage() {
   const { restaurant, updateRestaurantState } = useAuth();
@@ -10,7 +11,9 @@ export default function ProfilePage() {
     tagline: '',
     description: '',
     logo: '',
+    logoPublicId: '',
     coverImage: '',
+    coverImagePublicId: '',
     phone: '',
     email: '',
     address: '',
@@ -25,8 +28,6 @@ export default function ProfilePage() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [uploadingLogo, setUploadingLogo] = useState(false);
-  const [uploadingCover, setUploadingCover] = useState(false);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
@@ -36,7 +37,9 @@ export default function ProfilePage() {
         tagline: restaurant.tagline || '',
         description: restaurant.description || '',
         logo: restaurant.logo || '',
+        logoPublicId: restaurant.logoPublicId || '',
         coverImage: restaurant.coverImage || '',
+        coverImagePublicId: restaurant.coverImagePublicId || '',
         phone: restaurant.phone || '',
         email: restaurant.email || '',
         address: restaurant.address || '',
@@ -54,27 +57,6 @@ export default function ProfilePage() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleFileUpload = async (e, fieldName) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const data = new FormData();
-    data.append('image', file);
-
-    if (fieldName === 'logo') setUploadingLogo(true);
-    if (fieldName === 'coverImage') setUploadingCover(true);
-
-    try {
-      const res = await uploadAPI.uploadImage(data);
-      setFormData((prev) => ({ ...prev, [fieldName]: res.data.url }));
-    } catch (error) {
-      alert(error.response?.data?.message || 'Failed to upload image to Cloudinary');
-    } finally {
-      if (fieldName === 'logo') setUploadingLogo(false);
-      if (fieldName === 'coverImage') setUploadingCover(false);
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -196,60 +178,32 @@ export default function ProfilePage() {
             <span>Images & Branding</span>
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                Restaurant Logo
-              </label>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  name="logo"
-                  placeholder="https://images.unsplash.com/... or upload"
-                  value={formData.logo}
-                  onChange={handleChange}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm"
-                />
-                <label className="px-3 py-2.5 rounded-xl bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-black border border-amber-500/40 text-xs font-extrabold cursor-pointer transition-all shrink-0 flex items-center space-x-1.5">
-                  <Upload className="w-4 h-4" />
-                  <span>{uploadingLogo ? 'Uploading...' : 'Upload'}</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFileUpload(e, 'logo')}
-                    disabled={uploadingLogo}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <ImageUploader
+              label="Restaurant Logo"
+              imageUrl={formData.logo}
+              imagePublicId={formData.logoPublicId}
+              assetType="logo"
+              onUploadSuccess={(url, publicId) => {
+                setFormData((prev) => ({ ...prev, logo: url, logoPublicId: publicId }));
+              }}
+              onRemove={() => {
+                setFormData((prev) => ({ ...prev, logo: '', logoPublicId: '' }));
+              }}
+            />
 
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                Cover Image Banner
-              </label>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  name="coverImage"
-                  placeholder="https://images.unsplash.com/... or upload"
-                  value={formData.coverImage}
-                  onChange={handleChange}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm"
-                />
-                <label className="px-3 py-2.5 rounded-xl bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-black border border-amber-500/40 text-xs font-extrabold cursor-pointer transition-all shrink-0 flex items-center space-x-1.5">
-                  <Upload className="w-4 h-4" />
-                  <span>{uploadingCover ? 'Uploading...' : 'Upload'}</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFileUpload(e, 'coverImage')}
-                    disabled={uploadingCover}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-            </div>
+            <ImageUploader
+              label="Cover Image Banner"
+              imageUrl={formData.coverImage}
+              imagePublicId={formData.coverImagePublicId}
+              assetType="cover"
+              onUploadSuccess={(url, publicId) => {
+                setFormData((prev) => ({ ...prev, coverImage: url, coverImagePublicId: publicId }));
+              }}
+              onRemove={() => {
+                setFormData((prev) => ({ ...prev, coverImage: '', coverImagePublicId: '' }));
+              }}
+            />
           </div>
         </div>
 

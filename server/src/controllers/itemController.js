@@ -3,6 +3,7 @@ const Restaurant = require('../models/Restaurant');
 const mockStore = require('../config/mockStore');
 const { getIsConnected } = require('../config/db');
 const { ensureDefaultMenuForRestaurant } = require('../utils/seedHelper');
+const { deleteImage } = require('../services/cloudinaryService');
 
 const getMenuItems = async (req, res) => {
   try {
@@ -66,6 +67,12 @@ const updateMenuItem = async (req, res) => {
     if (getIsConnected()) {
       const item = await MenuItem.findById(id);
       if (!item) return res.status(404).json({ message: 'Item not found' });
+
+      // Clean up old Cloudinary image if replaced
+      if (req.body.imagePublicId && item.imagePublicId && req.body.imagePublicId !== item.imagePublicId) {
+        await deleteImage(item.imagePublicId);
+      }
+
       Object.assign(item, req.body);
       await item.save();
       return res.json(item);
@@ -128,9 +135,17 @@ const deleteMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
     if (getIsConnected()) {
+      const item = await MenuItem.findById(id);
+      if (item && item.imagePublicId) {
+        await deleteImage(item.imagePublicId);
+      }
       await MenuItem.deleteOne({ _id: id });
       return res.json({ message: 'Item deleted' });
     } else {
+      const item = mockStore.menuItems.find((i) => String(i._id) === String(id));
+      if (item && item.imagePublicId) {
+        await deleteImage(item.imagePublicId);
+      }
       mockStore.menuItems = mockStore.menuItems.filter((i) => String(i._id) !== String(id));
       return res.json({ message: 'Item deleted' });
     }

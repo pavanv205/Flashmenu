@@ -1,5 +1,7 @@
 const Category = require('../models/Category');
 const MenuItem = require('../models/MenuItem');
+const Restaurant = require('../models/Restaurant');
+const User = require('../models/User');
 const mockStore = require('../config/mockStore');
 const { getIsConnected } = require('../config/db');
 const { defaultCategories } = require('./defaultMenu');
@@ -23,6 +25,7 @@ const ensureDefaultMenuForRestaurant = async (restaurantId) => {
               restaurantId,
               name: catData.name,
               order: catData.order,
+              isActive: true,
             });
           }
 
@@ -119,4 +122,66 @@ const ensureDefaultMenuForRestaurant = async (restaurantId) => {
   }
 };
 
-module.exports = { ensureDefaultMenuForRestaurant };
+const ensureSpiceGardenRestaurant = async () => {
+  try {
+    if (getIsConnected()) {
+      let restaurant = await Restaurant.findOne({
+        slug: { $regex: new RegExp('^spice-garden$', 'i') },
+      });
+
+      if (!restaurant) {
+        let user = await User.findOne({ email: 'demo@flashmenu.com' });
+        if (!user) {
+          const bcrypt = require('bcryptjs');
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash('password123', salt);
+          user = await User.create({
+            name: 'Chef Rajesh Kumar',
+            email: 'demo@flashmenu.com',
+            password: hashedPassword,
+            phone: '+91 98765 43210',
+            role: 'owner',
+          });
+        }
+
+        restaurant = await Restaurant.create({
+          ownerId: user._id,
+          name: 'Spice Garden',
+          slug: 'spice-garden',
+          tagline: 'Authentic Indian & Fusion Gastronomy',
+          description: 'Experience rich aromas, royal biryanis, and artisan tandoori bread crafted with organic spices.',
+          logo: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&auto=format&fit=crop&q=80',
+          coverImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&auto=format&fit=crop&q=80',
+          phone: '+91 98765 43210',
+          email: 'contact@spicegarden.com',
+          address: '102 Jubilee Hills Main Road',
+          city: 'Hyderabad',
+          googleMapsUrl: 'https://maps.google.com',
+          openingHours: '11:30 AM - 11:00 PM',
+          cuisineType: 'North Indian, Mughlai & Fusion',
+          primaryColor: '#F59E0B',
+          secondaryColor: '#0F172A',
+          currency: '₹',
+          tableCount: 25,
+          isActive: true,
+          isOpen: true,
+          subscriptionPlan: 'premium',
+        });
+      } else if (!restaurant.isActive) {
+        restaurant.isActive = true;
+        await restaurant.save();
+      }
+
+      await ensureDefaultMenuForRestaurant(restaurant._id);
+      return restaurant;
+    } else {
+      await mockStore.initDemoData();
+      return mockStore.restaurants.find((r) => r.slug === 'spice-garden');
+    }
+  } catch (err) {
+    console.error('Error ensuring Spice Garden demo restaurant:', err);
+    return null;
+  }
+};
+
+module.exports = { ensureDefaultMenuForRestaurant, ensureSpiceGardenRestaurant };

@@ -7,16 +7,32 @@ const CallWaiter = require('../models/CallWaiter');
 const Order = require('../models/Order');
 const mockStore = require('../config/mockStore');
 const { getIsConnected } = require('../config/db');
-const { ensureDefaultMenuForRestaurant } = require('../utils/seedHelper');
+const { ensureDefaultMenuForRestaurant, ensureSpiceGardenRestaurant } = require('../utils/seedHelper');
 const crypto = require('crypto');
 
 const getPublicMenu = async (req, res) => {
   try {
     const { slug } = req.params;
     const { table } = req.query;
+    const normalizedSlug = String(slug || '').toLowerCase().trim();
 
     if (getIsConnected()) {
-      const restaurant = await Restaurant.findOne({ slug });
+      let restaurant = await Restaurant.findOne({
+        slug: { $regex: new RegExp(`^${normalizedSlug}$`, 'i') },
+      });
+
+      if (!restaurant && (normalizedSlug === 'spice-garden' || normalizedSlug.includes('demo') || normalizedSlug.includes('spice'))) {
+        restaurant = await ensureSpiceGardenRestaurant();
+      }
+
+      if (!restaurant) {
+        // Fallback: If any active restaurant exists in MongoDB Atlas, use it for demo
+        restaurant = await Restaurant.findOne({ isActive: true });
+        if (!restaurant) {
+          restaurant = await ensureSpiceGardenRestaurant();
+        }
+      }
+
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
       // Auto-repair seed if menu items/categories are empty
@@ -51,7 +67,15 @@ const getPublicMenu = async (req, res) => {
 
       return res.json({ restaurant, categories, menuItems, tableNumber: table || null });
     } else {
-      const restaurant = mockStore.restaurants.find((r) => r.slug === slug);
+      await mockStore.initDemoData();
+      let restaurant = mockStore.restaurants.find(
+        (r) => r && r.slug && r.slug.toLowerCase() === normalizedSlug
+      );
+
+      if (!restaurant) {
+        restaurant = mockStore.restaurants.find((r) => r.slug === 'spice-garden') || mockStore.restaurants[0];
+      }
+
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
       // Auto-repair seed if menu items/categories are empty

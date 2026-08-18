@@ -68,7 +68,8 @@ export const uploadAPI = {
 
 export const adminAPI = {
   getRestaurants: () => API.get('/admin/restaurants'),
-  updatePlan: (id, subscriptionPlan) => API.put(`/admin/restaurants/${id}/plan`, { subscriptionPlan }),
+  updatePlan: (id, subscriptionPlan, secretCode) =>
+    API.put(`/admin/restaurants/${id}/plan`, { subscriptionPlan, secretCode, adminPassword: secretCode }),
   toggleStatus: (id) => API.put(`/admin/restaurants/${id}/status`),
   deleteRestaurant: (id) => API.delete(`/admin/restaurants/${id}`),
 };

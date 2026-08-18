@@ -1001,6 +1001,13 @@ const defaultCategories = [
     name: 'Drinks',
     order: 6,
     items: [
+      {
+        name: 'Mineral Water Bottle (1L)',
+        price: 20,
+        vegType: 'veg',
+        isBestseller: true,
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787036383/flashmenu/defaults/liidygqh4t4vatb9obk2.png',
+      },
       
       {
         name: 'Sprite',

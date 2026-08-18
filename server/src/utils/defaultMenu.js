@@ -298,7 +298,7 @@ const defaultCategories = [
         vegType: 'non-veg',
         spicyLevel: 2,
         subCategory: '🍗 NON VEG STARTERS',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030876/flashmenu/defaults/ygzh7fryr3aezp6elbli.webp',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032015/flashmenu/defaults/kywje66fthiytdfemfyu.png',
       },
       {
         name: 'Crispy Chicken',
@@ -506,7 +506,7 @@ const defaultCategories = [
         vegType: 'non-veg',
         spicyLevel: 2,
         subCategory: '🐟 FISH STARTERS',
-        image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032015/flashmenu/defaults/kywje66fthiytdfemfyu.png',
       },
       {
         name: 'Fish Fingers',

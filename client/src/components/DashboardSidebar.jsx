@@ -63,7 +63,7 @@ export default function DashboardSidebar({ closeMobileMenu }) {
           </div>
           <p className="text-sm font-bold text-white truncate">{restaurant.name}</p>
           <a
-            href={`/menu/${restaurant.slug}`}
+            href={`/menu/${restaurant.slug}?preview=true`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center space-x-1.5 text-xs text-brand-400 font-medium hover:underline"

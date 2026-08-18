@@ -77,7 +77,7 @@ export default function DashboardOverview() {
           </p>
         </div>
         <a
-          href={`/menu/${restaurant?.slug}`}
+          href={`/menu/${restaurant?.slug}?preview=true`}
           target="_blank"
           rel="noopener noreferrer"
           className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20"

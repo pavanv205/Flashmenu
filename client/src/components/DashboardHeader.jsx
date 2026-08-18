@@ -28,7 +28,7 @@ export default function DashboardHeader({ toggleMobileMenu }) {
       <div className="flex items-center space-x-3">
         {restaurant && (
           <a
-            href={`/menu/${restaurant.slug}`}
+            href={`/menu/${restaurant.slug}?preview=true`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-dark-base border border-dark-border text-xs font-semibold text-brand-400 hover:bg-dark-hover transition-colors"

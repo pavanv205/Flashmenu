@@ -900,13 +900,7 @@ const defaultCategories = [
         image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787034507/flashmenu/defaults/ie6s1sxakbozgo9ayjzx.jpg',
       },
       
-      {
-        name: 'Kadhai Paneer Special',
-        price: 290,
-        vegType: 'veg',
-        subCategory: '🥦 VEG MAIN COURSE',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030020/flashmenu/defaults/jthgdhnlhe2kcwxxrtlg.jpg',
-      },
+      
 
       // 🍗 NON VEG MAIN COURSE
       {

@@ -190,20 +190,7 @@ const defaultCategories = [
         subCategory: '🥗 VEG STARTERS',
         image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80',
       },
-      {
-        name: 'Masala Papad',
-        price: 80,
-        vegType: 'veg',
-        subCategory: '🥗 VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=600&q=80',
-      },
-      {
-        name: 'French Fries',
-        price: 140,
-        vegType: 'veg',
-        subCategory: '🥗 VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80',
-      },
+
 
       // 🍗 NON VEG STARTERS
       {

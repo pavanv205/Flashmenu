@@ -1013,7 +1013,7 @@ const defaultCategories = [
         price: 50,
         vegType: 'veg',
         isBestseller: true,
-        image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787036283/flashmenu/defaults/mbj9nplxfns0ri56ep3d.webp',
       },
       {
         name: 'Coca-Cola',

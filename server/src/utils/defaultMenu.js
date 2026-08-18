@@ -890,22 +890,8 @@ const defaultCategories = [
         subCategory: '🥦 VEG MAIN COURSE',
         image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787034158/flashmenu/defaults/fw4cy34ngenpszz908kt.webp',
       },
-      {
-        name: 'Tomato Pappu with Rice',
-        price: 190,
-        vegType: 'veg',
-        isBestseller: true,
-        subCategory: '🥦 VEG MAIN COURSE',
-        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80',
-      },
-      {
-        name: 'Gutti Vankaya with Rice',
-        price: 220,
-        vegType: 'veg',
-        isChefSpecial: true,
-        subCategory: '🥦 VEG MAIN COURSE',
-        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80',
-      },
+      
+      
       {
         name: 'Sambar Rice',
         price: 170,
@@ -913,14 +899,7 @@ const defaultCategories = [
         subCategory: '🥦 VEG MAIN COURSE',
         image: 'https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=600&q=80',
       },
-      {
-        name: 'Dal Makhani Signature',
-        price: 260,
-        vegType: 'veg',
-        isBestseller: true,
-        subCategory: '🥦 VEG MAIN COURSE',
-        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80',
-      },
+      
       {
         name: 'Kadhai Paneer Special',
         price: 290,

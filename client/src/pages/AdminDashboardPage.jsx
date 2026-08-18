@@ -213,6 +213,7 @@ export default function AdminDashboardPage() {
                 <tr>
                   <th className="p-4">Restaurant & Owner</th>
                   <th className="p-4">Contact</th>
+                  <th className="p-4">Joined Date</th>
                   <th className="p-4">Owner Status</th>
                   <th className="p-4">Subscription Plan</th>
                   <th className="p-4 text-right">Actions</th>
@@ -229,6 +230,28 @@ export default function AdminDashboardPage() {
                     <td className="p-4">
                       <div>{r.owner?.email || r.email || 'N/A'}</div>
                       <div className="text-[11px] text-gray-400">{r.phone || r.owner?.phone || 'No phone'}</div>
+                    </td>
+
+                    {/* Joined Date */}
+                    <td className="p-4 whitespace-nowrap">
+                      <div className="font-semibold text-gray-200">
+                        {r.createdAt
+                          ? new Date(r.createdAt).toLocaleDateString('en-IN', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })
+                          : 'N/A'}
+                      </div>
+                      <div className="text-[11px] text-gray-400 font-mono">
+                        {r.createdAt
+                          ? new Date(r.createdAt).toLocaleTimeString('en-IN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: true,
+                            })
+                          : ''}
+                      </div>
                     </td>
 
                     {/* Active / Inactive Status Toggle (Triggers Secret Code Modal) */}

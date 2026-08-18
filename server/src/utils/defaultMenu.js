@@ -1001,13 +1001,7 @@ const defaultCategories = [
     name: 'Drinks',
     order: 6,
     items: [
-      {
-        name: 'Mango Lassi Delight',
-        price: 130,
-        vegType: 'veg',
-        isBestseller: true,
-        image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=600&q=80',
-      },
+      
       {
         name: 'Sprite',
         price: 50,

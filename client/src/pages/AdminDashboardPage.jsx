@@ -9,19 +9,28 @@ import {
   ExternalLink,
   Trash2,
   CheckCircle2,
+  XCircle,
+  UserCheck,
+  UserX,
   Sparkles,
   Zap,
   RefreshCw,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
 
 export default function AdminDashboardPage() {
   const { user } = useAuth();
-  const [data, setData] = useState({ totalRestaurants: 0, premiumCount: 0, basicCount: 0, restaurants: [] });
+  const [data, setData] = useState({
+    totalRestaurants: 0,
+    activeCount: 0,
+    inactiveCount: 0,
+    premiumCount: 0,
+    basicCount: 0,
+    restaurants: [],
+  });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [planFilter, setPlanFilter] = useState('all');
+  const [filterTab, setFilterTab] = useState('all');
   const [updatingId, setUpdatingId] = useState(null);
 
   const fetchRestaurants = async () => {
@@ -53,6 +62,18 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleToggleStatus = async (restaurant) => {
+    setUpdatingId(restaurant._id);
+    try {
+      await adminAPI.toggleStatus(restaurant._id);
+      await fetchRestaurants();
+    } catch (error) {
+      alert('Failed to toggle status');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   const handleDeleteRestaurant = async (restaurant) => {
     if (
       !window.confirm(
@@ -76,14 +97,13 @@ export default function AdminDashboardPage() {
       r.owner?.name?.toLowerCase().includes(search.toLowerCase()) ||
       (r.city || '').toLowerCase().includes(search.toLowerCase());
 
-    const matchesPlan =
-      planFilter === 'all'
-        ? true
-        : planFilter === 'premium'
-        ? r.subscriptionPlan === 'premium'
-        : r.subscriptionPlan !== 'premium';
+    let matchesFilter = true;
+    if (filterTab === 'active') matchesFilter = r.isActive;
+    else if (filterTab === 'inactive') matchesFilter = !r.isActive;
+    else if (filterTab === 'premium') matchesFilter = r.subscriptionPlan === 'premium';
+    else if (filterTab === 'basic') matchesFilter = r.subscriptionPlan !== 'premium';
 
-    return matchesSearch && matchesPlan;
+    return matchesSearch && matchesFilter;
   });
 
   return (
@@ -111,8 +131,8 @@ export default function AdminDashboardPage() {
         </button>
       </div>
 
-      {/* Overview Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Overview Stats Cards Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         <div className="p-5 rounded-3xl bg-dark-card border border-dark-border space-y-2">
           <div className="flex items-center justify-between text-gray-400">
             <span className="text-xs font-bold uppercase tracking-wider">Total Registered</span>
@@ -122,13 +142,31 @@ export default function AdminDashboardPage() {
           <span className="text-[11px] text-gray-500">Customer Restaurants</span>
         </div>
 
+        <div className="p-5 rounded-3xl bg-dark-card border border-emerald-500/30 space-y-2">
+          <div className="flex items-center justify-between text-emerald-400">
+            <span className="text-xs font-bold uppercase tracking-wider">Active Owners</span>
+            <UserCheck className="w-5 h-5 text-emerald-400" />
+          </div>
+          <p className="text-3xl font-black text-emerald-400">{data.activeCount}</p>
+          <span className="text-[11px] text-emerald-400/80 font-semibold">Online & Operating</span>
+        </div>
+
+        <div className="p-5 rounded-3xl bg-dark-card border border-red-500/30 space-y-2">
+          <div className="flex items-center justify-between text-red-400">
+            <span className="text-xs font-bold uppercase tracking-wider">Inactive Owners</span>
+            <UserX className="w-5 h-5 text-red-400" />
+          </div>
+          <p className="text-3xl font-black text-red-400">{data.inactiveCount}</p>
+          <span className="text-[11px] text-red-400/80 font-semibold">Paused / Offline</span>
+        </div>
+
         <div className="p-5 rounded-3xl bg-dark-card border border-amber-500/30 space-y-2 gold-glow">
           <div className="flex items-center justify-between text-amber-400">
             <span className="text-xs font-bold uppercase tracking-wider">Premium Plan</span>
             <Crown className="w-5 h-5 text-amber-400 fill-amber-400" />
           </div>
           <p className="text-3xl font-black text-amber-400">{data.premiumCount}</p>
-          <span className="text-[11px] text-amber-400/80 font-semibold">Active Premium Subscriptions</span>
+          <span className="text-[11px] text-amber-400/80 font-semibold">Active Subscriptions</span>
         </div>
 
         <div className="p-5 rounded-3xl bg-dark-card border border-dark-border space-y-2">
@@ -138,15 +176,6 @@ export default function AdminDashboardPage() {
           </div>
           <p className="text-3xl font-black text-white">{data.basicCount}</p>
           <span className="text-[11px] text-gray-500">Free Tier Customers</span>
-        </div>
-
-        <div className="p-5 rounded-3xl bg-dark-card border border-dark-border space-y-2">
-          <div className="flex items-center justify-between text-gray-400">
-            <span className="text-xs font-bold uppercase tracking-wider">Master Status</span>
-            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-          </div>
-          <p className="text-xl font-extrabold text-emerald-400">SUPER ADMIN</p>
-          <span className="text-[11px] text-gray-500">{user?.email || 'admin@flashmenu.com'}</span>
         </div>
       </div>
 
@@ -170,19 +199,19 @@ export default function AdminDashboardPage() {
               />
             </div>
 
-            {/* Filter Pills */}
-            <div className="flex rounded-xl bg-dark-base p-1 border border-dark-border">
-              {['all', 'premium', 'basic'].map((f) => (
+            {/* Filter Tabs */}
+            <div className="flex flex-wrap rounded-xl bg-dark-base p-1 border border-dark-border">
+              {['all', 'active', 'inactive', 'premium', 'basic'].map((tab) => (
                 <button
-                  key={f}
-                  onClick={() => setPlanFilter(f)}
+                  key={tab}
+                  onClick={() => setFilterTab(tab)}
                   className={`px-3 py-1 rounded-lg text-xs font-bold capitalize transition-all ${
-                    planFilter === f
+                    filterTab === tab
                       ? 'bg-amber-500 text-black shadow-md'
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
-                  {f}
+                  {tab}
                 </button>
               ))}
             </div>
@@ -205,8 +234,8 @@ export default function AdminDashboardPage() {
                 <tr>
                   <th className="p-4">Restaurant & Owner</th>
                   <th className="p-4">Contact</th>
-                  <th className="p-4">Menu Items</th>
-                  <th className="p-4">Current Plan</th>
+                  <th className="p-4">Owner Status</th>
+                  <th className="p-4">Subscription Plan</th>
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -222,11 +251,34 @@ export default function AdminDashboardPage() {
                       <div>{r.owner?.email || r.email || 'N/A'}</div>
                       <div className="text-[11px] text-gray-400">{r.phone || r.owner?.phone || 'No phone'}</div>
                     </td>
-                    <td className="p-4 font-bold text-white">
-                      <span className="px-2.5 py-1 rounded-lg bg-dark-base border border-dark-border">
-                        {r.itemCount} Items
-                      </span>
+
+                    {/* Active / Inactive Status Toggle */}
+                    <td className="p-4">
+                      <button
+                        onClick={() => handleToggleStatus(r)}
+                        disabled={updatingId === r._id}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 border transition-all ${
+                          r.isActive
+                            ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 hover:bg-emerald-500 hover:text-black'
+                            : 'bg-red-500/20 text-red-400 border-red-500/40 hover:bg-red-500 hover:text-white'
+                        }`}
+                        title="Click to toggle Active / Inactive owner status"
+                      >
+                        {r.isActive ? (
+                          <>
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>ACTIVE OWNER</span>
+                          </>
+                        ) : (
+                          <>
+                            <XCircle className="w-3.5 h-3.5" />
+                            <span>INACTIVE OWNER</span>
+                          </>
+                        )}
+                      </button>
                     </td>
+
+                    {/* Subscription Plan Toggle */}
                     <td className="p-4">
                       <button
                         onClick={() => handleTogglePlan(r)}
@@ -236,7 +288,7 @@ export default function AdminDashboardPage() {
                             ? 'bg-amber-500/20 text-amber-400 border-amber-500/40 hover:bg-amber-500 hover:text-black'
                             : 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40 hover:bg-cyan-500 hover:text-black'
                         }`}
-                        title="Click to toggle plan"
+                        title="Click to toggle Basic / Premium subscription plan"
                       >
                         {r.subscriptionPlan === 'premium' ? (
                           <>
@@ -248,6 +300,7 @@ export default function AdminDashboardPage() {
                         )}
                       </button>
                     </td>
+
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <a

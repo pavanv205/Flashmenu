@@ -14,6 +14,7 @@ const getAllRestaurants = async (req, res) => {
       const restaurantList = await Promise.all(
         restaurants.map(async (r) => {
           const itemCount = await MenuItem.countDocuments({ restaurantId: r._id });
+          const isActive = r.isActive !== false && r.isOpen !== false;
           return {
             _id: r._id,
             name: r.name,
@@ -21,6 +22,7 @@ const getAllRestaurants = async (req, res) => {
             city: r.city,
             phone: r.phone,
             subscriptionPlan: r.subscriptionPlan || 'basic',
+            isActive,
             itemCount,
             createdAt: r.createdAt,
             owner: r.ownerId
@@ -37,6 +39,8 @@ const getAllRestaurants = async (req, res) => {
 
       return res.json({
         totalRestaurants: restaurantList.length,
+        activeCount: restaurantList.filter((r) => r.isActive).length,
+        inactiveCount: restaurantList.filter((r) => !r.isActive).length,
         premiumCount: restaurantList.filter((r) => r.subscriptionPlan === 'premium').length,
         basicCount: restaurantList.filter((r) => r.subscriptionPlan !== 'premium').length,
         restaurants: restaurantList,
@@ -45,6 +49,7 @@ const getAllRestaurants = async (req, res) => {
       const restaurantList = mockStore.restaurants.map((r) => {
         const owner = mockStore.users.find((u) => u._id === r.ownerId);
         const itemCount = mockStore.menuItems.filter((i) => i.restaurantId === r._id).length;
+        const isActive = r.isActive !== false && r.isOpen !== false;
         return {
           _id: r._id,
           name: r.name,
@@ -52,6 +57,7 @@ const getAllRestaurants = async (req, res) => {
           city: r.city,
           phone: r.phone,
           subscriptionPlan: r.subscriptionPlan || 'basic',
+          isActive,
           itemCount,
           createdAt: new Date(),
           owner: owner
@@ -62,6 +68,8 @@ const getAllRestaurants = async (req, res) => {
 
       return res.json({
         totalRestaurants: restaurantList.length,
+        activeCount: restaurantList.filter((r) => r.isActive).length,
+        inactiveCount: restaurantList.filter((r) => !r.isActive).length,
         premiumCount: restaurantList.filter((r) => r.subscriptionPlan === 'premium').length,
         basicCount: restaurantList.filter((r) => r.subscriptionPlan !== 'premium').length,
         restaurants: restaurantList,
@@ -100,6 +108,39 @@ const updateRestaurantPlan = async (req, res) => {
   }
 };
 
+// Toggle Owner Status (Active <-> Inactive)
+const toggleRestaurantStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (getIsConnected()) {
+      const restaurant = await Restaurant.findById(id);
+      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+
+      const currentStatus = restaurant.isActive !== false && restaurant.isOpen !== false;
+      const nextStatus = !currentStatus;
+
+      restaurant.isActive = nextStatus;
+      restaurant.isOpen = nextStatus;
+      await restaurant.save();
+
+      return res.json({ message: `Owner status updated to ${nextStatus ? 'ACTIVE' : 'INACTIVE'}`, restaurant });
+    } else {
+      const restaurant = mockStore.restaurants.find((r) => r._id === id);
+      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+
+      const currentStatus = restaurant.isActive !== false && restaurant.isOpen !== false;
+      const nextStatus = !currentStatus;
+
+      restaurant.isActive = nextStatus;
+      restaurant.isOpen = nextStatus;
+      return res.json({ message: `Owner status updated to ${nextStatus ? 'ACTIVE' : 'INACTIVE'}`, restaurant });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Delete Restaurant & Associated Data
 const deleteRestaurant = async (req, res) => {
   try {
@@ -126,4 +167,4 @@ const deleteRestaurant = async (req, res) => {
   }
 };
 
-module.exports = { getAllRestaurants, updateRestaurantPlan, deleteRestaurant };
+module.exports = { getAllRestaurants, updateRestaurantPlan, toggleRestaurantStatus, deleteRestaurant };

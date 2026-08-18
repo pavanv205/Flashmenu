@@ -29,6 +29,7 @@ const restaurantSchema = new mongoose.Schema(
       website: { type: String, default: '' },
     },
     isOpen: { type: Boolean, default: true },
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

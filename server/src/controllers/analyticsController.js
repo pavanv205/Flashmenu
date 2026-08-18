@@ -38,7 +38,7 @@ const getDashboardOverview = async (req, res) => {
         last7Days.push({ date: dayName, views: dayViews });
       }
 
-      const topItems = await MenuItem.find({ restaurantId }).sort({ isBestseller: -1, price: -1 }).limit(5);
+      const topItems = await MenuItem.find({ restaurantId }).sort({ isBestseller: -1, price: -1 }).limit(6);
       const recentFeedback = await Feedback.find({ restaurantId }).sort({ createdAt: -1 }).limit(5);
       const waiterCalls = await CallWaiter.find({ restaurantId, status: 'pending' }).sort({ createdAt: -1 });
 

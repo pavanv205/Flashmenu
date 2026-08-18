@@ -214,7 +214,7 @@ export default function DashboardOverview() {
         <div className="lg:col-span-4 p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
           <h3 className="text-lg font-bold text-white">Popular Menu Items</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
-            {topItems.map((item) => (
+            {topItems.slice(0, 6).map((item) => (
               <div
                 key={item._id}
                 className="p-3 rounded-2xl bg-dark-base border border-dark-border flex items-center space-x-3"

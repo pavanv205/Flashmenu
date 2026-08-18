@@ -655,14 +655,14 @@ const defaultCategories = [
         vegType: 'veg',
         isBestseller: true,
         subCategory: '🥦 VEG BIRYANI',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030020/flashmenu/defaults/jthgdhnlhe2kcwxxrtlg.jpg',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787033233/flashmenu/defaults/ufsm8weanmqtjawtssi2.jpg',
       },
       {
         name: 'Paneer Tikka Biryani',
         price: 310,
         vegType: 'veg',
         subCategory: '🥦 VEG BIRYANI',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030020/flashmenu/defaults/jthgdhnlhe2kcwxxrtlg.jpg',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787033233/flashmenu/defaults/ufsm8weanmqtjawtssi2.jpg',
       },
       {
         name: 'Mushroom Biryani',
@@ -698,7 +698,7 @@ const defaultCategories = [
         price: 340,
         vegType: 'veg',
         subCategory: '🥦 VEG BIRYANI',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030020/flashmenu/defaults/jthgdhnlhe2kcwxxrtlg.jpg',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787033233/flashmenu/defaults/ufsm8weanmqtjawtssi2.jpg',
       },
       
       {

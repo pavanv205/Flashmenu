@@ -17,6 +17,7 @@ import {
   Crown,
 } from 'lucide-react';
 import DemoPaymentModal from '../components/DemoPaymentModal';
+import { useAuth } from '../context/AuthContext';
 
 export default function SignupPage() {
   const [step, setStep] = useState(1); // 1 = Registration Form, 2 = Select Subscription Plan

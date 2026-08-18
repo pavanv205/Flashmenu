@@ -950,14 +950,7 @@ const defaultCategories = [
         subCategory: '🍗 NON VEG MAIN COURSE',
         image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787035144/flashmenu/defaults/rs6cmpgfpdhrmnec2k4s.jpg',
       },
-      {
-        name: 'Butter Chicken Grand Style',
-        price: 360,
-        vegType: 'non-veg',
-        isBestseller: true,
-        subCategory: '🍗 NON VEG MAIN COURSE',
-        image: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=600&q=80',
-      },
+      
     ],
   },
   {

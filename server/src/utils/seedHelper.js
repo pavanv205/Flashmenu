@@ -10,6 +10,7 @@ const ensureDefaultMenuForRestaurant = async (restaurantId) => {
   try {
     if (getIsConnected()) {
       let items = await MenuItem.find({ restaurantId });
+
       if (items.length === 0) {
         let existingCategories = await Category.find({ restaurantId });
 
@@ -33,6 +34,7 @@ const ensureDefaultMenuForRestaurant = async (restaurantId) => {
               name: item.name,
               description: item.description || '',
               price: item.price,
+              image: item.image || '',
               vegType: item.vegType || 'veg',
               spicyLevel: item.spicyLevel || 0,
               isBestseller: Boolean(item.isBestseller),
@@ -42,6 +44,28 @@ const ensureDefaultMenuForRestaurant = async (restaurantId) => {
             }));
             await MenuItem.insertMany(itemDocs);
           }
+        }
+      } else {
+        // Auto-update missing images on existing items from defaultCategories map
+        const bulkUpdates = [];
+        for (const defaultCat of defaultCategories) {
+          for (const defaultItem of defaultCat.items) {
+            if (defaultItem.image) {
+              bulkUpdates.push({
+                updateMany: {
+                  filter: {
+                    restaurantId,
+                    name: defaultItem.name,
+                    $or: [{ image: '' }, { image: { $exists: false } }],
+                  },
+                  update: { $set: { image: defaultItem.image } },
+                },
+              });
+            }
+          }
+        }
+        if (bulkUpdates.length > 0) {
+          await MenuItem.bulkWrite(bulkUpdates);
         }
       }
     } else {
@@ -77,6 +101,7 @@ const ensureDefaultMenuForRestaurant = async (restaurantId) => {
                 name: item.name,
                 description: item.description || '',
                 price: item.price,
+                image: item.image || '',
                 vegType: item.vegType || 'veg',
                 spicyLevel: item.spicyLevel || 0,
                 isBestseller: Boolean(item.isBestseller),

@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Zap, Mail, Lock, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Zap, Mail, Lock, ArrowRight, Code, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
+  const [searchParams] = useSearchParams();
+  const isDevMode = searchParams.get('dev') === 'true';
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,14 +15,21 @@ export default function LoginPage() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       navigate('/dashboard');
     }
   }, [user, navigate]);
 
+  useEffect(() => {
+    if (isDevMode) {
+      setEmail('demo@flashmenu.com');
+      setPassword('password123');
+    }
+  }, [isDevMode]);
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setError('');
     setLoading(true);
     try {
@@ -27,6 +37,19 @@ export default function LoginPage() {
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid email or password');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDevLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      await login('demo@flashmenu.com', 'password123');
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Developer login failed');
     } finally {
       setLoading(false);
     }
@@ -42,10 +65,16 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
               <Zap className="w-6 h-6 text-black fill-black" />
             </div>
-            <span className="font-extrabold text-2xl text-white">Flash<span className="gold-gradient-text">Menu</span></span>
+            <span className="font-extrabold text-2xl text-white">
+              Flash<span className="gold-gradient-text">Menu</span>
+            </span>
           </Link>
-          <h2 className="text-xl font-bold text-white pt-2">Restaurant Admin Login</h2>
-          <p className="text-xs text-gray-400">Sign in to manage your digital restaurant menu & dashboard</p>
+          <h2 className="text-xl font-bold text-white pt-2">
+            {isDevMode ? 'Developer Quick Access' : 'Welcome Back'}
+          </h2>
+          <p className="text-xs text-gray-400">
+            {isDevMode ? 'Sign in with Developer Admin credentials' : 'Sign in to manage your digital restaurant menu'}
+          </p>
         </div>
 
         {error && (
@@ -99,14 +128,26 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Demo credentials hint */}
-        <div className="p-3 bg-dark-base rounded-xl border border-dark-border text-center space-y-1">
-          <p className="text-[11px] font-semibold text-amber-400 uppercase tracking-wider">Demo Credentials</p>
-          <p className="text-xs text-gray-300">Email: <span className="font-mono text-white">demo@flashmenu.com</span></p>
-          <p className="text-xs text-gray-300">Password: <span className="font-mono text-white">password123</span></p>
+        {/* Developer One-Click Access Button */}
+        <div className="pt-2 border-t border-dark-border space-y-3">
+          <button
+            type="button"
+            onClick={handleDevLogin}
+            disabled={loading}
+            className="w-full py-3 rounded-2xl bg-dark-base border-2 border-amber-500/40 hover:border-amber-500 text-amber-400 hover:text-white font-extrabold text-xs transition-all flex items-center justify-center space-x-2 shadow-lg shadow-amber-500/10"
+          >
+            <Code className="w-4 h-4 text-amber-400" />
+            <span>⚡ One-Click Developer Login</span>
+          </button>
+
+          <div className="p-3 bg-dark-base/80 rounded-xl border border-dark-border text-center space-y-1">
+            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Dev Admin Credentials</p>
+            <p className="text-[11px] text-gray-300">Email: <span className="font-mono text-white">demo@flashmenu.com</span></p>
+            <p className="text-[11px] text-gray-300">Password: <span className="font-mono text-white">password123</span></p>
+          </div>
         </div>
 
-        <p className="text-center text-xs text-gray-400 pt-2">
+        <p className="text-center text-xs text-gray-400 pt-1">
           Don't have a FlashMenu account?{' '}
           <Link to="/signup" className="text-amber-400 font-bold hover:underline">
             Register Restaurant

@@ -15,8 +15,11 @@ import {
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 
+import { Link, useNavigate } from 'react-router-dom';
+
 export default function DashboardOverview() {
-  const { restaurant } = useAuth();
+  const { user, restaurant } = useAuth();
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -34,10 +37,14 @@ export default function DashboardOverview() {
   };
 
   useEffect(() => {
+    if (user?.role === 'admin') {
+      navigate('/dashboard/admin');
+      return;
+    }
     fetchOverview();
     const interval = setInterval(fetchOverview, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user, navigate]);
 
   const handleResolveCall = async (id) => {
     try {

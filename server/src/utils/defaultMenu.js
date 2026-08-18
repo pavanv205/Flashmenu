@@ -714,27 +714,9 @@ const defaultCategories = [
         subCategory: '🥦 VEG BIRYANI',
         image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
       },
-      {
-        name: 'Jackfruit Biryani',
-        price: 290,
-        vegType: 'veg',
-        subCategory: '🥦 VEG BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
-      },
-      {
-        name: 'Soya Chaap Biryani',
-        price: 280,
-        vegType: 'veg',
-        subCategory: '🥦 VEG BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
-      },
-      {
-        name: 'Eggless Special Biryani',
-        price: 290,
-        vegType: 'veg',
-        subCategory: '🥦 VEG BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
-      },
+      
+      
+      
 
       // 🍗 CHICKEN BIRYANI
       {

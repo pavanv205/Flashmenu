@@ -105,7 +105,7 @@ export default function QRCodesPage() {
               <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 to-amber-400/5 border border-amber-500/30 space-y-2">
                 <div className="flex items-center space-x-1.5 text-xs font-extrabold text-amber-400">
                   <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
-                  <span>Table-Specific QR Codes (Table 1 to 50)</span>
+                  <span>Table-Specific QR Codes (Table 1 to 25)</span>
                 </div>
                 <p className="text-[11px] text-gray-400 leading-snug">
                   Want individual table numbers printed on QR stickers for instant waiter calls & ordering?
@@ -126,13 +126,13 @@ export default function QRCodesPage() {
                 <span>Select Table Number</span>
               </h3>
               <p className="text-xs text-gray-400">
-                Leave blank for the master restaurant QR code or select a table number (1 to {restaurant.tableCount || 20}) for table-specific ordering.
+                Leave blank for the master restaurant QR code or select a table number (1 to {restaurant.tableCount || 25}) for table-specific ordering.
               </p>
 
               <input
                 type="number"
                 min="1"
-                max="100"
+                max="25"
                 placeholder="e.g. 5 (Leave blank for Master QR)"
                 value={selectedTable}
                 onChange={(e) => setSelectedTable(e.target.value)}

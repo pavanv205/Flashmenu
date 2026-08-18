@@ -24,7 +24,7 @@ export default function ProfilePage() {
     primaryColor: '#F59E0B',
     secondaryColor: '#0F172A',
     currency: '₹',
-    tableCount: 20,
+    tableCount: 25,
   });
 
   const [loading, setLoading] = useState(false);
@@ -50,7 +50,7 @@ export default function ProfilePage() {
         primaryColor: restaurant.primaryColor || '#F59E0B',
         secondaryColor: restaurant.secondaryColor || '#0F172A',
         currency: restaurant.currency || '₹',
-        tableCount: restaurant.tableCount || 20,
+        tableCount: restaurant.tableCount || 25,
       });
     }
   }, [restaurant]);

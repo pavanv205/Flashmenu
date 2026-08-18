@@ -12,8 +12,7 @@ import {
   XCircle,
   UserCheck,
   UserX,
-  Sparkles,
-  Zap,
+  Lock,
   RefreshCw,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -33,6 +32,11 @@ export default function AdminDashboardPage() {
   const [filterTab, setFilterTab] = useState('all');
   const [updatingId, setUpdatingId] = useState(null);
 
+  // Security Password Modal State
+  const [planModalTarget, setPlanModalTarget] = useState(null);
+  const [adminPasswordInput, setAdminPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
   const fetchRestaurants = async () => {
     try {
       setLoading(true);
@@ -48,19 +52,6 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     fetchRestaurants();
   }, []);
-
-  const handleTogglePlan = async (restaurant) => {
-    const newPlan = restaurant.subscriptionPlan === 'premium' ? 'basic' : 'premium';
-    setUpdatingId(restaurant._id);
-    try {
-      await adminAPI.updatePlan(restaurant._id, newPlan);
-      await fetchRestaurants();
-    } catch (error) {
-      alert('Failed to update plan');
-    } finally {
-      setUpdatingId(null);
-    }
-  };
 
   const handleToggleStatus = async (restaurant) => {
     setUpdatingId(restaurant._id);
@@ -278,17 +269,21 @@ export default function AdminDashboardPage() {
                       </button>
                     </td>
 
-                    {/* Subscription Plan Toggle */}
+                    {/* Subscription Plan Toggle (Triggers Security Password Modal) */}
                     <td className="p-4">
                       <button
-                        onClick={() => handleTogglePlan(r)}
+                        onClick={() => {
+                          setPlanModalTarget(r);
+                          setAdminPasswordInput('');
+                          setPasswordError('');
+                        }}
                         disabled={updatingId === r._id}
                         className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 border transition-all ${
                           r.subscriptionPlan === 'premium'
                             ? 'bg-amber-500/20 text-amber-400 border-amber-500/40 hover:bg-amber-500 hover:text-black'
                             : 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40 hover:bg-cyan-500 hover:text-black'
                         }`}
-                        title="Click to toggle Basic / Premium subscription plan"
+                        title="Click to change subscription plan (Password required)"
                       >
                         {r.subscriptionPlan === 'premium' ? (
                           <>
@@ -330,6 +325,81 @@ export default function AdminDashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Plan Security Password Verification Modal */}
+      {planModalTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-dark-card border-2 border-amber-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 text-center gold-glow">
+            <div className="w-16 h-16 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center mx-auto">
+              <Lock className="w-8 h-8" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl font-extrabold text-white">Admin Security Password Required</h3>
+              <p className="text-xs text-gray-300 leading-relaxed">
+                Enter admin security password to change subscription plan for <strong className="text-white">"{planModalTarget.name}"</strong> to{' '}
+                <strong className={planModalTarget.subscriptionPlan === 'premium' ? 'text-cyan-400 font-black' : 'text-amber-400 font-black'}>
+                  {planModalTarget.subscriptionPlan === 'premium' ? 'BASIC' : 'PREMIUM'}
+                </strong>.
+              </p>
+            </div>
+
+            {passwordError && (
+              <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold text-center">
+                {passwordError}
+              </div>
+            )}
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setPasswordError('');
+                try {
+                  const targetId = planModalTarget._id;
+                  const newPlan = planModalTarget.subscriptionPlan === 'premium' ? 'basic' : 'premium';
+                  await adminAPI.updatePlan(targetId, newPlan, adminPasswordInput);
+                  setPlanModalTarget(null);
+                  fetchRestaurants();
+                } catch (err) {
+                  setPasswordError(err.response?.data?.message || 'Invalid admin security password');
+                }
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1 text-left">
+                  Admin Password *
+                </label>
+                <input
+                  type="password"
+                  required
+                  autoFocus
+                  placeholder="Enter security password"
+                  value={adminPasswordInput}
+                  onChange={(e) => setAdminPasswordInput(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500 font-mono text-center tracking-widest"
+                />
+              </div>
+
+              <div className="flex space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setPlanModalTarget(null)}
+                  className="flex-1 py-3 rounded-2xl bg-dark-base border border-dark-border text-gray-300 hover:text-white font-bold text-xs transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20"
+                >
+                  Verify & Update Plan
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

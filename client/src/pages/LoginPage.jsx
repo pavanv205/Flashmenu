@@ -33,7 +33,7 @@ export default function LoginPage({ initialRole }) {
     setError('');
     if (role === 'admin') {
       setEmail('admin@flashmenu.com');
-      setPassword('admin123');
+      setPassword('Pavan@2193');
     } else {
       setEmail('');
       setPassword('');
@@ -170,7 +170,7 @@ export default function LoginPage({ initialRole }) {
               Email: <span className="font-mono text-white">admin@flashmenu.com</span>
             </p>
             <p className="text-xs text-gray-300">
-              Password: <span className="font-mono text-white">admin123</span>
+              Password: <span className="font-mono text-white">Pavan@2193</span>
             </p>
           </div>
         ) : (

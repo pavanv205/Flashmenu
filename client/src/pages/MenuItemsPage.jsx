@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { categoryAPI, itemAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { getSubCategory } from '../utils/categoryHelper';
-import { REGIONAL_CATALOG } from '../data/regionalCatalog';
-import { normalizeCategorySlug, normalizeDishSlug, getMenuItemImage, handleImageErrorCascade } from '../utils/imageHelper';
 import ImageUploader from '../components/ImageUploader';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import {
@@ -113,24 +111,6 @@ export default function MenuItemsPage() {
     setIsModalOpen(true);
   };
 
-  const handleApplySuggestion = (sugg) => {
-    const activeModalCatObj = categories.find((c) => c._id === formData.categoryId);
-    const activeModalCatName = activeModalCatObj ? activeModalCatObj.name : '';
-
-    setFormData((prev) => ({
-      ...prev,
-      name: sugg.name,
-      subCategory: sugg.subCategory || prev.subCategory,
-      vegType: sugg.vegType || prev.vegType,
-      spicyLevel: sugg.spicyLevel !== undefined ? sugg.spicyLevel : prev.spicyLevel,
-      price: prev.price || sugg.defaultPrice || '',
-      description: prev.description || sugg.description || '',
-      image: prev.image || getMenuItemImage(sugg, activeModalCatName),
-      isBestseller: sugg.isBestseller !== undefined ? sugg.isBestseller : prev.isBestseller,
-      isChefSpecial: sugg.isChefSpecial !== undefined ? sugg.isChefSpecial : prev.isChefSpecial,
-    }));
-  };
-
   const handleSaveItem = async (e) => {
     e.preventDefault();
     try {
@@ -221,17 +201,6 @@ export default function MenuItemsPage() {
     selectedSubCategory === 'all'
       ? categoryItems
       : categoryItems.filter((i) => i.computedSubCategory === selectedSubCategory);
-
-  // Calculate suggestions for active category in modal (Duplicate Prevention)
-  const activeModalCatObj = categories.find((c) => c._id === formData.categoryId);
-  const activeModalCatName = activeModalCatObj ? activeModalCatObj.name : '';
-  const existingNormalizedNames = new Set(items.map((i) => normalizeDishSlug(i.name)));
-
-  const suggestions = REGIONAL_CATALOG.filter((catItem) => {
-    const isCatMatch = normalizeCategorySlug(catItem.category) === normalizeCategorySlug(activeModalCatName);
-    const isDuplicate = existingNormalizedNames.has(normalizeDishSlug(catItem.name));
-    return isCatMatch && !isDuplicate;
-  }).slice(0, 10);
 
   if (loading) {
     return (
@@ -344,154 +313,156 @@ export default function MenuItemsPage() {
                   <p className="text-xs text-gray-400">Click "Add New Menu Item" above to add dishes to your menu.</p>
                 </div>
               ) : (
-                filteredItems.map((item, index) => {
-                  const displayImage = getMenuItemImage(item, currentCategoryName);
-                  return (
-                    <Draggable key={item._id} draggableId={item._id} index={index}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          className={`p-4 rounded-3xl bg-dark-card border transition-all flex flex-col justify-between relative group ${
-                            item.isAvailable
-                              ? 'border-dark-border hover:border-amber-500/40'
-                              : 'border-red-500/40 bg-red-950/10'
-                          }`}
-                        >
-                          <div>
-                            {/* Item Top Row with Drag Handle */}
-                            <div className="flex items-center justify-between mb-3">
-                              <div {...provided.dragHandleProps} className="text-gray-500 hover:text-white cursor-grab">
-                                <GripVertical className="w-5 h-5" />
-                              </div>
-
-                              {/* Veg / Non-Veg badge */}
-                              <div className="flex items-center space-x-2">
-                                {item.vegType === 'veg' ? (
-                                  <span className="w-4 h-4 rounded-sm border border-emerald-500 flex items-center justify-center p-0.5" title="Vegetarian">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                  </span>
-                                ) : (
-                                  <span className="w-4 h-4 rounded-sm border border-red-500 flex items-center justify-center p-0.5" title="Non-Vegetarian">
-                                    <span className="w-0 h-0 border-l-[3px] border-l-transparent border-r-[3px] border-r-transparent border-b-[6px] border-b-red-500"></span>
-                                  </span>
-                                )}
-
-                                {/* Instant Availability Toggle Switch */}
-                                <button
-                                  onClick={() => handleToggleAvailable(item._id)}
-                                  className={`px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider flex items-center space-x-1.5 transition-all ${
-                                    item.isAvailable
-                                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-black'
-                                      : 'bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500 hover:text-white'
-                                  }`}
-                                >
-                                  {item.isAvailable ? (
-                                    <>
-                                      <CheckCircle2 className="w-3.5 h-3.5" />
-                                      <span>Available</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <XCircle className="w-3.5 h-3.5" />
-                                      <span>SOLD OUT</span>
-                                    </>
-                                  )}
-                                </button>
-                              </div>
+                filteredItems.map((item, index) => (
+                  <Draggable key={item._id} draggableId={item._id} index={index}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className={`p-4 rounded-3xl bg-dark-card border transition-all flex flex-col justify-between relative group ${
+                          item.isAvailable
+                            ? 'border-dark-border hover:border-amber-500/40'
+                            : 'border-red-500/40 bg-red-950/10'
+                        }`}
+                      >
+                        <div>
+                          {/* Item Top Row with Drag Handle */}
+                          <div className="flex items-center justify-between mb-3">
+                            <div {...provided.dragHandleProps} className="text-gray-500 hover:text-white cursor-grab">
+                              <GripVertical className="w-5 h-5" />
                             </div>
 
-                            {/* Image & Main Info */}
-                            <div className="flex space-x-3 mb-3">
+                            {/* Veg / Non-Veg badge */}
+                            <div className="flex items-center space-x-2">
+                              {item.vegType === 'veg' ? (
+                                <span className="w-4 h-4 rounded-sm border border-emerald-500 flex items-center justify-center p-0.5" title="Vegetarian">
+                                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                </span>
+                              ) : (
+                                <span className="w-4 h-4 rounded-sm border border-red-500 flex items-center justify-center p-0.5" title="Non-Vegetarian">
+                                  <span className="w-0 h-0 border-l-[3px] border-l-transparent border-r-[3px] border-r-transparent border-b-[6px] border-b-red-500"></span>
+                                </span>
+                              )}
+
+                              {/* Instant Availability Toggle Switch */}
+                              <button
+                                onClick={() => handleToggleAvailable(item._id)}
+                                className={`px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider flex items-center space-x-1.5 transition-all ${
+                                  item.isAvailable
+                                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-black'
+                                    : 'bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500 hover:text-white'
+                                }`}
+                              >
+                                {item.isAvailable ? (
+                                  <>
+                                    <CheckCircle2 className="w-3.5 h-3.5" />
+                                    <span>Available</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <XCircle className="w-3.5 h-3.5" />
+                                    <span>SOLD OUT</span>
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Image & Main Info */}
+                          <div className="flex space-x-3 mb-3">
+                            {item.image ? (
                               <img
-                                src={displayImage}
+                                src={item.image}
                                 alt={item.name}
-                                onError={(e) => handleImageErrorCascade(e, item, currentCategoryName)}
                                 className={`w-20 h-20 rounded-2xl object-cover border border-dark-border ${
                                   !item.isAvailable && 'grayscale opacity-60'
                                 }`}
                               />
+                            ) : (
+                              <div className="w-20 h-20 rounded-2xl bg-dark-base border border-dark-border flex items-center justify-center text-gray-600">
+                                <ImageIcon className="w-8 h-8" />
+                              </div>
+                            )}
 
-                              <div className="flex-1 min-w-0">
-                                <h3 className="text-sm font-bold text-white truncate">{item.name}</h3>
-                                {item.computedSubCategory && (
-                                  <span className="inline-block text-[10px] font-black text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/30 mt-0.5 mb-1">
-                                    {item.computedSubCategory}
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-sm font-bold text-white truncate">{item.name}</h3>
+                              {item.computedSubCategory && (
+                                <span className="inline-block text-[10px] font-black text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/30 mt-0.5 mb-1">
+                                  {item.computedSubCategory}
+                                </span>
+                              )}
+                              <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">
+                                {item.description || 'No description'}
+                              </p>
+
+                              <div className="flex items-baseline space-x-2 mt-2">
+                                <span className="text-base font-extrabold text-amber-400">
+                                  {restaurant?.currency || '₹'}{item.discountPrice || item.price}
+                                </span>
+                                {item.discountPrice && (
+                                  <span className="text-xs text-gray-500 line-through">
+                                    {restaurant?.currency || '₹'}{item.price}
                                   </span>
                                 )}
-                                <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">
-                                  {item.description || 'No description'}
-                                </p>
-
-                                <div className="flex items-baseline space-x-2 mt-2">
-                                  <span className="text-base font-extrabold text-amber-400">
-                                    {restaurant?.currency || '₹'}{item.discountPrice || item.price}
-                                  </span>
-                                  {item.discountPrice && (
-                                    <span className="text-xs text-gray-500 line-through">
-                                      {restaurant?.currency || '₹'}{item.price}
-                                    </span>
-                                  )}
-                                </div>
                               </div>
                             </div>
-
-                            {/* Badges */}
-                            <div className="flex flex-wrap gap-1.5 mb-3">
-                              {item.isBestseller && (
-                                <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold">
-                                  Bestseller
-                                </span>
-                              )}
-                              {item.isChefSpecial && (
-                                <span className="px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-400 border border-purple-500/30 text-[10px] font-bold">
-                                  Chef Special
-                                </span>
-                              )}
-                              {item.isNewItem && (
-                                <span className="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-[10px] font-bold">
-                                  NEW
-                                </span>
-                              )}
-                              {item.spicyLevel > 0 && (
-                                <span className="px-2 py-0.5 rounded-md bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-bold flex items-center space-x-0.5">
-                                  <Flame className="w-3 h-3" />
-                                  <span>Spicy Lvl {item.spicyLevel}</span>
-                                </span>
-                              )}
-                            </div>
                           </div>
 
-                          {/* Bottom Actions */}
-                          <div className="pt-3 border-t border-dark-border flex items-center justify-between text-xs text-gray-400">
-                            <button
-                              onClick={() => handleDuplicate(item._id)}
-                              className="inline-flex items-center space-x-1 hover:text-white"
-                            >
-                              <Copy className="w-3.5 h-3.5" />
-                              <span>Copy</span>
-                            </button>
-
-                            <div className="flex items-center space-x-2">
-                              <button
-                                onClick={() => handleOpenModal(item)}
-                                className="p-1.5 rounded-lg bg-dark-base hover:bg-dark-hover text-gray-300 hover:text-white"
-                              >
-                                <Edit3 className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(item._id)}
-                                className="p-1.5 rounded-lg bg-dark-base hover:bg-red-500/20 text-red-400"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
+                          {/* Badges */}
+                          <div className="flex flex-wrap gap-1.5 mb-3">
+                            {item.isBestseller && (
+                              <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold">
+                                Bestseller
+                              </span>
+                            )}
+                            {item.isChefSpecial && (
+                              <span className="px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-400 border border-purple-500/30 text-[10px] font-bold">
+                                Chef Special
+                              </span>
+                            )}
+                            {item.isNewItem && (
+                              <span className="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-[10px] font-bold">
+                                NEW
+                              </span>
+                            )}
+                            {item.spicyLevel > 0 && (
+                              <span className="px-2 py-0.5 rounded-md bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-bold flex items-center space-x-0.5">
+                                <Flame className="w-3 h-3" />
+                                <span>Spicy Lvl {item.spicyLevel}</span>
+                              </span>
+                            )}
                           </div>
                         </div>
-                      )}
-                    </Draggable>
-                  );
-                })
+
+                        {/* Bottom Actions */}
+                        <div className="pt-3 border-t border-dark-border flex items-center justify-between text-xs text-gray-400">
+                          <button
+                            onClick={() => handleDuplicate(item._id)}
+                            className="inline-flex items-center space-x-1 hover:text-white"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Copy</span>
+                          </button>
+
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => handleOpenModal(item)}
+                              className="p-1.5 rounded-lg bg-dark-base hover:bg-dark-hover text-gray-300 hover:text-white"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(item._id)}
+                              className="p-1.5 rounded-lg bg-dark-base hover:bg-red-500/20 text-red-400"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </Draggable>
+                ))
               )}
               {provided.placeholder}
             </div>
@@ -539,32 +510,6 @@ export default function MenuItemsPage() {
                     className="w-full px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
                   />
                 </div>
-
-                {/* Suggestions pill section */}
-                {suggestions.length > 0 && !editingItem && (
-                  <div className="col-span-full p-3 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-2">
-                    <div className="flex items-center justify-between text-[11px] font-black text-amber-400 uppercase tracking-wider">
-                      <span className="flex items-center space-x-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Suggested AP & Telangana Dishes ({activeModalCatName}):</span>
-                      </span>
-                      <span className="text-[10px] text-gray-400 font-normal">Click to auto-fill</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto no-scrollbar">
-                      {suggestions.map((sugg) => (
-                        <button
-                          key={sugg.slug}
-                          type="button"
-                          onClick={() => handleApplySuggestion(sugg)}
-                          className="px-2.5 py-1 rounded-xl bg-dark-base border border-dark-border hover:border-amber-500 text-xs font-bold text-gray-200 hover:text-amber-400 transition-all flex items-center space-x-1"
-                        >
-                          <Plus className="w-3 h-3 text-amber-500" />
-                          <span>{sugg.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">

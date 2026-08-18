@@ -5,7 +5,7 @@ import CallWaiterModal from '../components/CallWaiterModal';
 import FeedbackModal from '../components/FeedbackModal';
 import OrderDrawer from '../components/OrderDrawer';
 import { getSubCategory } from '../utils/categoryHelper';
-import { getOptimizedImageUrl, getMenuItemImage, handleImageErrorCascade } from '../utils/imageHelper';
+import { getOptimizedImageUrl, getCategoryFallbackImage } from '../utils/imageHelper';
 import {
   Zap,
   Search,
@@ -341,13 +341,25 @@ export default function PublicMenuPage() {
                   >
                     {/* Food Image */}
                     <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-dark-base flex-shrink-0">
-                      <img
-                        src={getMenuItemImage(item, activeCategoryName)}
-                        alt={item.name}
-                        loading="lazy"
-                        className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
-                        onError={(e) => handleImageErrorCascade(e, item, activeCategoryName)}
-                      />
+                      {(() => {
+                        const fallback = getCategoryFallbackImage(
+                          item.categoryId?.name,
+                          item.computedSubCategory || item.subCategory,
+                          item.name
+                        );
+                        const displayImage = item.image ? getOptimizedImageUrl(item.image, 400) : fallback;
+                        return (
+                          <img
+                            src={displayImage}
+                            alt={item.name}
+                            loading="lazy"
+                            className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
+                            onError={(e) => {
+                              e.target.src = fallback;
+                            }}
+                          />
+                        );
+                      })()}
 
                       {/* SOLD OUT Overlay */}
                       {!item.isAvailable && (

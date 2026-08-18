@@ -25,6 +25,11 @@ export const restaurantAPI = {
   updateMyRestaurant: (data) => API.put('/restaurants/my-restaurant', data),
 };
 
+export const paymentAPI = {
+  createOrder: (data) => API.post('/payment/create-order', data),
+  verifyPayment: (data) => API.post('/payment/verify-payment', data),
+};
+
 export const categoryAPI = {
   getAll: () => API.get('/categories'),
   create: (data) => API.post('/categories', data),

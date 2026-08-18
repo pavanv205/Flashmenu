@@ -35,6 +35,8 @@ export default function DashboardOverview() {
 
   useEffect(() => {
     fetchOverview();
+    const interval = setInterval(fetchOverview, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleResolveCall = async (id) => {
@@ -174,44 +176,42 @@ export default function DashboardOverview() {
       </div>
 
       {/* Popular items & Graph section */}
-      <div className={`grid grid-cols-1 ${isBasicPlan ? 'lg:grid-cols-1' : 'lg:grid-cols-12'} gap-8`}>
-        {/* 7-Day Views Graph (Only for Premium Plan) */}
-        {!isBasicPlan && (
-          <div className="lg:col-span-8 p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-bold text-white">7-Day Menu Scans Timeline</h3>
-                <p className="text-xs text-gray-400">Customer views tracked over the past week</p>
-              </div>
-            </div>
-            <div className="h-64 w-full pt-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={viewsGraph}>
-                  <defs>
-                    <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="date" stroke="#6B7280" fontSize={11} />
-                  <YAxis stroke="#6B7280" fontSize={11} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#131B2E',
-                      borderColor: '#1F293D',
-                      borderRadius: '12px',
-                      color: '#FFF',
-                    }}
-                  />
-                  <Area type="monotone" dataKey="views" stroke="#F59E0B" strokeWidth={3} fillOpacity={1} fill="url(#colorViews)" />
-                </AreaChart>
-              </ResponsiveContainer>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* 7-Day Views Graph */}
+        <div className="lg:col-span-8 p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-bold text-white">7-Day Menu Scans Timeline</h3>
+              <p className="text-xs text-gray-400">Customer views tracked over the past week</p>
             </div>
           </div>
-        )}
+          <div className="h-64 w-full pt-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={viewsGraph}>
+                <defs>
+                  <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="date" stroke="#6B7280" fontSize={11} />
+                <YAxis stroke="#6B7280" fontSize={11} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#131B2E',
+                    borderColor: '#1F293D',
+                    borderRadius: '12px',
+                    color: '#FFF',
+                  }}
+                />
+                <Area type="monotone" dataKey="views" stroke="#F59E0B" strokeWidth={3} fillOpacity={1} fill="url(#colorViews)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
         {/* Most Viewed Items */}
-        <div className={`${isBasicPlan ? 'w-full' : 'lg:col-span-4'} p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4`}>
+        <div className="lg:col-span-4 p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
           <h3 className="text-lg font-bold text-white">Popular Menu Items</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
             {topItems.map((item) => (

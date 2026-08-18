@@ -29,10 +29,10 @@ const getDashboardOverview = async (req, res) => {
 
       const last7Days = [];
       for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const dayStart = new Date(d.setHours(0, 0, 0, 0));
-        const dayEnd = new Date(d.setHours(23, 59, 59, 999));
+        const now = new Date();
+        now.setDate(now.getDate() - i);
+        const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+        const dayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
         const dayViews = await MenuView.countDocuments({ restaurantId, timestamp: { $gte: dayStart, $lte: dayEnd } });
         const dayName = dayStart.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
         last7Days.push({ date: dayName, views: dayViews });

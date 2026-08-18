@@ -719,7 +719,7 @@ const defaultCategories = [
         vegType: 'non-veg',
         isBestseller: true,
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Chicken Dum Biryani',
@@ -727,7 +727,7 @@ const defaultCategories = [
         vegType: 'non-veg',
         isBestseller: true,
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Chicken Fry Piece Biryani',
@@ -735,7 +735,7 @@ const defaultCategories = [
         vegType: 'non-veg',
         isBestseller: true,
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Chicken 65 Biryani',
@@ -743,14 +743,14 @@ const defaultCategories = [
         vegType: 'non-veg',
         isBestseller: true,
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Chicken Tikka Biryani',
         price: 350,
         vegType: 'non-veg',
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Chicken Boneless Biryani',
@@ -758,42 +758,42 @@ const defaultCategories = [
         vegType: 'non-veg',
         isBestseller: true,
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Chicken Special Biryani',
         price: 370,
         vegType: 'non-veg',
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Chicken Lollipop Biryani',
         price: 360,
         vegType: 'non-veg',
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787031374/flashmenu/defaults/h9opsrirvsiayqnw8x3j.jpg',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Chicken Keema Biryani',
         price: 360,
         vegType: 'non-veg',
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Chicken Roast Biryani',
         price: 350,
         vegType: 'non-veg',
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Chicken Mughlai Biryani',
         price: 370,
         vegType: 'non-veg',
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Andhra Chicken Biryani',
@@ -801,7 +801,7 @@ const defaultCategories = [
         vegType: 'non-veg',
         spicyLevel: 2,
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Hyderabadi Chicken Biryani',
@@ -810,7 +810,7 @@ const defaultCategories = [
         isBestseller: true,
         spicyLevel: 2,
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Telangana Chicken Biryani',
@@ -818,7 +818,7 @@ const defaultCategories = [
         vegType: 'non-veg',
         spicyLevel: 2,
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
       {
         name: 'Rayalaseema Chicken Biryani',
@@ -826,7 +826,7 @@ const defaultCategories = [
         vegType: 'non-veg',
         spicyLevel: 3,
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787032798/flashmenu/defaults/j4zdxqifus7fmjra8smv.avif',
       },
 
       // 🐐 MUTTON BIRYANI

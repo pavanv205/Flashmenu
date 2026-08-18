@@ -155,7 +155,6 @@ export default function AdminDashboardPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-lg font-bold text-white">Registered Customer Restaurants</h3>
-            <p className="text-xs text-gray-400">Control subscription plan access and preview customer digital menus</p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">

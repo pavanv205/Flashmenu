@@ -151,27 +151,9 @@ const defaultCategories = [
       
       
       
-      {
-        name: 'Hara Bhara Kebab',
-        price: 220,
-        vegType: 'veg',
-        subCategory: '🥗 VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=600&q=80',
-      },
-      {
-        name: 'Veg Seekh Kebab',
-        price: 220,
-        vegType: 'veg',
-        subCategory: '🥗 VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=600&q=80',
-      },
-      {
-        name: 'Kaju Pakoda',
-        price: 240,
-        vegType: 'veg',
-        subCategory: '🥗 VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80',
-      },
+      
+      
+      
 
 
       // 🍗 NON VEG STARTERS
@@ -473,20 +455,8 @@ const defaultCategories = [
         subCategory: '🔥 TANDOORI / KEBAB STARTERS',
         image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030020/flashmenu/defaults/jthgdhnlhe2kcwxxrtlg.jpg',
       },
-      {
-        name: 'Hara Bhara Kebab',
-        price: 230,
-        vegType: 'veg',
-        subCategory: '🔥 TANDOORI / KEBAB STARTERS',
-        image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=600&q=80',
-      },
-      {
-        name: 'Veg Seekh Kebab',
-        price: 230,
-        vegType: 'veg',
-        subCategory: '🔥 TANDOORI / KEBAB STARTERS',
-        image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=600&q=80',
-      },
+      
+      
 
       // 🐟 FISH STARTERS
       {

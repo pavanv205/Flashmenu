@@ -25,10 +25,10 @@ export default function Navbar() {
         </Link>
 
         {/* Action Buttons */}
-        <div className="flex items-center space-x-3 sm:space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           <Link
             to="/menu/spice-garden"
-            className="hidden sm:inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-300 hover:text-brand-400 transition-colors"
+            className="hidden md:inline-flex items-center px-3 py-2 text-sm font-semibold text-gray-300 hover:text-brand-400 transition-colors"
           >
             Live Demo
           </Link>
@@ -45,13 +45,19 @@ export default function Navbar() {
             <>
               <Link
                 to="/login"
-                className="px-4 py-2 text-sm font-semibold text-gray-300 hover:text-white transition-colors"
+                className="px-3 py-2 text-sm font-semibold text-gray-300 hover:text-white transition-colors"
               >
                 Sign In
               </Link>
               <Link
+                to="/login"
+                className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 font-bold text-xs sm:text-sm transition-all"
+              >
+                <span>Admin Login</span>
+              </Link>
+              <Link
                 to="/signup"
-                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 hover:from-brand-400 hover:to-brand-300 text-black font-bold text-sm transition-all shadow-lg shadow-brand-500/20 hover:scale-[1.02]"
+                className="inline-flex items-center space-x-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 hover:from-brand-400 hover:to-brand-300 text-black font-bold text-sm transition-all shadow-lg shadow-brand-500/20 hover:scale-[1.02]"
               >
                 <span>Get Started</span>
                 <ArrowRight className="w-4 h-4" />

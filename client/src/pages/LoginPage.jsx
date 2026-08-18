@@ -44,8 +44,8 @@ export default function LoginPage() {
             </div>
             <span className="font-extrabold text-2xl text-white">Flash<span className="gold-gradient-text">Menu</span></span>
           </Link>
-          <h2 className="text-xl font-bold text-white pt-2">Welcome Back</h2>
-          <p className="text-xs text-gray-400">Sign in to manage your digital restaurant menu</p>
+          <h2 className="text-xl font-bold text-white pt-2">Restaurant Admin Login</h2>
+          <p className="text-xs text-gray-400">Sign in to manage your digital restaurant menu & dashboard</p>
         </div>
 
         {error && (

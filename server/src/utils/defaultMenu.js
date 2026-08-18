@@ -700,13 +700,7 @@ const defaultCategories = [
         subCategory: '🥦 VEG BIRYANI',
         image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030020/flashmenu/defaults/jthgdhnlhe2kcwxxrtlg.jpg',
       },
-      {
-        name: 'Corn Biryani',
-        price: 260,
-        vegType: 'veg',
-        subCategory: '🥦 VEG BIRYANI',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030405/flashmenu/defaults/jmtug7nka8djwopq2bxj.jpg',
-      },
+      
       {
         name: 'Mix Veg Biryani',
         price: 270,

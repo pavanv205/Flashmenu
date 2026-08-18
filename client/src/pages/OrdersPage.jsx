@@ -49,7 +49,7 @@ export default function OrdersPage() {
     <div className="space-y-6 max-w-6xl mx-auto">
       <div>
         <h1 className="text-2xl font-extrabold text-white">Live Kitchen Orders</h1>
-        <p className="text-xs text-gray-400">Incoming table orders placed directly from customer mobile menus</p>
+        <p className="text-xs text-gray-400">Incoming table orders placed directly from customer mobile menus (Auto-deleted after 24 hours)</p>
       </div>
 
       {orders.length === 0 ? (

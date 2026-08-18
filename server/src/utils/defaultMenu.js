@@ -215,7 +215,7 @@ const defaultCategories = [
         price: 290,
         vegType: 'non-veg',
         subCategory: '🍗 NON VEG STARTERS',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030876/flashmenu/defaults/ygzh7fryr3aezp6elbli.webp',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787031768/flashmenu/defaults/gpis9spkpc2ic3oo53w7.jpg',
       },
       {
         name: 'Chicken Pakoda',

@@ -909,7 +909,7 @@ const defaultCategories = [
         vegType: 'non-veg',
         isBestseller: true,
         subCategory: '🍗 NON VEG MAIN COURSE',
-        image: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787037081/flashmenu/defaults/j8koeb4lp6ial4rkzuci.webp',
       },
       {
         name: 'Chicken Fry',
@@ -926,7 +926,7 @@ const defaultCategories = [
         isBestseller: true,
         spicyLevel: 2,
         subCategory: '🍗 NON VEG MAIN COURSE',
-        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787037080/flashmenu/defaults/yjgehsfnq7e38imogg3o.webp',
       },
       {
         name: 'Fish Pulusu',
@@ -935,7 +935,7 @@ const defaultCategories = [
         isBestseller: true,
         spicyLevel: 2,
         subCategory: '🍗 NON VEG MAIN COURSE',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787035051/flashmenu/defaults/axi8etp5icejwbzjkz18.jpg',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787037083/flashmenu/defaults/vlxrokm1knw7o7myy8sh.jpg',
       },
       {
         name: 'Egg Curry',

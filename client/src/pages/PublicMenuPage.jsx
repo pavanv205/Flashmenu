@@ -155,6 +155,37 @@ export default function PublicMenuPage() {
     );
   }
 
+  const isInactive = restaurant.isActive === false || restaurant.isOpen === false;
+
+  if (isInactive) {
+    return (
+      <div className="min-h-screen bg-[#0A0E17] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-red-500/10 rounded-full blur-[140px] pointer-events-none" />
+
+        <div className="w-full max-w-sm bg-dark-card border-2 border-red-500/30 rounded-3xl p-8 shadow-2xl relative z-10 text-center space-y-6">
+          <div className="w-20 h-20 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto shadow-lg shadow-red-500/10">
+            <XCircle className="w-10 h-10" />
+          </div>
+
+          <div className="space-y-2">
+            <span className="px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest border border-red-500/30">
+              OFFLINE / INACTIVE
+            </span>
+            <h2 className="text-xl font-extrabold text-white pt-2">{restaurant.name}</h2>
+            <p className="text-xs text-gray-400 leading-relaxed pt-1">
+              This restaurant digital menu is currently inactive. Food items cannot be viewed or ordered at this time.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-dark-base border border-dark-border text-center space-y-1">
+            <p className="text-xs font-bold text-gray-300">Need Assistance?</p>
+            <p className="text-[11px] text-gray-400">Please speak directly to your waiter or restaurant staff.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const primaryColor = restaurant.primaryColor || '#F59E0B';
 
   const activeCategoryObj = categories.find((c) => c._id === activeCategory);

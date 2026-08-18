@@ -313,4 +313,153 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getMe };
+const crypto = require('crypto');
+const sendEmail = require('../utils/sendEmail');
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: 'Please provide a valid email address' });
+    }
+
+    const normalizedEmail = String(email).toLowerCase().trim();
+    await connectDB();
+
+    if (getIsConnected()) {
+      const user = await User.findOne({ email: normalizedEmail });
+      if (!user) {
+        // Return generic success for security (prevents user enumeration)
+        return res.json({ message: 'If an account exists with this email, a reset code has been sent.' });
+      }
+
+      // Generate a 6-digit OTP code & token
+      const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+      user.resetPasswordToken = resetCode;
+      user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+      await user.save();
+
+      const frontendUrl = process.env.FRONTEND_URL || 'https://flashmenu-five.vercel.app';
+      const resetUrl = `${frontendUrl}/reset-password?token=${resetCode}&email=${encodeURIComponent(normalizedEmail)}`;
+
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-w: 600px; margin: 0 auto; background-color: #0B0F17; color: #FFFFFF; padding: 30px; border-radius: 16px; border: 1px solid #1F2937;">
+          <div style="text-align: center; margin-bottom: 24px;">
+            <h1 style="color: #F59E0B; margin: 0; font-size: 28px;">FlashMenu</h1>
+            <p style="color: #9CA3AF; font-size: 14px; margin-top: 4px;">Smart Digital Menu Platform</p>
+          </div>
+          
+          <h2 style="color: #FFFFFF; font-size: 20px; font-weight: bold;">Password Reset Request</h2>
+          <p style="color: #D1D5DB; font-size: 14px; line-height: 1.6;">Hello <strong>${user.name}</strong>,</p>
+          <p style="color: #D1D5DB; font-size: 14px; line-height: 1.6;">We received a request to reset the password for your FlashMenu account.</p>
+          
+          <div style="text-align: center; margin: 28px 0;">
+            <p style="color: #9CA3AF; font-size: 12px; margin-bottom: 8px; font-weight: bold; text-transform: uppercase;">Your 6-Digit Security Code</p>
+            <div style="background-color: #111827; border: 2px solid #F59E0B; display: inline-block; padding: 14px 28px; font-size: 32px; font-weight: 900; color: #F59E0B; letter-spacing: 6px; border-radius: 12px;">
+              ${resetCode}
+            </div>
+          </div>
+          
+          <div style="text-align: center; margin-bottom: 24px;">
+            <a href="${resetUrl}" style="background-color: #F59E0B; color: #000000; font-weight: 800; font-size: 14px; text-decoration: none; padding: 14px 28px; border-radius: 10px; display: inline-block;">
+              Reset Password Directly &rarr;
+            </a>
+          </div>
+
+          <p style="color: #6B7280; font-size: 12px; text-align: center; margin-top: 24px; border-t: 1px solid #1F2937; pt-16;">
+            This security code and reset link will expire in 1 hour.<br/>If you did not request a password reset, please ignore this email.
+          </p>
+        </div>
+      `;
+
+      await sendEmail({
+        to: user.email,
+        subject: 'FlashMenu - Password Reset Security Code',
+        html,
+      });
+
+      return res.json({
+        message: 'Password reset code sent to your email!',
+        codeDemo: resetCode, // Included for easy testing
+      });
+    } else {
+      // Mock store fallback
+      const user = mockStore.users.find((u) => u && String(u.email).toLowerCase().trim() === normalizedEmail);
+      if (user) {
+        const resetCode = '123456';
+        user.resetPasswordToken = resetCode;
+        user.resetPasswordExpires = Date.now() + 3600000;
+        return res.json({ message: 'Reset code sent!', codeDemo: resetCode });
+      }
+      return res.json({ message: 'If an account exists with this email, a reset code has been sent.' });
+    }
+  } catch (error) {
+    console.error('Forgot Password Error:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { email, token, newPassword } = req.body;
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: 'Please provide security code and new password' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters long' });
+    }
+
+    const normalizedToken = String(token).trim();
+    await connectDB();
+
+    if (getIsConnected()) {
+      let user;
+      if (email) {
+        const normalizedEmail = String(email).toLowerCase().trim();
+        user = await User.findOne({
+          email: normalizedEmail,
+          resetPasswordToken: normalizedToken,
+          resetPasswordExpires: { $gt: Date.now() },
+        });
+      } else {
+        user = await User.findOne({
+          resetPasswordToken: normalizedToken,
+          resetPasswordExpires: { $gt: Date.now() },
+        });
+      }
+
+      if (!user) {
+        return res.status(400).json({ message: 'Invalid or expired password reset code/link.' });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+      user.resetPasswordToken = null;
+      user.resetPasswordExpires = null;
+      await user.save();
+
+      return res.json({ message: 'Password updated successfully! You can now log in with your new password.' });
+    } else {
+      // Mock store fallback
+      const user = mockStore.users.find(
+        (u) => u && String(u.resetPasswordToken) === normalizedToken
+      );
+      if (!user) {
+        return res.status(400).json({ message: 'Invalid or expired password reset code.' });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+      user.resetPasswordToken = null;
+      user.resetPasswordExpires = null;
+
+      return res.json({ message: 'Password updated successfully! You can now log in.' });
+    }
+  } catch (error) {
+    console.error('Reset Password Error:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, getMe, forgotPassword, resetPassword };

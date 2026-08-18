@@ -16,6 +16,8 @@ export const authAPI = {
   login: (data) => API.post('/auth/login', data),
   register: (data) => API.post('/auth/register', data),
   getMe: () => API.get('/auth/me'),
+  forgotPassword: (data) => API.post('/auth/forgot-password', data),
+  resetPassword: (data) => API.post('/auth/reset-password', data),
 };
 
 export const restaurantAPI = {

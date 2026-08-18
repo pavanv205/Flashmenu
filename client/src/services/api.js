@@ -59,4 +59,11 @@ export const publicAPI = {
   createOrder: (data) => API.post('/public/order', data),
 };
 
+export const uploadAPI = {
+  uploadImage: (formData) =>
+    API.post('/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+};
+
 export default API;

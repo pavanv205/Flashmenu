@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { categoryAPI, itemAPI } from '../services/api';
+import { categoryAPI, itemAPI, uploadAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { getSubCategory } from '../utils/categoryHelper';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -17,6 +17,7 @@ import {
   Image,
   UtensilsCrossed,
   Layers,
+  Upload,
 } from 'lucide-react';
 
 export default function MenuItemsPage() {
@@ -26,6 +27,7 @@ export default function MenuItemsPage() {
   const [selectedSubCategory, setSelectedSubCategory] = useState('all');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,6 +68,24 @@ export default function MenuItemsPage() {
   const handleCategorySelect = (catId) => {
     setSelectedCategory(catId);
     setSelectedSubCategory('all');
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const data = new FormData();
+    data.append('image', file);
+    setUploadingImage(true);
+
+    try {
+      const res = await uploadAPI.uploadImage(data);
+      setFormData((prev) => ({ ...prev, image: res.data.url }));
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to upload image to Cloudinary');
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleOpenModal = (item = null) => {
@@ -552,15 +572,28 @@ export default function MenuItemsPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                  Food Image URL
+                  Food Image
                 </label>
-                <input
-                  type="text"
-                  placeholder="https://images.unsplash.com/..."
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
-                />
+                <div className="flex items-center space-x-2 mb-2">
+                  <input
+                    type="text"
+                    placeholder="https://images.unsplash.com/... or upload file"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
+                  />
+                  <label className="px-4 py-2.5 rounded-xl bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-black border border-amber-500/40 text-xs font-extrabold cursor-pointer transition-all shrink-0 flex items-center space-x-1.5">
+                    <Upload className="w-4 h-4" />
+                    <span>{uploadingImage ? 'Uploading...' : 'Upload Photo'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      disabled={uploadingImage}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

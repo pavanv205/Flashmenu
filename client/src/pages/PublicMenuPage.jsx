@@ -68,7 +68,27 @@ export default function PublicMenuPage() {
 
   const handleCategorySelect = (catId) => {
     setActiveCategory(catId);
-    setActiveSubCategory('all');
+    if (catId === 'all') {
+      setActiveSubCategory('all');
+      return;
+    }
+    const catObj = categories.find((c) => c._id === catId);
+    const catName = catObj ? catObj.name : '';
+    const itemsInCat = menuItems
+      .filter((item) => (item.categoryId?._id || item.categoryId) === catId)
+      .map((item) => getSubCategory(item, catName));
+
+    const subs = Array.from(new Set(itemsInCat.filter(Boolean)));
+    if (subs.length > 0) {
+      const vegSub = subs.find((s) => s.toUpperCase().includes('VEG') && !s.toUpperCase().includes('NON VEG'));
+      if (vegSub) {
+        setActiveSubCategory(vegSub);
+      } else {
+        setActiveSubCategory(subs[0]);
+      }
+    } else {
+      setActiveSubCategory('all');
+    }
   };
 
   const addToCart = (item) => {

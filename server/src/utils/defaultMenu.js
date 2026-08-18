@@ -941,7 +941,7 @@ const defaultCategories = [
         isBestseller: true,
         spicyLevel: 2,
         subCategory: '🍗 NON VEG MAIN COURSE',
-        image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787035051/flashmenu/defaults/axi8etp5icejwbzjkz18.jpg',
       },
       {
         name: 'Egg Curry',

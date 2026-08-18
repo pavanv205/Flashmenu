@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { restaurantAPI } from '../services/api';
-import { Check, Sparkles, Zap, ShieldCheck, Crown } from 'lucide-react';
+import { Check, Sparkles, Zap, ShieldCheck, Crown, Store } from 'lucide-react';
 
 export default function SubscriptionPage() {
   const { restaurant, updateRestaurantState } = useAuth();
@@ -36,9 +36,9 @@ export default function SubscriptionPage() {
         </p>
       </div>
 
-      {/* 2 Subscription Plans Cards (6 Months Plan ₹2499 vs One-Time Plan ₹9999) */}
+      {/* 2 Restaurant Plans Cards (Basic vs Premium with 6 Months & Lifetime Durations) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-        {/* FIRST HALF: 6 MONTHS PLAN ₹2499 */}
+        {/* CARD 1: BASIC RESTAURANT */}
         <div
           className={`relative rounded-3xl p-8 transition-all flex flex-col justify-between ${
             currentPlan === 'basic'
@@ -53,24 +53,32 @@ export default function SubscriptionPage() {
           )}
 
           <div className="space-y-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">
-                  <Zap className="w-4 h-4 text-amber-400" />
-                  <span>Half-Year Pass</span>
-                </div>
-                <h3 className="text-2xl font-extrabold text-white">6 Months Plan</h3>
-                <p className="text-xs text-gray-400 mt-1">
-                  Half-year full access to all digital menu & table features.
-                </p>
+            <div>
+              <div className="inline-flex items-center space-x-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                <Store className="w-4 h-4 text-amber-400" />
+                <span>Standard Tier</span>
               </div>
-              <div className="text-right">
-                <span className="text-3xl font-black text-white">₹5,999</span>
-                <span className="block text-[10px] text-gray-400 uppercase font-semibold">/ 6 Months</span>
+              <h3 className="text-2xl font-extrabold text-white">Basic Restaurant</h3>
+              <p className="text-xs text-gray-400 mt-1">
+                Essential digital QR menu setup for cafes & small dining spots.
+              </p>
+            </div>
+
+            {/* Pricing Durations Box */}
+            <div className="grid grid-cols-2 gap-3 p-4 bg-dark-base rounded-2xl border border-dark-border">
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">6 Months Plan</span>
+                <p className="text-xl font-black text-white">₹2,499</p>
+                <span className="text-[10px] text-gray-400">for 6 months</span>
+              </div>
+              <div className="space-y-0.5 pl-3 border-l border-dark-border">
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Lifetime Plan</span>
+                <p className="text-xl font-black text-amber-400">₹9,999</p>
+                <span className="text-[10px] text-gray-400">one-time payment</span>
               </div>
             </div>
 
-            <div className="space-y-3 pt-4 border-t border-dark-border">
+            <div className="space-y-3 pt-2">
               <div className="flex items-center space-x-3 text-xs text-gray-300">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>1 Digital Restaurant Menu</span>
@@ -81,24 +89,20 @@ export default function SubscriptionPage() {
               </div>
               <div className="flex items-center space-x-3 text-xs text-gray-300">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>High-Resolution Master & Table QR Code Pack (Table 1..25)</span>
+                <span>High-Resolution Master Table QR Code</span>
               </div>
               <div className="flex items-center space-x-3 text-xs text-gray-300">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Instant SOLD OUT & Availability Toggle</span>
+                <span>Instant SOLD OUT & Availability Toggles</span>
               </div>
               <div className="flex items-center space-x-3 text-xs text-gray-300">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Real-Time Table Ordering & Kitchen Display</span>
-              </div>
-              <div className="flex items-center space-x-3 text-xs text-gray-300">
-                <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>6 Months Priority Updates & Customer Support</span>
+                <span>Fast Mobile Customer Menu View</span>
               </div>
             </div>
           </div>
 
-          <div className="pt-8">
+          <div className="pt-8 space-y-2">
             <button
               onClick={() => handleSelectPlan('basic')}
               disabled={currentPlan === 'basic' || loadingPlan === 'basic'}
@@ -111,13 +115,13 @@ export default function SubscriptionPage() {
               {loadingPlan === 'basic'
                 ? 'Updating...'
                 : currentPlan === 'basic'
-                ? 'Selected Plan'
-                : 'Select 6 Months Plan (₹5,999)'}
+                ? 'Active Basic Plan'
+                : 'Select Basic Plan (6 Mo: ₹2,499 / Lifetime: ₹9,999)'}
             </button>
           </div>
         </div>
 
-        {/* SECOND HALF: ONE-TIME PLAN ₹24999 */}
+        {/* CARD 2: PREMIUM RESTAURANT */}
         <div
           className={`relative rounded-3xl p-8 transition-all flex flex-col justify-between ${
             currentPlan === 'premium'
@@ -127,62 +131,70 @@ export default function SubscriptionPage() {
         >
           {currentPlan === 'premium' ? (
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-emerald-500 text-black text-[10px] font-black uppercase tracking-wider shadow-lg">
-              Active One-Time Plan
+              Active Premium Plan
             </div>
           ) : (
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-black text-[10px] font-black uppercase tracking-wider shadow-lg flex items-center space-x-1">
               <Sparkles className="w-3 h-3 fill-black" />
-              <span>Best Value &bull; One Time</span>
+              <span>Recommended</span>
             </div>
           )}
 
           <div className="space-y-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">
-                  <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
-                  <span>Lifetime Access</span>
-                </div>
-                <h3 className="text-2xl font-extrabold text-white">One-Time Plan</h3>
-                <p className="text-xs text-gray-300 mt-1">
-                  Pay once, use forever with zero recurring monthly or annual fees.
-                </p>
+            <div>
+              <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">
+                <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
+                <span>Full Pro Suite</span>
               </div>
-              <div className="text-right">
-                <span className="text-3xl font-black text-amber-400">₹24,999</span>
-                <span className="block text-[10px] text-gray-400 uppercase font-semibold">/ One-Time</span>
+              <h3 className="text-2xl font-extrabold text-white">Premium Restaurant</h3>
+              <p className="text-xs text-gray-300 mt-1">
+                Complete QR platform for busy restaurants, ordering & fine dining.
+              </p>
+            </div>
+
+            {/* Pricing Durations Box */}
+            <div className="grid grid-cols-2 gap-3 p-4 bg-dark-base/80 rounded-2xl border border-amber-500/30">
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-bold text-gray-300 uppercase tracking-wider">6 Months Plan</span>
+                <p className="text-xl font-black text-white">₹5,999</p>
+                <span className="text-[10px] text-gray-400">for 6 months</span>
+              </div>
+              <div className="space-y-0.5 pl-3 border-l border-amber-500/30">
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Lifetime Plan</span>
+                <p className="text-xl font-black text-amber-400">₹24,999</p>
+                <span className="text-[10px] text-gray-400">one-time payment</span>
               </div>
             </div>
 
-            <div className="space-y-3 pt-4 border-t border-dark-border">
+            <div className="space-y-3 pt-2">
               <div className="flex items-center space-x-3 text-xs text-white font-medium">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Everything in 6 Months Plan</span>
+                <span>Everything in Basic Plan</span>
               </div>
               <div className="flex items-center space-x-3 text-xs text-amber-300 font-semibold">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Lifetime Unlimited Access (No Monthly or Annual Fees)</span>
+                <span>Table-Specific QR Codes (Table 1 to 25)</span>
               </div>
               <div className="flex items-center space-x-3 text-xs text-amber-300 font-semibold">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Full Kitchen Order History & Real-Time Call Waiter Alerts</span>
+                <span>Real-Time Table Ordering & Kitchen Display</span>
               </div>
               <div className="flex items-center space-x-3 text-xs text-amber-300 font-semibold">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Unlimited Table QR Codes Generator</span>
+                <span>Instant Call Waiter & Bill Request Alerts</span>
               </div>
               <div className="flex items-center space-x-3 text-xs text-amber-300 font-semibold">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Real-Time Customer Feedback & Star Ratings Feed</span>
+                <span>Private Customer Reviews & Ratings Feed</span>
               </div>
               <div className="flex items-center space-x-3 text-xs text-amber-300 font-semibold">
                 <Check className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Priority VIP Setup & Dedicated 24/7 Support</span>
+                <span>Daily Scan Volume Analytics Graphs</span>
               </div>
             </div>
           </div>
 
-          <div className="pt-8">
+          <div className="pt-8 space-y-2">
             <button
               onClick={() => handleSelectPlan('premium')}
               disabled={currentPlan === 'premium' || loadingPlan === 'premium'}
@@ -195,8 +207,8 @@ export default function SubscriptionPage() {
               {loadingPlan === 'premium'
                 ? 'Upgrading Plan...'
                 : currentPlan === 'premium'
-                ? 'Active One-Time Plan'
-                : 'Select One-Time Plan (₹24,999)'}
+                ? 'Active Premium Plan'
+                : 'Upgrade to Premium Plan (6 Mo: ₹5,999 / Lifetime: ₹24,999)'}
             </button>
           </div>
         </div>

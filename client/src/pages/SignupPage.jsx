@@ -301,7 +301,7 @@ export default function SignupPage() {
                 </div>
 
                 <div className="pt-2">
-                  <span className="text-3xl font-black text-white">₹2,499</span>
+                  <span className="text-3xl font-black text-white">₹5,999</span>
                   <span className="text-xs text-gray-400 ml-1.5 font-medium">/ 6 Months</span>
                 </div>
 
@@ -337,12 +337,12 @@ export default function SignupPage() {
                 onClick={() => handleFinishOnboarding('basic')}
                 className="w-full py-3.5 rounded-2xl bg-dark-card hover:bg-dark-hover border border-dark-border text-white font-extrabold text-xs transition-all flex items-center justify-center space-x-2"
               >
-                <span>Select 6 Months Plan (₹2,499)</span>
+                <span>Select 6 Months Plan (₹5,999)</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
-            {/* PLAN 2: ONE-TIME PLAN ₹9999 */}
+            {/* PLAN 2: ONE-TIME PLAN ₹24999 */}
             <div
               className={`p-6 sm:p-8 rounded-3xl border-2 transition-all flex flex-col justify-between space-y-6 relative ${
                 selectedPlan === 'premium'
@@ -374,7 +374,7 @@ export default function SignupPage() {
                 </div>
 
                 <div className="pt-2">
-                  <span className="text-3xl font-black text-amber-400">₹9,999</span>
+                  <span className="text-3xl font-black text-amber-400">₹24,999</span>
                   <span className="text-xs text-gray-400 ml-1.5 font-medium">/ One-Time</span>
                 </div>
 
@@ -410,7 +410,7 @@ export default function SignupPage() {
                 onClick={() => handleFinishOnboarding('premium')}
                 className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2"
               >
-                <span>Select One-Time Plan (₹9,999)</span>
+                <span>Select One-Time Plan (₹24,999)</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

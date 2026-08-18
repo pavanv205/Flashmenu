@@ -223,7 +223,7 @@ export default function LandingPage() {
                 <h4 className="text-2xl font-extrabold text-white">6 Months Plan</h4>
                 <p className="text-xs text-gray-400">Half-year full access to all digital menu & table features.</p>
                 <div className="pt-2">
-                  <span className="text-4xl font-black text-white">₹2,499</span>
+                  <span className="text-4xl font-black text-white">₹5,999</span>
                   <span className="text-xs text-gray-400 ml-2 font-medium">/ 6 Months</span>
                 </div>
 
@@ -259,7 +259,7 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            {/* SECOND HALF: ONE-TIME PLAN ₹9999 */}
+            {/* SECOND HALF: ONE-TIME PLAN ₹24999 */}
             <div className="bg-gradient-to-b from-dark-card via-[#162238] to-dark-card border-2 border-amber-500 p-8 rounded-3xl relative gold-glow flex flex-col justify-between space-y-6">
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-500 text-black text-[11px] font-black uppercase tracking-wider flex items-center space-x-1 shadow-lg">
                 <Crown className="w-3.5 h-3.5 text-black fill-black" />
@@ -274,7 +274,7 @@ export default function LandingPage() {
                 <h4 className="text-2xl font-extrabold text-white">One-Time Plan</h4>
                 <p className="text-xs text-gray-300">Pay once, use forever with zero recurring monthly or annual fees.</p>
                 <div className="pt-2">
-                  <span className="text-4xl font-black text-amber-400">₹9,999</span>
+                  <span className="text-4xl font-black text-amber-400">₹24,999</span>
                   <span className="text-xs text-gray-400 ml-2 font-medium">/ One-Time</span>
                 </div>
 

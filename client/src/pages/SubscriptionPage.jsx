@@ -65,7 +65,7 @@ export default function SubscriptionPage() {
                 </p>
               </div>
               <div className="text-right">
-                <span className="text-3xl font-black text-white">₹2,499</span>
+                <span className="text-3xl font-black text-white">₹5,999</span>
                 <span className="block text-[10px] text-gray-400 uppercase font-semibold">/ 6 Months</span>
               </div>
             </div>
@@ -112,12 +112,12 @@ export default function SubscriptionPage() {
                 ? 'Updating...'
                 : currentPlan === 'basic'
                 ? 'Selected Plan'
-                : 'Select 6 Months Plan (₹2,499)'}
+                : 'Select 6 Months Plan (₹5,999)'}
             </button>
           </div>
         </div>
 
-        {/* SECOND HALF: ONE-TIME PLAN ₹9999 */}
+        {/* SECOND HALF: ONE-TIME PLAN ₹24999 */}
         <div
           className={`relative rounded-3xl p-8 transition-all flex flex-col justify-between ${
             currentPlan === 'premium'
@@ -149,7 +149,7 @@ export default function SubscriptionPage() {
                 </p>
               </div>
               <div className="text-right">
-                <span className="text-3xl font-black text-amber-400">₹9,999</span>
+                <span className="text-3xl font-black text-amber-400">₹24,999</span>
                 <span className="block text-[10px] text-gray-400 uppercase font-semibold">/ One-Time</span>
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function SubscriptionPage() {
                 ? 'Upgrading Plan...'
                 : currentPlan === 'premium'
                 ? 'Active One-Time Plan'
-                : 'Select One-Time Plan (₹9,999)'}
+                : 'Select One-Time Plan (₹24,999)'}
             </button>
           </div>
         </div>

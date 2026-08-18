@@ -224,7 +224,6 @@ export default function AdminDashboardPage() {
                   <tr key={r._id} className="hover:bg-dark-base/50 transition-colors">
                     <td className="p-4">
                       <div className="font-extrabold text-white text-sm">{r.name}</div>
-                      <div className="text-[11px] text-amber-400 font-mono">flashmenu.com/menu/{r.slug}</div>
                       <div className="text-[11px] text-gray-400 mt-0.5">Owner: {r.owner?.name || 'N/A'}</div>
                     </td>
                     <td className="p-4">

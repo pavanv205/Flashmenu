@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Zap, ArrowRight, LayoutDashboard } from 'lucide-react';
+import { Zap, ArrowRight, LayoutDashboard, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
@@ -27,34 +27,32 @@ export default function Navbar() {
         {/* Action Buttons */}
         <div className="flex items-center space-x-3 sm:space-x-4">
           <Link
-            to="/menu/eat-and-meet"
-            className="hidden sm:inline-flex items-center px-3 py-2 text-sm font-semibold text-gray-300 hover:text-brand-400 transition-colors"
+            to="/menu/spice-garden"
+            className="hidden sm:inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-300 hover:text-brand-400 transition-colors"
           >
             Live Demo
           </Link>
 
-          {!user && (
-            <Link
-              to="/login?dev=true"
-              className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-dark-card border border-amber-500/40 text-amber-400 font-extrabold text-xs hover:border-amber-500 hover:bg-amber-500/10 transition-all"
-            >
-              <span>Dev Login</span>
-            </Link>
-          )}
-
           {user ? (
             <Link
-              to="/dashboard"
+              to={user.role === 'admin' ? '/dashboard/admin' : '/dashboard'}
               className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-black font-bold text-sm transition-all shadow-md shadow-brand-500/20"
             >
               <LayoutDashboard className="w-4 h-4" />
-              <span>Dashboard</span>
+              <span>{user.role === 'admin' ? 'Master Admin' : 'Dashboard'}</span>
             </Link>
           ) : (
             <>
               <Link
+                to="/login?role=admin"
+                className="hidden sm:inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-xs font-bold text-amber-400 hover:bg-amber-500/20 transition-all"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Admin Login</span>
+              </Link>
+              <Link
                 to="/login"
-                className="px-4 py-2 text-sm font-semibold text-gray-300 hover:text-white transition-colors"
+                className="px-3.5 py-2 text-sm font-semibold text-gray-300 hover:text-white transition-colors"
               >
                 Sign In
               </Link>

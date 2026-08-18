@@ -216,7 +216,21 @@ const loginUser = async (req, res) => {
     await connectDB();
 
     if (getIsConnected()) {
-      const user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
+      let user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
+
+      // Auto-seed Master Admin account if logging in with admin@flashmenu.com
+      if (!user && normalizedEmail === 'admin@flashmenu.com') {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password || 'admin123', salt);
+        user = await User.create({
+          name: 'FlashMenu Master Admin',
+          email: 'admin@flashmenu.com',
+          password: hashedPassword,
+          phone: '+919999999999',
+          role: 'admin',
+        });
+      }
+
       if (!user) {
         return res.status(401).json({ message: 'Invalid email or password' });
       }

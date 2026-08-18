@@ -13,11 +13,12 @@ import {
   LogOut,
   Zap,
   ExternalLink,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function DashboardSidebar({ closeMobileMenu }) {
-  const { restaurant, logout } = useAuth();
+  const { user, restaurant, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -28,6 +29,9 @@ export default function DashboardSidebar({ closeMobileMenu }) {
   const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
   const navItems = [
+    ...(user?.role === 'admin'
+      ? [{ name: 'Master Admin Panel', path: '/dashboard/admin', icon: ShieldCheck, badge: 'ADMIN' }]
+      : []),
     { name: 'Overview', path: '/dashboard', icon: LayoutDashboard, exact: true },
     { name: 'Menu Items', path: '/dashboard/items', icon: UtensilsCrossed },
     { name: 'Categories', path: '/dashboard/categories', icon: FolderTree },

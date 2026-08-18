@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Zap, Mail, Lock, ArrowRight, Code, ShieldCheck } from 'lucide-react';
+import { Zap, Mail, Lock, ArrowRight, ShieldCheck, Store, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export default function LoginPage() {
+export default function LoginPage({ initialRole }) {
   const [searchParams] = useSearchParams();
-  const isDevMode = searchParams.get('dev') === 'true';
+  const roleParam = searchParams.get('role');
 
+  const [activeRole, setActiveRole] = useState(
+    initialRole === 'admin' || roleParam === 'admin' ? 'admin' : 'owner'
+  );
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,39 +20,39 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      if (user.role === 'admin') {
+        navigate('/dashboard/admin');
+      } else {
+        navigate('/dashboard');
+      }
     }
   }, [user, navigate]);
 
-  useEffect(() => {
-    if (isDevMode) {
-      setEmail('demo@flashmenu.com');
-      setPassword('password123');
-    }
-  }, [isDevMode]);
-
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
+  const handleRoleSwitch = (role) => {
+    setActiveRole(role);
     setError('');
-    setLoading(true);
-    try {
-      await login(email.trim().toLowerCase(), password);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password');
-    } finally {
-      setLoading(false);
+    if (role === 'admin') {
+      setEmail('admin@flashmenu.com');
+      setPassword('admin123');
+    } else {
+      setEmail('');
+      setPassword('');
     }
   };
 
-  const handleDevLogin = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await login('demo@flashmenu.com', 'password123');
-      navigate('/dashboard');
+      const resData = await login(email.trim().toLowerCase(), password);
+      if (resData.role === 'admin') {
+        navigate('/dashboard/admin');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Developer login failed');
+      setError(err.response?.data?.message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
@@ -70,11 +73,42 @@ export default function LoginPage() {
             </span>
           </Link>
           <h2 className="text-xl font-bold text-white pt-2">
-            {isDevMode ? 'Developer Quick Access' : 'Welcome Back'}
+            {activeRole === 'admin' ? 'Master Admin Control Sign In' : 'Welcome Back'}
           </h2>
           <p className="text-xs text-gray-400">
-            {isDevMode ? 'Sign in with Developer Admin credentials' : 'Sign in to manage your digital restaurant menu'}
+            {activeRole === 'admin'
+              ? 'Platform Administrator Portal & Customer Controls'
+              : 'Sign in to manage your digital restaurant menu'}
           </p>
+        </div>
+
+        {/* Role Toggle Switcher */}
+        <div className="grid grid-cols-2 gap-2 p-1.5 bg-dark-base border border-dark-border rounded-2xl">
+          <button
+            type="button"
+            onClick={() => handleRoleSwitch('owner')}
+            className={`py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 ${
+              activeRole === 'owner'
+                ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-extrabold'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <Store className="w-4 h-4" />
+            <span>Restaurant Owner</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleRoleSwitch('admin')}
+            className={`py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 ${
+              activeRole === 'admin'
+                ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-extrabold'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>Master Admin</span>
+          </button>
         </div>
 
         {error && (
@@ -93,7 +127,7 @@ export default function LoginPage() {
               <input
                 type="email"
                 required
-                placeholder="owner@restaurant.com"
+                placeholder={activeRole === 'admin' ? 'admin@flashmenu.com' : 'owner@restaurant.com'}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
@@ -123,31 +157,35 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 flex items-center justify-center space-x-2"
           >
-            <span>{loading ? 'Signing in...' : 'Sign In'}</span>
+            <span>{loading ? 'Signing in...' : activeRole === 'admin' ? 'Login as Master Admin' : 'Sign In'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
-        {/* Developer One-Click Access Button */}
-        <div className="pt-2 border-t border-dark-border space-y-3">
-          <button
-            type="button"
-            onClick={handleDevLogin}
-            disabled={loading}
-            className="w-full py-3 rounded-2xl bg-dark-base border-2 border-amber-500/40 hover:border-amber-500 text-amber-400 hover:text-white font-extrabold text-xs transition-all flex items-center justify-center space-x-2 shadow-lg shadow-amber-500/10"
-          >
-            <Code className="w-4 h-4 text-amber-400" />
-            <span>⚡ One-Click Developer Login</span>
-          </button>
-
-          <div className="p-3 bg-dark-base/80 rounded-xl border border-dark-border text-center space-y-1">
-            <p className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Dev Admin Credentials</p>
-            <p className="text-[11px] text-gray-300">Email: <span className="font-mono text-white">demo@flashmenu.com</span></p>
-            <p className="text-[11px] text-gray-300">Password: <span className="font-mono text-white">password123</span></p>
+        {/* Admin Quick Credentials Hint */}
+        {activeRole === 'admin' ? (
+          <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-500/30 text-center space-y-1">
+            <p className="text-[11px] font-black text-amber-400 uppercase tracking-wider">Master Admin Credentials</p>
+            <p className="text-xs text-gray-300">
+              Email: <span className="font-mono text-white">admin@flashmenu.com</span>
+            </p>
+            <p className="text-xs text-gray-300">
+              Password: <span className="font-mono text-white">admin123</span>
+            </p>
           </div>
-        </div>
+        ) : (
+          <div className="p-3 bg-dark-base rounded-xl border border-dark-border text-center space-y-1">
+            <p className="text-[11px] font-semibold text-amber-400 uppercase tracking-wider">Demo Credentials</p>
+            <p className="text-xs text-gray-300">
+              Email: <span className="font-mono text-white">demo@flashmenu.com</span>
+            </p>
+            <p className="text-xs text-gray-300">
+              Password: <span className="font-mono text-white">password123</span>
+            </p>
+          </div>
+        )}
 
-        <p className="text-center text-xs text-gray-400 pt-1">
+        <p className="text-center text-xs text-gray-400 pt-2">
           Don't have a FlashMenu account?{' '}
           <Link to="/signup" className="text-amber-400 font-bold hover:underline">
             Register Restaurant

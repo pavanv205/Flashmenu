@@ -17,6 +17,7 @@ import ProfilePage from './pages/ProfilePage';
 import FeedbackPage from './pages/FeedbackPage';
 import OrdersPage from './pages/OrdersPage';
 import SubscriptionPage from './pages/SubscriptionPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 
 export default function App() {
   return (
@@ -25,12 +26,14 @@ export default function App() {
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin/login" element={<LoginPage initialRole="admin" />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/menu/:restaurantSlug" element={<PublicMenuPage />} />
 
         {/* Dashboard Protected Routes */}
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<DashboardOverview />} />
+          <Route path="admin" element={<AdminDashboardPage />} />
           <Route path="items" element={<MenuItemsPage />} />
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="qrcodes" element={<QRCodesPage />} />

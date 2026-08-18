@@ -633,21 +633,21 @@ const defaultCategories = [
         price: 240,
         vegType: 'veg',
         subCategory: '🥦 VEG BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787033516/flashmenu/defaults/zgd53yinghfapcab8kix.avif',
       },
       {
         name: 'Vegetable Dum Biryani',
         price: 260,
         vegType: 'veg',
         subCategory: '🥦 VEG BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787033516/flashmenu/defaults/zgd53yinghfapcab8kix.avif',
       },
       {
         name: 'Veg Dum Biryani',
         price: 260,
         vegType: 'veg',
         subCategory: '🥦 VEG BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787033516/flashmenu/defaults/zgd53yinghfapcab8kix.avif',
       },
       {
         name: 'Paneer Biryani',
@@ -706,7 +706,7 @@ const defaultCategories = [
         price: 270,
         vegType: 'veg',
         subCategory: '🥦 VEG BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787033516/flashmenu/defaults/zgd53yinghfapcab8kix.avif',
       },
       
       

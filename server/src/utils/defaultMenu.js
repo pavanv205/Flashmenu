@@ -140,14 +140,7 @@ const defaultCategories = [
         subCategory: '🥗 VEG STARTERS',
         image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030540/flashmenu/defaults/tbtqhnld9hwtmg6hi0xp.jpg',
       },
-      {
-        name: 'Veg Manchurian',
-        price: 180,
-        vegType: 'veg',
-        isBestseller: true,
-        subCategory: '🥗 VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=600&q=80',
-      },
+      
       
       
       

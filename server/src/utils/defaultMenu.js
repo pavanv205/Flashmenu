@@ -201,7 +201,7 @@ const defaultCategories = [
         vegType: 'non-veg',
         isBestseller: true,
         subCategory: '🍗 NON VEG STARTERS',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030876/flashmenu/defaults/ygzh7fryr3aezp6elbli.webp',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787031374/flashmenu/defaults/h9opsrirvsiayqnw8x3j.jpg',
       },
       {
         name: 'Chicken Drumsticks',
@@ -796,7 +796,7 @@ const defaultCategories = [
         price: 360,
         vegType: 'non-veg',
         subCategory: '🍗 CHICKEN BIRYANI',
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787031374/flashmenu/defaults/h9opsrirvsiayqnw8x3j.jpg',
       },
       {
         name: 'Chicken Keema Biryani',

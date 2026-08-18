@@ -148,27 +148,9 @@ const defaultCategories = [
         subCategory: '🥗 VEG STARTERS',
         image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=600&q=80',
       },
-      {
-        name: 'Crispy Veg',
-        price: 190,
-        vegType: 'veg',
-        subCategory: '🥗 VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80',
-      },
-      {
-        name: 'Veg 65',
-        price: 180,
-        vegType: 'veg',
-        subCategory: '🥗 VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80',
-      },
-      {
-        name: 'Veg Spring Rolls',
-        price: 200,
-        vegType: 'veg',
-        subCategory: '🥗 VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80',
-      },
+      
+      
+      
       {
         name: 'Hara Bhara Kebab',
         price: 220,

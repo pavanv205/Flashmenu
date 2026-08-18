@@ -117,6 +117,12 @@ const updateRestaurantPlan = async (req, res) => {
 const toggleRestaurantStatus = async (req, res) => {
   try {
     const { id } = req.params;
+    const { secretCode, adminPassword } = req.body;
+
+    const cleanCode = String(secretCode || adminPassword || '').trim();
+    if (cleanCode !== 'Pavan@2193' && cleanCode.toLowerCase() !== 'pavan@2193') {
+      return res.status(401).json({ message: 'Invalid secret authorization code. Status update denied.' });
+    }
 
     if (getIsConnected()) {
       const restaurant = await Restaurant.findById(id);

@@ -70,7 +70,8 @@ export const adminAPI = {
   getRestaurants: () => API.get('/admin/restaurants'),
   updatePlan: (id, subscriptionPlan, secretCode) =>
     API.put(`/admin/restaurants/${id}/plan`, { subscriptionPlan, secretCode, adminPassword: secretCode }),
-  toggleStatus: (id) => API.put(`/admin/restaurants/${id}/status`),
+  toggleStatus: (id, secretCode) =>
+    API.put(`/admin/restaurants/${id}/status`, { secretCode, adminPassword: secretCode }),
   deleteRestaurant: (id) => API.delete(`/admin/restaurants/${id}`),
 };
 

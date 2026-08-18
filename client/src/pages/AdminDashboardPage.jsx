@@ -32,8 +32,8 @@ export default function AdminDashboardPage() {
   const [filterTab, setFilterTab] = useState('all');
   const [updatingId, setUpdatingId] = useState(null);
 
-  // Secret Code Modal State
-  const [planModalTarget, setPlanModalTarget] = useState(null);
+  // Secret Code Modal State for Plan and Owner Status
+  const [modalTarget, setModalTarget] = useState(null); // { restaurant, action: 'plan' | 'status' }
   const [secretCodeInput, setSecretCodeInput] = useState('');
   const [secretCodeError, setSecretCodeError] = useState('');
 
@@ -52,18 +52,6 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     fetchRestaurants();
   }, []);
-
-  const handleToggleStatus = async (restaurant) => {
-    setUpdatingId(restaurant._id);
-    try {
-      await adminAPI.toggleStatus(restaurant._id);
-      await fetchRestaurants();
-    } catch (error) {
-      alert('Failed to toggle status');
-    } finally {
-      setUpdatingId(null);
-    }
-  };
 
   const handleDeleteRestaurant = async (restaurant) => {
     if (
@@ -243,17 +231,21 @@ export default function AdminDashboardPage() {
                       <div className="text-[11px] text-gray-400">{r.phone || r.owner?.phone || 'No phone'}</div>
                     </td>
 
-                    {/* Active / Inactive Status Toggle */}
+                    {/* Active / Inactive Status Toggle (Triggers Secret Code Modal) */}
                     <td className="p-4">
                       <button
-                        onClick={() => handleToggleStatus(r)}
+                        onClick={() => {
+                          setModalTarget({ restaurant: r, action: 'status' });
+                          setSecretCodeInput('');
+                          setSecretCodeError('');
+                        }}
                         disabled={updatingId === r._id}
                         className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 border transition-all ${
                           r.isActive
                             ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 hover:bg-emerald-500 hover:text-black'
                             : 'bg-red-500/20 text-red-400 border-red-500/40 hover:bg-red-500 hover:text-white'
                         }`}
-                        title="Click to toggle Active / Inactive owner status"
+                        title="Click to toggle Active / Inactive owner status (Secret Code required)"
                       >
                         {r.isActive ? (
                           <>
@@ -273,7 +265,7 @@ export default function AdminDashboardPage() {
                     <td className="p-4">
                       <button
                         onClick={() => {
-                          setPlanModalTarget(r);
+                          setModalTarget({ restaurant: r, action: 'plan' });
                           setSecretCodeInput('');
                           setSecretCodeError('');
                         }}
@@ -327,7 +319,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Secret Authorization Code Verification Modal */}
-      {planModalTarget && (
+      {modalTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
           <div className="bg-dark-card border-2 border-amber-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 text-center gold-glow">
             <div className="w-16 h-16 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center mx-auto">
@@ -337,10 +329,18 @@ export default function AdminDashboardPage() {
             <div className="space-y-2">
               <h3 className="text-xl font-extrabold text-white">Secret Code Required</h3>
               <p className="text-xs text-gray-300 leading-relaxed">
-                Enter secret authorization code to change subscription plan for <strong className="text-white">"{planModalTarget.name}"</strong> to{' '}
-                <strong className={planModalTarget.subscriptionPlan === 'premium' ? 'text-cyan-400 font-black' : 'text-amber-400 font-black'}>
-                  {planModalTarget.subscriptionPlan === 'premium' ? 'BASIC' : 'PREMIUM'}
-                </strong>.
+                Enter secret authorization code to {modalTarget.action === 'status' ? 'change owner status' : 'change subscription plan'} for{' '}
+                <strong className="text-white">"{modalTarget.restaurant.name}"</strong> to{' '}
+                {modalTarget.action === 'status' ? (
+                  <strong className={modalTarget.restaurant.isActive ? 'text-red-400 font-black' : 'text-emerald-400 font-black'}>
+                    {modalTarget.restaurant.isActive ? 'INACTIVE OWNER' : 'ACTIVE OWNER'}
+                  </strong>
+                ) : (
+                  <strong className={modalTarget.restaurant.subscriptionPlan === 'premium' ? 'text-cyan-400 font-black' : 'text-amber-400 font-black'}>
+                    {modalTarget.restaurant.subscriptionPlan === 'premium' ? 'BASIC' : 'PREMIUM'}
+                  </strong>
+                )}
+                .
               </p>
             </div>
 
@@ -355,13 +355,22 @@ export default function AdminDashboardPage() {
                 e.preventDefault();
                 setSecretCodeError('');
                 try {
-                  const targetId = planModalTarget._id;
-                  const newPlan = planModalTarget.subscriptionPlan === 'premium' ? 'basic' : 'premium';
-                  await adminAPI.updatePlan(targetId, newPlan, secretCodeInput.trim());
-                  setPlanModalTarget(null);
+                  const targetId = modalTarget.restaurant._id;
+                  setUpdatingId(targetId);
+
+                  if (modalTarget.action === 'status') {
+                    await adminAPI.toggleStatus(targetId, secretCodeInput.trim());
+                  } else {
+                    const newPlan = modalTarget.restaurant.subscriptionPlan === 'premium' ? 'basic' : 'premium';
+                    await adminAPI.updatePlan(targetId, newPlan, secretCodeInput.trim());
+                  }
+
+                  setModalTarget(null);
                   fetchRestaurants();
                 } catch (err) {
                   setSecretCodeError(err.response?.data?.message || 'Invalid secret authorization code');
+                } finally {
+                  setUpdatingId(null);
                 }
               }}
               className="space-y-4"
@@ -384,7 +393,7 @@ export default function AdminDashboardPage() {
               <div className="flex space-x-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setPlanModalTarget(null)}
+                  onClick={() => setModalTarget(null)}
                   className="flex-1 py-3 rounded-2xl bg-dark-base border border-dark-border text-gray-300 hover:text-white font-bold text-xs transition-all"
                 >
                   Cancel
@@ -393,7 +402,7 @@ export default function AdminDashboardPage() {
                   type="submit"
                   className="flex-1 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20"
                 >
-                  Verify & Update Plan
+                  Verify & Update
                 </button>
               </div>
             </form>

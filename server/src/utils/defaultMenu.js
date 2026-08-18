@@ -664,27 +664,9 @@ const defaultCategories = [
         subCategory: '🥦 VEG BIRYANI',
         image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787033233/flashmenu/defaults/ufsm8weanmqtjawtssi2.jpg',
       },
-      {
-        name: 'Mushroom Biryani',
-        price: 290,
-        vegType: 'veg',
-        subCategory: '🥦 VEG BIRYANI',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030540/flashmenu/defaults/tbtqhnld9hwtmg6hi0xp.jpg',
-      },
-      {
-        name: 'Mushroom Dum Biryani',
-        price: 300,
-        vegType: 'veg',
-        subCategory: '🥦 VEG BIRYANI',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030540/flashmenu/defaults/tbtqhnld9hwtmg6hi0xp.jpg',
-      },
-      {
-        name: 'Baby Corn Biryani',
-        price: 280,
-        vegType: 'veg',
-        subCategory: '🥦 VEG BIRYANI',
-        image: 'https://res.cloudinary.com/xt6ci0uh/image/upload/v1787030405/flashmenu/defaults/jmtug7nka8djwopq2bxj.jpg',
-      },
+      
+      
+      
       {
         name: 'Kaju Biryani',
         price: 320,

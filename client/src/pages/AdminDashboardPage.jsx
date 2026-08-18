@@ -357,7 +357,7 @@ export default function AdminDashboardPage() {
                 try {
                   const targetId = planModalTarget._id;
                   const newPlan = planModalTarget.subscriptionPlan === 'premium' ? 'basic' : 'premium';
-                  await adminAPI.updatePlan(targetId, newPlan, adminPasswordInput);
+                  await adminAPI.updatePlan(targetId, newPlan, adminPasswordInput.trim());
                   setPlanModalTarget(null);
                   fetchRestaurants();
                 } catch (err) {

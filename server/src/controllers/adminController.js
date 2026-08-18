@@ -86,7 +86,8 @@ const updateRestaurantPlan = async (req, res) => {
     const { id } = req.params;
     const { subscriptionPlan, adminPassword } = req.body;
 
-    if (adminPassword !== 'Pavan@2193') {
+    const cleanPwd = String(adminPassword || '').trim();
+    if (cleanPwd !== 'Pavan@2193' && cleanPwd.toLowerCase() !== 'pavan@2193') {
       return res.status(401).json({ message: 'Invalid admin security password. Plan update denied.' });
     }
 

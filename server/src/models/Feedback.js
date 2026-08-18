@@ -11,4 +11,7 @@ const feedbackSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// TTL Index: Automatically expire & delete feedback after 24 hours (86400 seconds)
+feedbackSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
+
 module.exports = mongoose.model('Feedback', feedbackSchema);

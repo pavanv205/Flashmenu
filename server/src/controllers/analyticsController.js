@@ -39,7 +39,14 @@ const getDashboardOverview = async (req, res) => {
       }
 
       const topItems = await MenuItem.find({ restaurantId }).sort({ isBestseller: -1, price: -1 }).limit(6);
-      const recentFeedback = await Feedback.find({ restaurantId }).sort({ createdAt: -1 }).limit(5);
+
+      // Clean up feedback older than 24 hours
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      await Feedback.deleteMany({ restaurantId, createdAt: { $lt: twentyFourHoursAgo } });
+
+      const recentFeedback = await Feedback.find({ restaurantId, createdAt: { $gte: twentyFourHoursAgo } })
+        .sort({ createdAt: -1 })
+        .limit(5);
       const waiterCalls = await CallWaiter.find({ restaurantId, status: 'pending' }).sort({ createdAt: -1 });
 
       return res.json({
@@ -123,13 +130,17 @@ const resolveWaiterCall = async (req, res) => {
 
 const getFeedbackList = async (req, res) => {
   try {
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     if (getIsConnected()) {
       const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
-      const feedbacks = await Feedback.find({ restaurantId: restaurant._id }).sort({ createdAt: -1 });
+      await Feedback.deleteMany({ restaurantId: restaurant._id, createdAt: { $lt: twentyFourHoursAgo } });
+      const feedbacks = await Feedback.find({ restaurantId: restaurant._id, createdAt: { $gte: twentyFourHoursAgo } }).sort({ createdAt: -1 });
       return res.json(feedbacks);
     } else {
       const restaurant = mockStore.restaurants.find((r) => r.ownerId === req.user._id);
-      const feedbacks = mockStore.feedbacks.filter((f) => f.restaurantId === restaurant._id);
+      const feedbacks = mockStore.feedbacks.filter(
+        (f) => f.restaurantId === restaurant._id && new Date(f.createdAt) >= twentyFourHoursAgo
+      );
       return res.json(feedbacks);
     }
   } catch (error) {

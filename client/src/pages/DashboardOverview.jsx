@@ -243,7 +243,10 @@ export default function DashboardOverview() {
 
       {/* Recent Feedback Feed */}
       <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
-        <h3 className="text-lg font-bold text-white">Recent Customer Reviews</h3>
+        <div>
+          <h3 className="text-lg font-bold text-white">Recent Customer Reviews</h3>
+          <p className="text-xs text-gray-400 mt-0.5">Reviews are displayed for 24 hours and automatically deleted.</p>
+        </div>
         {recentFeedback && recentFeedback.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {recentFeedback.map((fb) => (

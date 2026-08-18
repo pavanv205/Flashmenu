@@ -329,30 +329,9 @@ const defaultCategories = [
         subCategory: '🍗 NON VEG STARTERS',
         image: 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?auto=format&fit=crop&w=600&q=80',
       },
-      {
-        name: 'Konaseema Chicken Fry',
-        price: 320,
-        vegType: 'non-veg',
-        spicyLevel: 2,
-        subCategory: '🍗 NON VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?auto=format&fit=crop&w=600&q=80',
-      },
-      {
-        name: 'Telangana Kodi Vepudu',
-        price: 320,
-        vegType: 'non-veg',
-        spicyLevel: 2,
-        subCategory: '🍗 NON VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?auto=format&fit=crop&w=600&q=80',
-      },
-      {
-        name: 'Karimnagar Chicken Wings',
-        price: 310,
-        vegType: 'non-veg',
-        spicyLevel: 2,
-        subCategory: '🍗 NON VEG STARTERS',
-        image: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=600&q=80',
-      },
+      
+      
+      
 
       // 🔥 TANDOORI / KEBAB STARTERS
       {

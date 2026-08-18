@@ -4,7 +4,7 @@ export const getSubCategory = (item, categoryName = '') => {
 
   // 1. Starters Category ONLY
   if (cat.includes('starter')) {
-    if (item.subCategory && item.subCategory.trim()) return item.subCategory;
+    if (item.subCategory && item.subCategory.trim()) return item.subCategory.replace(/🥦/g, '🌱');
     if (name.includes('fish') || name.includes('chepa') || name.includes('apollo')) {
       return '🐟 FISH STARTERS';
     }
@@ -26,13 +26,13 @@ export const getSubCategory = (item, categoryName = '') => {
     if (item.vegType === 'non-veg' || name.includes('chicken') || name.includes('mutton') || name.includes('kodi')) {
       return '🍗 NON VEG STARTERS';
     }
-    return '🥗 VEG STARTERS';
+    return '🌱 VEG STARTERS';
   }
 
   // 2. Biryanis Category ONLY
   if (cat.includes('biryani') || (cat === '' && name.includes('biryani'))) {
     if (item.subCategory && item.subCategory.trim() && item.subCategory.includes('BIRYANI')) {
-      return item.subCategory;
+      return item.subCategory.replace(/🥦/g, '🌱');
     }
     if (name.includes('mutton')) {
       return '🐐 MUTTON BIRYANI';
@@ -40,13 +40,13 @@ export const getSubCategory = (item, categoryName = '') => {
     if (name.includes('chicken') || name.includes('kodi')) {
       return '🍗 CHICKEN BIRYANI';
     }
-    return '🥦 VEG BIRYANI';
+    return '🌱 VEG BIRYANI';
   }
 
   // 3. Main Course Category ONLY
   if (cat.includes('main') || cat.includes('course')) {
     if (item.subCategory && item.subCategory.trim() && item.subCategory.includes('MAIN COURSE')) {
-      return item.subCategory;
+      return item.subCategory.replace(/🥦/g, '🌱');
     }
     if (
       item.vegType === 'non-veg' ||
@@ -59,14 +59,14 @@ export const getSubCategory = (item, categoryName = '') => {
     ) {
       return '🍗 NON VEG MAIN COURSE';
     }
-    return '🥦 VEG MAIN COURSE';
+    return '🌱 VEG MAIN COURSE';
   }
 
   // If item has an explicit custom subCategory saved by the user
   if (item.subCategory && item.subCategory.trim()) {
-    return item.subCategory;
+    return item.subCategory.replace(/🥦/g, '🌱');
   }
 
-  // For all other categories (Breads, Desserts, Drinks, etc.), return empty string (NO sub-category pills!)
+  // For all other categories (Breads, Desserts, Drinks, etc.), return empty string
   return '';
 };

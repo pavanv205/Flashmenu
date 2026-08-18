@@ -84,11 +84,11 @@ const getAllRestaurants = async (req, res) => {
 const updateRestaurantPlan = async (req, res) => {
   try {
     const { id } = req.params;
-    const { subscriptionPlan, adminPassword } = req.body;
+    const { subscriptionPlan, secretCode, adminPassword } = req.body;
 
-    const cleanPwd = String(adminPassword || '').trim();
-    if (cleanPwd !== 'Pavan@2193' && cleanPwd.toLowerCase() !== 'pavan@2193') {
-      return res.status(401).json({ message: 'Invalid admin security password. Plan update denied.' });
+    const cleanCode = String(secretCode || adminPassword || '').trim();
+    if (cleanCode !== 'Pavan@2193' && cleanCode.toLowerCase() !== 'pavan@2193') {
+      return res.status(401).json({ message: 'Invalid secret authorization code. Plan update denied.' });
     }
 
     const plan = subscriptionPlan === 'premium' ? 'premium' : 'basic';

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { restaurantAPI } from '../services/api';
-import { Check, Sparkles, Zap, ShieldCheck, Crown, Store } from 'lucide-react';
+import { Check, Sparkles, Zap, Crown, Store, CreditCard } from 'lucide-react';
+import DemoPaymentModal from '../components/DemoPaymentModal';
 
 export default function SubscriptionPage() {
   const { restaurant, updateRestaurantState } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState('');
+  const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
 
   const currentPlan = restaurant?.subscriptionPlan || 'basic';
 
@@ -25,6 +27,13 @@ export default function SubscriptionPage() {
     }
   };
 
+  const openDemoPayment = (planKey, title, duration, amount) => {
+    setDemoPaymentModal({
+      isOpen: true,
+      planDetails: { planKey, title, duration, amount },
+    });
+  };
+
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       <div>
@@ -36,7 +45,7 @@ export default function SubscriptionPage() {
         </p>
       </div>
 
-      {/* 2 Restaurant Plans Cards (Basic vs Premium with 6 Months & Lifetime Durations) */}
+      {/* 2 Restaurant Plans Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
         {/* CARD 1: BASIC RESTAURANT */}
         <div
@@ -64,17 +73,40 @@ export default function SubscriptionPage() {
               </p>
             </div>
 
-            {/* Pricing Durations Box */}
-            <div className="grid grid-cols-2 gap-3 p-4 bg-dark-base rounded-2xl border border-dark-border">
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">6 Months Plan</span>
-                <p className="text-xl font-black text-white">₹2,499</p>
-                <span className="text-[10px] text-gray-400">for 6 months</span>
+            {/* Pricing Durations Box (Divided in Middle with Vertical Line & Demo Pay Buttons) */}
+            <div className="grid grid-cols-2 rounded-2xl bg-dark-base border border-dark-border divide-x divide-dark-border overflow-hidden">
+              {/* Left Half: 6 Months */}
+              <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-dark-hover/30 transition-colors">
+                <div>
+                  <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
+                  <p className="text-2xl font-black text-white mt-1">₹2,499</p>
+                  <span className="text-[10px] text-gray-500">Valid for 6 Mo</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => openDemoPayment('basic', 'Basic Restaurant (6 Months)', '6 Months', 2499)}
+                  className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
+                >
+                  <CreditCard className="w-3.5 h-3.5" />
+                  <span>Demo Pay ₹2,499</span>
+                </button>
               </div>
-              <div className="space-y-0.5 pl-3 border-l border-dark-border">
-                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Lifetime Plan</span>
-                <p className="text-xl font-black text-amber-400">₹9,999</p>
-                <span className="text-[10px] text-gray-400">one-time payment</span>
+
+              {/* Right Half: Lifetime */}
+              <div className="p-4 flex flex-col justify-between space-y-3 text-center bg-amber-500/5 hover:bg-amber-500/10 transition-colors">
+                <div>
+                  <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
+                  <p className="text-2xl font-black text-amber-400 mt-1">₹9,999</p>
+                  <span className="text-[10px] text-amber-400/80">One-Time Pay</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => openDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime One-Time', 9999)}
+                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all shadow-md shadow-amber-500/20 flex items-center justify-center space-x-1"
+                >
+                  <CreditCard className="w-3.5 h-3.5" />
+                  <span>Demo Pay ₹9,999</span>
+                </button>
               </div>
             </div>
 
@@ -102,7 +134,7 @@ export default function SubscriptionPage() {
             </div>
           </div>
 
-          <div className="pt-8 space-y-2">
+          <div className="pt-8">
             <button
               onClick={() => handleSelectPlan('basic')}
               disabled={currentPlan === 'basic' || loadingPlan === 'basic'}
@@ -116,7 +148,7 @@ export default function SubscriptionPage() {
                 ? 'Updating...'
                 : currentPlan === 'basic'
                 ? 'Active Basic Plan'
-                : 'Select Basic Plan (6 Mo: ₹2,499 / Lifetime: ₹9,999)'}
+                : 'Select Basic Plan'}
             </button>
           </div>
         </div>
@@ -152,17 +184,40 @@ export default function SubscriptionPage() {
               </p>
             </div>
 
-            {/* Pricing Durations Box */}
-            <div className="grid grid-cols-2 gap-3 p-4 bg-dark-base/80 rounded-2xl border border-amber-500/30">
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-bold text-gray-300 uppercase tracking-wider">6 Months Plan</span>
-                <p className="text-xl font-black text-white">₹5,999</p>
-                <span className="text-[10px] text-gray-400">for 6 months</span>
+            {/* Pricing Durations Box (Divided in Middle with Vertical Line & Demo Pay Buttons) */}
+            <div className="grid grid-cols-2 rounded-2xl bg-dark-base border border-amber-500/40 divide-x divide-amber-500/30 overflow-hidden">
+              {/* Left Half: 6 Months */}
+              <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-dark-hover/30 transition-colors">
+                <div>
+                  <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
+                  <p className="text-2xl font-black text-white mt-1">₹5,999</p>
+                  <span className="text-[10px] text-gray-400">Valid for 6 Mo</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months', 5999)}
+                  className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
+                >
+                  <CreditCard className="w-3.5 h-3.5" />
+                  <span>Demo Pay ₹5,999</span>
+                </button>
               </div>
-              <div className="space-y-0.5 pl-3 border-l border-amber-500/30">
-                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Lifetime Plan</span>
-                <p className="text-xl font-black text-amber-400">₹24,999</p>
-                <span className="text-[10px] text-gray-400">one-time payment</span>
+
+              {/* Right Half: Lifetime */}
+              <div className="p-4 flex flex-col justify-between space-y-3 text-center bg-amber-500/10 hover:bg-amber-500/20 transition-colors">
+                <div>
+                  <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
+                  <p className="text-2xl font-black text-amber-400 mt-1">₹24,999</p>
+                  <span className="text-[10px] text-amber-400/80">One-Time Pay</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 24999)}
+                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all shadow-md shadow-amber-500/20 flex items-center justify-center space-x-1"
+                >
+                  <CreditCard className="w-3.5 h-3.5" />
+                  <span>Demo Pay ₹24,999</span>
+                </button>
               </div>
             </div>
 
@@ -194,7 +249,7 @@ export default function SubscriptionPage() {
             </div>
           </div>
 
-          <div className="pt-8 space-y-2">
+          <div className="pt-8">
             <button
               onClick={() => handleSelectPlan('premium')}
               disabled={currentPlan === 'premium' || loadingPlan === 'premium'}
@@ -208,11 +263,19 @@ export default function SubscriptionPage() {
                 ? 'Upgrading Plan...'
                 : currentPlan === 'premium'
                 ? 'Active Premium Plan'
-                : 'Upgrade to Premium Plan (6 Mo: ₹5,999 / Lifetime: ₹24,999)'}
+                : 'Upgrade to Premium Plan'}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Demo Payment Modal */}
+      <DemoPaymentModal
+        isOpen={demoPaymentModal.isOpen}
+        onClose={() => setDemoPaymentModal({ isOpen: false, planDetails: null })}
+        planDetails={demoPaymentModal.planDetails}
+        onSuccess={handleSelectPlan}
+      />
     </div>
   );
 }

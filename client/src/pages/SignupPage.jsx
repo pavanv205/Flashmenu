@@ -16,7 +16,7 @@ import {
   Layers,
   Crown,
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import DemoPaymentModal from '../components/DemoPaymentModal';
 
 export default function SignupPage() {
   const [step, setStep] = useState(1); // 1 = Registration Form, 2 = Select Subscription Plan
@@ -34,9 +34,21 @@ export default function SignupPage() {
   const [selectedPlan, setSelectedPlan] = useState('premium'); // default recommendation
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
 
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  const handleOpenDemoPayment = (planKey, title, duration, amount) => {
+    setDemoPaymentModal({
+      isOpen: true,
+      planDetails: { planKey, title, duration, amount },
+    });
+  };
+
+  const handleDemoPaymentSuccess = (planKey) => {
+    handleFinishOnboarding(planKey);
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -300,15 +312,29 @@ export default function SignupPage() {
                   <p className="text-xs text-gray-400 mt-1">Essential digital QR menu setup for cafes & small dining spots.</p>
                 </div>
 
-                {/* Price Durations */}
-                <div className="grid grid-cols-2 gap-3 p-3 bg-dark-card rounded-2xl border border-dark-border">
-                  <div>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">6 Months</span>
-                    <span className="text-lg font-black text-white">₹2,499</span>
+                {/* Price Durations (Divided in Middle with Vertical Line) */}
+                <div className="grid grid-cols-2 rounded-2xl bg-dark-card border border-dark-border divide-x divide-dark-border overflow-hidden">
+                  <div className="p-3 text-center space-y-1">
+                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
+                    <span className="text-xl font-black text-white block">₹2,499</span>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenDemoPayment('basic', 'Basic Restaurant (6 Months)', '6 Months', 2499)}
+                      className="w-full py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black text-[10px] font-extrabold transition-all border border-amber-500/30 mt-1"
+                    >
+                      Demo Pay ₹2,499
+                    </button>
                   </div>
-                  <div className="pl-3 border-l border-dark-border">
-                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">Lifetime</span>
-                    <span className="text-lg font-black text-amber-400">₹9,999</span>
+                  <div className="p-3 text-center space-y-1 bg-amber-500/5">
+                    <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
+                    <span className="text-xl font-black text-amber-400 block">₹9,999</span>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime One-Time', 9999)}
+                      className="w-full py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-black transition-all mt-1 shadow-sm"
+                    >
+                      Demo Pay ₹9,999
+                    </button>
                   </div>
                 </div>
 
@@ -376,15 +402,29 @@ export default function SignupPage() {
                   <p className="text-xs text-gray-300 mt-1">Complete QR platform for busy restaurants & fine dining.</p>
                 </div>
 
-                {/* Price Durations */}
-                <div className="grid grid-cols-2 gap-3 p-3 bg-dark-card rounded-2xl border border-amber-500/30">
-                  <div>
-                    <span className="text-[10px] font-bold text-gray-300 uppercase tracking-wider block">6 Months</span>
-                    <span className="text-lg font-black text-white">₹5,999</span>
+                {/* Price Durations (Divided in Middle with Vertical Line) */}
+                <div className="grid grid-cols-2 rounded-2xl bg-dark-card border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
+                  <div className="p-3 text-center space-y-1">
+                    <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
+                    <span className="text-xl font-black text-white block">₹5,999</span>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months', 5999)}
+                      className="w-full py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black text-[10px] font-extrabold transition-all border border-amber-500/30 mt-1"
+                    >
+                      Demo Pay ₹5,999
+                    </button>
                   </div>
-                  <div className="pl-3 border-l border-amber-500/30">
-                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">Lifetime</span>
-                    <span className="text-lg font-black text-amber-400">₹24,999</span>
+                  <div className="p-3 text-center space-y-1 bg-amber-500/10">
+                    <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
+                    <span className="text-xl font-black text-amber-400 block">₹24,999</span>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 24999)}
+                      className="w-full py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-black transition-all mt-1 shadow-sm"
+                    >
+                      Demo Pay ₹24,999
+                    </button>
                   </div>
                 </div>
 
@@ -427,6 +467,14 @@ export default function SignupPage() {
           </div>
         </div>
       )}
+
+      {/* Demo Payment Modal */}
+      <DemoPaymentModal
+        isOpen={demoPaymentModal.isOpen}
+        onClose={() => setDemoPaymentModal({ isOpen: false, planDetails: null })}
+        planDetails={demoPaymentModal.planDetails}
+        onSuccess={handleDemoPaymentSuccess}
+      />
     </div>
   );
 }

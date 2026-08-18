@@ -223,15 +223,27 @@ export default function LandingPage() {
                 <h4 className="text-2xl font-extrabold text-white">Basic Restaurant</h4>
                 <p className="text-xs text-gray-400">Essential digital QR menu setup for cafes & small dining spots.</p>
                 
-                {/* Durations */}
-                <div className="grid grid-cols-2 gap-3 p-4 bg-dark-base rounded-2xl border border-dark-border">
-                  <div>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">6 Months</span>
-                    <span className="text-2xl font-black text-white">₹2,499</span>
+                {/* Durations (Divided in Middle with Vertical Line) */}
+                <div className="grid grid-cols-2 rounded-2xl bg-dark-base border border-dark-border divide-x divide-dark-border overflow-hidden">
+                  <div className="p-3 text-center space-y-1">
+                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
+                    <span className="text-xl font-black text-white block">₹2,499</span>
+                    <Link
+                      to="/signup"
+                      className="w-full py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black text-[10px] font-extrabold transition-all border border-amber-500/30 block mt-1"
+                    >
+                      Demo Pay ₹2,499
+                    </Link>
                   </div>
-                  <div className="pl-3 border-l border-dark-border">
-                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">Lifetime</span>
-                    <span className="text-2xl font-black text-amber-400">₹9,999</span>
+                  <div className="p-3 text-center space-y-1 bg-amber-500/5">
+                    <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
+                    <span className="text-xl font-black text-amber-400 block">₹9,999</span>
+                    <Link
+                      to="/signup"
+                      className="w-full py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-black transition-all block mt-1 shadow-sm"
+                    >
+                      Demo Pay ₹9,999
+                    </Link>
                   </div>
                 </div>
 
@@ -282,15 +294,27 @@ export default function LandingPage() {
                 <h4 className="text-2xl font-extrabold text-white">Premium Restaurant</h4>
                 <p className="text-xs text-gray-300">Complete QR platform for busy restaurants & fine dining.</p>
                 
-                {/* Durations */}
-                <div className="grid grid-cols-2 gap-3 p-4 bg-dark-base rounded-2xl border border-amber-500/30">
-                  <div>
-                    <span className="text-[10px] font-bold text-gray-300 uppercase tracking-wider block">6 Months</span>
-                    <span className="text-2xl font-black text-white">₹5,999</span>
+                {/* Durations (Divided in Middle with Vertical Line) */}
+                <div className="grid grid-cols-2 rounded-2xl bg-dark-base border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
+                  <div className="p-3 text-center space-y-1">
+                    <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
+                    <span className="text-xl font-black text-white block">₹5,999</span>
+                    <Link
+                      to="/signup"
+                      className="w-full py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black text-[10px] font-extrabold transition-all border border-amber-500/30 block mt-1"
+                    >
+                      Demo Pay ₹5,999
+                    </Link>
                   </div>
-                  <div className="pl-3 border-l border-amber-500/30">
-                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">Lifetime</span>
-                    <span className="text-2xl font-black text-amber-400">₹24,999</span>
+                  <div className="p-3 text-center space-y-1 bg-amber-500/10">
+                    <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
+                    <span className="text-xl font-black text-amber-400 block">₹24,999</span>
+                    <Link
+                      to="/signup"
+                      className="w-full py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-black transition-all block mt-1 shadow-sm"
+                    >
+                      Demo Pay ₹24,999
+                    </Link>
                   </div>
                 </div>
 

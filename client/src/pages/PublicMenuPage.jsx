@@ -27,40 +27,12 @@ import {
   Utensils,
 } from 'lucide-react';
 
-function SubCategoryLabel({ name, count, isActive }) {
+function SubCategoryLabel({ name, count }) {
   const cleanName = (name || '').replace(/[\u{1F000}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim();
-  const upper = cleanName.toUpperCase();
-
-  let Icon = Utensils;
-  let defaultColor = 'text-amber-400';
-
-  if (upper.includes('FISH')) {
-    Icon = Fish;
-    defaultColor = 'text-cyan-400';
-  } else if (upper.includes('PRAWN') || upper.includes('ROYYALA')) {
-    Icon = Fish;
-    defaultColor = 'text-rose-400';
-  } else if (upper.includes('TANDOORI') || upper.includes('KEBAB')) {
-    Icon = Flame;
-    defaultColor = 'text-amber-500';
-  } else if (upper.includes('CHICKEN') || upper.includes('NON VEG')) {
-    Icon = Drumstick;
-    defaultColor = 'text-amber-600';
-  } else if (upper.includes('MUTTON')) {
-    Icon = Utensils;
-    defaultColor = 'text-amber-500';
-  } else if (upper.includes('VEG')) {
-    Icon = Leaf;
-    defaultColor = 'text-emerald-400';
-  }
-
-  const iconClass = isActive ? 'text-black' : defaultColor;
 
   return (
-    <span className="inline-flex items-center space-x-1.5">
-      <Icon className={`w-3.5 h-3.5 ${iconClass}`} />
-      <span>{cleanName}</span>
-      {count !== undefined && <span className="opacity-80">({count})</span>}
+    <span>
+      {cleanName} {count !== undefined && <span className="opacity-80">({count})</span>}
     </span>
   );
 }

@@ -80,9 +80,9 @@ export default function LandingPage() {
           <div className="pt-8 max-w-2xl mx-auto relative">
             <div className="relative">
               <img
-                src="/mockup_preview.png"
+                src="/hero_showcase.png"
                 alt="FlashMenu QR Code Standee and Live Mobile App Interface"
-                className="w-full h-auto object-contain brightness-[0.88] contrast-[1.05] hover:brightness-100 transition-all duration-500 [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)]"
+                className="w-full h-auto object-contain brightness-[0.92] contrast-[1.04] hover:brightness-100 transition-all duration-500 [mask-image:linear-gradient(to_bottom,black_80%,transparent_100%)]"
               />
             </div>
           </div>

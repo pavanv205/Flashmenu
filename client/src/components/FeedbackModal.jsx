@@ -37,7 +37,7 @@ export default function FeedbackModal({ isOpen, onClose, restaurantSlug, default
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-dark-card border border-dark-border rounded-3xl p-6 w-full max-w-md relative shadow-2xl">
+      <div className="bg-[#0E0E14] border border-white/[0.08] rounded-3xl p-6 w-full max-w-md relative shadow-2xl">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white rounded-full hover:bg-dark-hover"

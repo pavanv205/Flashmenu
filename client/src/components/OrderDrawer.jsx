@@ -50,10 +50,10 @@ export default function OrderDrawer({ isOpen, onClose, cart, updateQuantity, cle
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black/80 backdrop-blur-sm flex justify-end">
-      <div className="w-full max-w-md bg-dark-card border-l border-dark-border h-full flex flex-col shadow-2xl">
+    <div className="fixed inset-0 z-50 overflow-hidden bg-black/80 backdrop-blur-sm flex justify-end font-sans">
+      <div className="w-full max-w-md bg-[#0E0E14] border-l border-white/[0.08] h-full flex flex-col shadow-2xl">
         {/* Header */}
-        <div className="p-4 sm:p-6 border-b border-dark-border flex items-center justify-between">
+        <div className="p-4 sm:p-6 border-b border-white/[0.08] flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
               <ShoppingBag className="w-5 h-5" />

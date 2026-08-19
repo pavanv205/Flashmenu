@@ -159,7 +159,7 @@ export default function PublicMenuPage() {
 
   if (isInactive) {
     return (
-      <div className="min-h-screen bg-[#08080A] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <div className="min-h-screen bg-[#0A0E17] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-red-500/10 rounded-full blur-[140px] pointer-events-none" />
 
         <div className="w-full max-w-sm bg-dark-card border-2 border-red-500/30 rounded-3xl p-8 shadow-2xl relative z-10 text-center space-y-6">
@@ -229,149 +229,150 @@ export default function PublicMenuPage() {
   const cartTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-[#08080A] text-white pb-28 max-w-md mx-auto relative shadow-2xl border-x border-white/[0.08] selection:bg-amber-500 selection:text-black font-sans">
-      {/* Top Cover Banner */}
-      <div className="relative h-48 w-full bg-[#0E0E14] overflow-hidden">
-        {restaurant.coverImage ? (
-          <img src={restaurant.coverImage} alt={restaurant.name} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-r from-amber-600 to-amber-800" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#08080A] via-[#08080A]/40 to-transparent" />
-
-        {/* Table Badge */}
-        {tableParam && (
-          <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-amber-500 text-black font-extrabold text-xs shadow-lg">
-            Table #{tableParam}
-          </div>
-        )}
-      </div>
-
-      {/* Restaurant Info Header */}
-      <div className="px-5 -mt-14 relative z-10 space-y-3">
-        <div className="flex items-end justify-between">
-          <div className="relative">
-            {restaurant.logo ? (
-              <img
-                src={restaurant.logo}
-                alt={restaurant.name}
-                className="w-20 h-20 rounded-2xl object-cover border-4 border-[#08080A] shadow-xl"
-              />
-            ) : (
-              <div
-                className="w-20 h-20 rounded-2xl border-4 border-[#08080A] shadow-xl flex items-center justify-center"
-                style={{ backgroundColor: primaryColor }}
-              >
-                <Zap className="w-10 h-10 text-black fill-black" />
-              </div>
-            )}
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Open Now</span>
-            </span>
-          </div>
-        </div>
-
-        <div>
-          <h1 className="text-2xl font-black tracking-tight text-white">{restaurant.name}</h1>
-          <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mt-0.5">
-            {restaurant.cuisineType}
-          </p>
-          {restaurant.description && (
-            <p className="text-xs text-gray-400 mt-1.5 leading-relaxed">{restaurant.description}</p>
+    <div className="min-h-screen bg-[#08080A] text-white selection:bg-amber-500 selection:text-black font-sans">
+      <div className="min-h-screen bg-[#08080A] pb-28 max-w-md mx-auto relative shadow-2xl border-x border-white/[0.08]">
+        {/* Top Cover Banner */}
+        <div className="relative h-48 w-full bg-[#0E0E14] overflow-hidden">
+          {restaurant.coverImage ? (
+            <img src={restaurant.coverImage} alt={restaurant.name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-r from-amber-600 to-amber-800" />
           )}
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#08080A] via-[#08080A]/40 to-transparent" />
 
-        <div className="flex items-center space-x-4 text-xs text-gray-400 pt-1 border-t border-white/[0.08]">
-          <div className="flex items-center space-x-1">
-            <Clock className="w-3.5 h-3.5 text-gray-500" />
-            <span>{restaurant.openingHours}</span>
-          </div>
-          {restaurant.city && (
-            <div className="flex items-center space-x-1">
-              <MapPin className="w-3.5 h-3.5 text-gray-500" />
-              <span>{restaurant.city}</span>
+          {/* Table Badge */}
+          {tableParam && (
+            <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-amber-500 text-black font-extrabold text-xs shadow-lg">
+              Table #{tableParam}
             </div>
           )}
         </div>
-      </div>
 
-      {/* Sticky Search & Category Bar */}
-      <div className="sticky top-0 z-30 bg-[#08080A]/95 backdrop-blur-md pt-4 pb-2 px-5 border-b border-white/[0.08] space-y-2 mt-4">
-        {/* Search input */}
-        <div className="relative">
-          <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-3" />
-          <input
-            type="text"
-            placeholder="Search dishes or categories..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-xl bg-dark-card border border-dark-border text-white text-xs focus:outline-none focus:border-amber-500 font-medium"
-          />
-        </div>
-
-        {/* Categories horizontal scroll pills */}
-        <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar py-1">
-          <button
-            onClick={() => handleCategorySelect('all')}
-            className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-              activeCategory === 'all'
-                ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
-                : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
-            }`}
-          >
-            All Items ({menuItems.length})
-          </button>
-          {categories.map((cat) => (
-            <button
-              key={cat._id}
-              onClick={() => handleCategorySelect(cat._id)}
-              className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
-                activeCategory === cat._id
-                  ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
-                  : 'bg-dark-card text-gray-400 hover:text-white border border-dark-border'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-
-        {/* Sub-Category horizontal scroll pills */}
-        {activeCategory !== 'all' && availableSubCategories.length > 0 && (
-          <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-2 pb-1 border-t border-gray-800/60">
-            <button
-              onClick={() => setActiveSubCategory('all')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
-                activeSubCategory === 'all'
-                  ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
-                  : 'bg-dark-card text-gray-300 hover:text-white border border-dark-border'
-              }`}
-            >
-              All ({categoryItems.length})
-            </button>
-            {availableSubCategories.map((sub) => {
-              const count = categoryItems.filter((i) => i.computedSubCategory === sub).length;
-              return (
-                <button
-                  key={sub}
-                  onClick={() => setActiveSubCategory(sub)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
-                    activeSubCategory === sub
-                      ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
-                      : 'bg-dark-card text-gray-300 hover:text-white border border-dark-border'
-                  }`}
+        {/* Restaurant Info Header */}
+        <div className="px-5 -mt-14 relative z-10 space-y-3">
+          <div className="flex items-end justify-between">
+            <div className="relative">
+              {restaurant.logo ? (
+                <img
+                  src={restaurant.logo}
+                  alt={restaurant.name}
+                  className="w-20 h-20 rounded-2xl object-cover border-4 border-[#08080A] shadow-xl"
+                />
+              ) : (
+                <div
+                  className="w-20 h-20 rounded-2xl border-4 border-[#08080A] shadow-xl flex items-center justify-center"
+                  style={{ backgroundColor: primaryColor }}
                 >
-                  <SubCategoryLabel name={sub} count={count} isActive={activeSubCategory === sub} />
-                </button>
-              );
-            })}
+                  <Zap className="w-10 h-10 text-black fill-black" />
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Open Now</span>
+              </span>
+            </div>
           </div>
-        )}
-      </div>
+
+          <div>
+            <h1 className="text-2xl font-black tracking-tight text-white">{restaurant.name}</h1>
+            <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mt-0.5">
+              {restaurant.cuisineType}
+            </p>
+            {restaurant.description && (
+              <p className="text-xs text-gray-400 mt-1.5 leading-relaxed">{restaurant.description}</p>
+            )}
+          </div>
+
+          <div className="flex items-center space-x-4 text-xs text-gray-400 pt-1 border-t border-white/[0.08]">
+            <div className="flex items-center space-x-1">
+              <Clock className="w-3.5 h-3.5 text-gray-500" />
+              <span>{restaurant.openingHours}</span>
+            </div>
+            {restaurant.city && (
+              <div className="flex items-center space-x-1">
+                <MapPin className="w-3.5 h-3.5 text-gray-500" />
+                <span>{restaurant.city}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Sticky Search & Category Bar */}
+        <div className="sticky top-0 z-30 bg-[#08080A]/95 backdrop-blur-md pt-4 pb-2 px-5 border-b border-white/[0.08] space-y-2 mt-4">
+          {/* Search input */}
+          <div className="relative">
+            <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-3" />
+            <input
+              type="text"
+              placeholder="Search dishes or categories..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#0E0E14] border border-white/[0.08] text-white text-xs focus:outline-none focus:border-amber-500 font-medium"
+            />
+          </div>
+
+          {/* Categories horizontal scroll pills */}
+          <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar py-1">
+            <button
+              onClick={() => handleCategorySelect('all')}
+              className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                activeCategory === 'all'
+                  ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-extrabold'
+                  : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
+              }`}
+            >
+              All Items ({menuItems.length})
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat._id}
+                onClick={() => handleCategorySelect(cat._id)}
+                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                  activeCategory === cat._id
+                    ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-extrabold'
+                    : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Sub-Category horizontal scroll pills */}
+          {activeCategory !== 'all' && availableSubCategories.length > 0 && (
+            <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-2 pb-1 border-t border-white/[0.08]">
+              <button
+                onClick={() => setActiveSubCategory('all')}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
+                  activeSubCategory === 'all'
+                    ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20 font-extrabold'
+                    : 'bg-[#0E0E14] text-gray-300 hover:text-white border border-white/[0.08]'
+                }`}
+              >
+                All ({categoryItems.length})
+              </button>
+              {availableSubCategories.map((sub) => {
+                const count = categoryItems.filter((i) => i.computedSubCategory === sub).length;
+                return (
+                  <button
+                    key={sub}
+                    onClick={() => setActiveSubCategory(sub)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
+                      activeSubCategory === sub
+                        ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20 font-extrabold'
+                        : 'bg-[#0E0E14] text-gray-300 hover:text-white border border-white/[0.08]'
+                    }`}
+                  >
+                    <SubCategoryLabel name={sub} count={count} isActive={activeSubCategory === sub} />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
       {/* Food Items List Grouped by Sub-Category */}
       <div className="px-5 pt-4 space-y-6">
@@ -388,7 +389,7 @@ export default function PublicMenuPage() {
                   <h2 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center space-x-2">
                     <SubCategoryLabel name={subGroup} isActive={false} />
                   </h2>
-                  <span className="text-[10px] font-bold text-gray-500 bg-dark-card px-2.5 py-0.5 rounded-full border border-dark-border">
+                  <span className="text-[10px] font-bold text-gray-400 bg-[#0E0E14] px-2.5 py-0.5 rounded-full border border-white/[0.08]">
                     {items.length} items
                   </span>
                 </div>
@@ -399,14 +400,14 @@ export default function PublicMenuPage() {
                 return (
                   <div
                     key={item._id}
-                    className={`p-4 rounded-3xl bg-dark-card border transition-all flex space-x-3 relative overflow-hidden ${
+                    className={`p-4 rounded-3xl bg-[#0E0E14] border transition-all flex space-x-3 relative overflow-hidden ${
                       item.isAvailable
-                        ? 'border-dark-border hover:border-amber-500/40'
+                        ? 'border-white/[0.08] hover:border-amber-500/40'
                         : 'border-red-900/40 bg-red-950/10'
                     }`}
                   >
                     {/* Food Image */}
-                    <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-dark-base flex-shrink-0">
+                    <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-[#08080A] flex-shrink-0 border border-white/[0.06]">
                       {(() => {
                         const fallback = getCategoryFallbackImage(
                           item.categoryId?.name,
@@ -481,7 +482,7 @@ export default function PublicMenuPage() {
                       </div>
 
                       {/* Price & Add Button */}
-                      <div className="flex items-center justify-between pt-2 border-t border-dark-border/60">
+                      <div className="flex items-center justify-between pt-2 border-t border-white/[0.08]">
                         <div className="flex items-baseline space-x-1.5">
                           <span className="text-sm font-black text-amber-400">
                             {restaurant.currency || '₹'}{item.discountPrice || item.price}
@@ -527,7 +528,7 @@ export default function PublicMenuPage() {
             <>
               <button
                 onClick={() => setIsWaiterModalOpen(true)}
-                className="flex-1 py-3 px-4 rounded-2xl bg-dark-card border border-amber-500/40 text-amber-400 font-extrabold text-xs shadow-2xl flex items-center justify-center space-x-2 backdrop-blur-md"
+                className="flex-1 py-3 px-4 rounded-2xl bg-[#0E0E14]/90 border border-amber-500/40 text-amber-400 font-extrabold text-xs shadow-2xl flex items-center justify-center space-x-2 backdrop-blur-md"
               >
                 <Bell className="w-4 h-4 animate-bounce" />
                 <span>Call Waiter</span>
@@ -535,7 +536,7 @@ export default function PublicMenuPage() {
 
               <button
                 onClick={() => setIsFeedbackModalOpen(true)}
-                className="p-3 rounded-2xl bg-dark-card border border-dark-border text-gray-300 font-bold text-xs"
+                className="p-3 rounded-2xl bg-[#0E0E14] border border-white/[0.08] text-gray-300 font-bold text-xs"
                 title="Rate & Review"
               >
                 <Star className="w-5 h-5 text-amber-400" />
@@ -582,6 +583,7 @@ export default function PublicMenuPage() {
         restaurant={restaurant}
         tableNumber={tableParam}
       />
+      </div>
     </div>
   );
 }

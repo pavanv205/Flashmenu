@@ -76,19 +76,14 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          {/* Social Proof Stats */}
-          <div className="pt-12 border-t border-white/[0.08] grid grid-cols-3 gap-6 text-center max-w-2xl mx-auto">
-            <div>
-              <h4 className="text-2xl sm:text-3xl font-extrabold text-white">100%</h4>
-              <p className="text-xs text-gray-400 font-medium mt-1">No App Download</p>
-            </div>
-            <div>
-              <h4 className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">&lt; 1s</h4>
-              <p className="text-xs text-gray-400 font-medium mt-1">Lightning Scan Speed</p>
-            </div>
-            <div>
-              <h4 className="text-2xl sm:text-3xl font-extrabold text-white">Instant</h4>
-              <p className="text-xs text-gray-400 font-medium mt-1">Sold Out Toggle</p>
+          {/* Realistic Product Mockup Showcase */}
+          <div className="pt-10 max-w-4xl mx-auto">
+            <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0E0E14] shadow-2xl group hover:border-amber-500/30 transition-all">
+              <img
+                src="/mockup_preview.png"
+                alt="FlashMenu QR Code Standee and Live Mobile App Interface"
+                className="w-full h-auto object-cover rounded-3xl transform hover:scale-[1.01] transition-transform duration-500"
+              />
             </div>
           </div>
         </div>

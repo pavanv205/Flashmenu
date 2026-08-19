@@ -338,35 +338,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 5. FAQ SECTION */}
-      <section id="faq" className="py-24 border-b border-white/[0.08]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 space-y-3">
-            <h2 className="text-[11px] font-extrabold text-amber-400 uppercase tracking-widest">Questions & Answers</h2>
-            <h3 className="text-3xl font-extrabold text-white tracking-tight">Frequently Asked Questions</h3>
-          </div>
-
-          <div className="space-y-4">
-            {faqs.map((faq, idx) => (
-              <div key={idx} className="minimal-card rounded-2xl overflow-hidden">
-                <button
-                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full p-6 text-left font-bold text-white text-sm flex items-center justify-between hover:text-amber-400 transition-colors"
-                >
-                  <span>{faq.q}</span>
-                  <ChevronDown className={`w-5 h-5 transition-transform ${openFaq === idx ? 'rotate-180 text-amber-400' : 'text-gray-400'}`} />
-                </button>
-                {openFaq === idx && (
-                  <div className="px-6 pb-6 text-xs text-gray-400 leading-relaxed border-t border-white/[0.06] pt-4">
-                    {faq.a}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <Footer />
     </div>
   );

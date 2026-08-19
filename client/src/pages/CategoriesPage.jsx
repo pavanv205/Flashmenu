@@ -60,7 +60,7 @@ export default function CategoriesPage() {
       await categoryAPI.delete(id);
       fetchCategories();
     } catch (error) {
-      alert('Error deleting category');
+      alert('Failed to delete category');
     }
   };
 
@@ -94,15 +94,15 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-4xl mx-auto font-sans">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-white">Menu Categories</h1>
+          <h1 className="text-2xl font-extrabold text-white tracking-tight">Menu Categories</h1>
           <p className="text-xs text-gray-400">Organize your dishes into clear sections (Starters, Main Course, Drinks)</p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20"
+          className="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-white text-black font-extrabold text-xs transition-all hover:bg-gray-200 shadow-md"
         >
           <Plus className="w-4 h-4" />
           <span>Add Category</span>
@@ -114,7 +114,7 @@ export default function CategoriesPage() {
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-3">
               {categories.length === 0 ? (
-                <div className="py-16 text-center space-y-3 bg-dark-card rounded-3xl border border-dark-border">
+                <div className="py-16 text-center space-y-3 bg-[#0E0E14] rounded-3xl border border-white/[0.07]">
                   <FolderTree className="w-12 h-12 text-gray-600 mx-auto" />
                   <h3 className="text-lg font-bold text-white">No Categories Added</h3>
                   <p className="text-xs text-gray-400">Create your first category to start organizing your menu.</p>
@@ -126,31 +126,25 @@ export default function CategoriesPage() {
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
-                        className="p-4 rounded-2xl bg-dark-card border border-dark-border flex items-center justify-between group hover:border-amber-500/40 transition-all"
+                        className="minimal-card p-4 rounded-2xl flex items-center justify-between group"
                       >
-                        <div className="flex items-center space-x-4">
-                          <div {...provided.dragHandleProps} className="text-gray-500 hover:text-white cursor-grab">
+                        <div className="flex items-center space-x-3">
+                          <div {...provided.dragHandleProps} className="text-gray-500 hover:text-gray-300 cursor-grab">
                             <GripVertical className="w-5 h-5" />
                           </div>
-                          <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-xs">
-                            {index + 1}
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-bold text-white">{cat.name}</h3>
-                            <span className="text-[11px] text-gray-400">Display Position #{index + 1}</span>
-                          </div>
+                          <span className="font-extrabold text-white text-sm">{cat.name}</span>
                         </div>
 
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => handleOpenModal(cat)}
-                            className="p-2 rounded-xl bg-dark-base hover:bg-dark-hover text-gray-300 hover:text-white"
+                            className="p-2 rounded-xl bg-white/[0.05] hover:bg-white/10 text-gray-300 transition-colors"
                           >
                             <Edit3 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(cat._id)}
-                            className="p-2 rounded-xl bg-dark-base hover:bg-red-500/20 text-red-400"
+                            className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -166,40 +160,39 @@ export default function CategoriesPage() {
         </Droppable>
       </DragDropContext>
 
-      {/* Modal */}
+      {/* Category Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-dark-card border border-dark-border rounded-3xl p-6 w-full max-w-md shadow-2xl">
-            <h3 className="text-xl font-bold text-white mb-4">
-              {editingCategory ? 'Rename Category' : 'Create New Category'}
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#0E0E14] border border-white/[0.08] w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4 text-white">
+            <h3 className="text-lg font-bold text-white">
+              {editingCategory ? 'Edit Category' : 'Create New Category'}
             </h3>
-
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                  Category Name *
+                <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
+                  Category Name
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Desserts or Chef Specials"
+                  placeholder="e.g. Starters & Appetizers"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500 font-semibold"
+                  className="w-full px-4 py-3 rounded-xl bg-[#08080A] border border-white/[0.08] text-white text-xs focus:outline-none focus:border-amber-500 font-medium"
                 />
               </div>
 
-              <div className="pt-2 flex items-center justify-end space-x-3">
+              <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 rounded-xl bg-dark-hover text-gray-300 font-bold text-xs"
+                  className="py-3 rounded-full bg-[#08080A] border border-white/[0.08] text-gray-400 hover:text-white font-bold text-xs transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs shadow-lg shadow-amber-500/20"
+                  className="py-3 rounded-full bg-white text-black font-extrabold text-xs transition-all hover:bg-gray-200 shadow-md"
                 >
                   Save Category
                 </button>

@@ -86,13 +86,13 @@ export default function LoginPage({ initialRole }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[140px] pointer-events-none" />
+    <div className="min-h-screen bg-[#08080A] flex items-center justify-center p-4 relative overflow-hidden font-sans">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[160px] pointer-events-none" />
 
-      <div className="w-full max-w-md bg-dark-card border border-dark-border rounded-3xl p-8 shadow-2xl relative z-10 space-y-6">
+      <div className="w-full max-w-md bg-[#0E0E14] border border-white/[0.08] rounded-3xl p-8 shadow-2xl relative z-10 space-y-6">
         <div className="text-center space-y-2">
           <Link to="/" className="inline-flex items-center space-x-2">
-            <div className="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+            <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center shadow-lg">
               <Zap className="w-6 h-6 text-black fill-black" />
             </div>
             <span className="font-extrabold text-2xl text-white">
@@ -115,9 +115,9 @@ export default function LoginPage({ initialRole }) {
           </p>
         </div>
 
-        {/* Role Toggle Switcher (Hidden in 2FA mode) */}
+        {/* Role Toggle Switcher */}
         {!step2FA && (
-          <div className="grid grid-cols-2 gap-2 p-1.5 bg-dark-base border border-dark-border rounded-2xl">
+          <div className="grid grid-cols-2 gap-2 p-1.5 bg-[#08080A] border border-white/[0.08] rounded-2xl">
             <button
               type="button"
               onClick={() => handleRoleSwitch('owner')}
@@ -162,7 +162,7 @@ export default function LoginPage({ initialRole }) {
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider">
                   6-Digit Confirmation Code
                 </label>
                 <button
@@ -194,7 +194,7 @@ export default function LoginPage({ initialRole }) {
                   placeholder="123456"
                   value={adminOtp}
                   onChange={(e) => setAdminOtp(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-dark-base border border-amber-500/50 text-amber-400 text-sm font-mono tracking-widest font-black focus:outline-none focus:border-amber-500"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#08080A] border border-amber-500/50 text-amber-400 text-sm font-mono tracking-widest font-black focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
@@ -202,7 +202,7 @@ export default function LoginPage({ initialRole }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 flex items-center justify-center space-x-2"
+              className="w-full py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>
@@ -231,7 +231,7 @@ export default function LoginPage({ initialRole }) {
           /* STEP 1: LOGIN CREDENTIALS FORM */
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
                 Email Address
               </label>
               <div className="relative">
@@ -242,14 +242,14 @@ export default function LoginPage({ initialRole }) {
                   placeholder={activeRole === 'admin' ? 'pavanvadapalli26@gmail.com' : 'owner@restaurant.com'}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#08080A] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-amber-500 font-medium"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider">
                   Password
                 </label>
                 {activeRole !== 'admin' && (
@@ -269,7 +269,7 @@ export default function LoginPage({ initialRole }) {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#08080A] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-amber-500 font-medium"
                 />
               </div>
             </div>
@@ -277,7 +277,7 @@ export default function LoginPage({ initialRole }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 flex items-center justify-center space-x-2"
+              className="w-full py-3.5 rounded-full bg-white text-black hover:bg-gray-200 font-extrabold text-sm transition-all shadow-md disabled:opacity-50 flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>

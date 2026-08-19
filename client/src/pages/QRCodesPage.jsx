@@ -55,12 +55,14 @@ export default function QRCodesPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto">
+    <div className="space-y-8 max-w-6xl mx-auto font-sans">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-white">QR Code Generator & Print Cards</h1>
-          <p className="text-xs text-gray-400">
-            Generate master or table-specific QR codes for your restaurant standees & table stickers.
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Printable Table QR Codes
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-400 mt-1">
+            Download high-resolution vector QR cards customized for your dining tables.
           </p>
         </div>
 
@@ -68,124 +70,102 @@ export default function QRCodesPage() {
           <button
             onClick={handleDownloadPNG}
             disabled={downloading}
-            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-dark-card border border-dark-border text-white hover:border-amber-500 font-bold text-xs transition-all disabled:opacity-50"
+            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-white text-black font-extrabold text-xs transition-all hover:bg-gray-200 shadow-md disabled:opacity-50"
           >
-            <Download className="w-4 h-4 text-amber-400" />
+            <Download className="w-4 h-4" />
             <span>{downloading ? 'Generating PNG...' : 'Download PNG'}</span>
           </button>
           <button
             onClick={handlePrint}
-            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20"
+            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-[#0E0E14] border border-white/[0.08] hover:border-amber-500/50 text-white font-extrabold text-xs transition-all"
           >
-            <Printer className="w-4 h-4" />
+            <Printer className="w-4 h-4 text-amber-400" />
             <span>Print QR Card</span>
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Controls & Table Selector */}
-        <div className="lg:col-span-5 space-y-6">
-          {isBasicPlan ? (
-            <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-base font-bold text-white flex items-center space-x-2">
-                  <Table className="w-4 h-4 text-amber-400" />
-                  <span>Master Restaurant QR Code</span>
-                </h3>
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-black uppercase tracking-wider border border-amber-500/30">
-                  Basic Plan
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column Controls */}
+        <div className="space-y-6 lg:col-span-1">
+          {/* Table Selection Box */}
+          <div className="minimal-card p-6 rounded-3xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Select Dining Table</h3>
+              {isBasicPlan ? (
+                <span className="text-[9px] font-extrabold bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/30">
+                  BASIC TIER
                 </span>
-              </div>
-              <p className="text-xs text-gray-300 leading-relaxed">
-                Your Basic Restaurant account includes <strong className="text-white">1 Master Digital Menu QR Code</strong> for your restaurant standees, table tent cards, and entrance posters.
-              </p>
+              ) : (
+                <span className="text-[9px] font-extrabold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                  PREMIUM TIER
+                </span>
+              )}
+            </div>
 
-              {/* Upgrade Promo Box */}
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 to-amber-400/5 border border-amber-500/30 space-y-2">
-                <div className="flex items-center space-x-1.5 text-xs font-extrabold text-amber-400">
-                  <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
-                  <span>Table-Specific QR Codes (Table 1 to 25)</span>
+            {isBasicPlan ? (
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2 text-xs">
+                <div className="flex items-center space-x-2 text-amber-400 font-bold">
+                  <Crown className="w-4 h-4" />
+                  <span>Master QR Active</span>
                 </div>
-                <p className="text-[11px] text-gray-400 leading-snug">
-                  Want individual table numbers printed on QR stickers for instant waiter calls & ordering?
+                <p className="text-gray-300 text-[11px] leading-relaxed">
+                  Basic tier includes 1 Master QR code for all tables. Upgrade to Premium to generate unique QR codes for Table 1 to 50 with live table ordering!
                 </p>
                 <Link
                   to="/dashboard/subscription"
-                  className="inline-flex items-center space-x-1.5 text-xs text-amber-400 font-bold hover:underline pt-1"
+                  className="inline-flex items-center space-x-1 text-amber-400 font-extrabold hover:underline pt-1"
                 >
                   <span>Upgrade to Premium Plan</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
-            </div>
-          ) : (
-            <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-4">
-              <h3 className="text-base font-bold text-white flex items-center space-x-2">
-                <Table className="w-4 h-4 text-amber-400" />
-                <span>Select Table Number</span>
-              </h3>
-              <p className="text-xs text-gray-400">
-                Leave blank for the master restaurant QR code or select a table number (1 to {restaurant.tableCount || 25}) for table-specific ordering.
-              </p>
-
-              <input
-                type="number"
-                min="1"
-                max="25"
-                placeholder="e.g. 5 (Leave blank for Master QR)"
-                value={selectedTable}
-                onChange={(e) => setSelectedTable(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500 font-bold"
-              />
-
-              {/* Quick table buttons grid */}
-              <div className="pt-2">
-                <label className="block text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                  Quick Select Table:
+            ) : (
+              <div className="space-y-3">
+                <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider">
+                  Select Table Number (1 - 50)
                 </label>
-                <div className="grid grid-cols-5 gap-2">
-                  {['', '1', '2', '3', '4', '5', '6', '7', '8', '10'].map((num) => (
-                    <button
-                      key={num}
-                      onClick={() => setSelectedTable(num)}
-                      className={`py-2 rounded-xl text-xs font-extrabold border transition-all ${
-                        selectedTable === num
-                          ? 'bg-amber-500 text-black border-amber-500'
-                          : 'bg-dark-base text-gray-300 border-dark-border hover:bg-dark-hover'
-                      }`}
-                    >
-                      {num === '' ? 'Master' : `#${num}`}
-                    </button>
+                <select
+                  value={selectedTable}
+                  onChange={(e) => setSelectedTable(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-[#08080A] border border-white/[0.08] text-white text-xs font-bold focus:outline-none focus:border-amber-500"
+                >
+                  <option value="">Master QR Code (All Tables)</option>
+                  {Array.from({ length: 50 }, (_, i) => i + 1).map((num) => (
+                    <option key={num} value={num}>
+                      Table #{num}
+                    </option>
                   ))}
-                </div>
+                </select>
+              </div>
+            )}
+
+            {/* Target URL Display Box */}
+            <div className="space-y-2 pt-2">
+              <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">Target Scan Link</h4>
+              <div className="p-3 rounded-2xl bg-[#08080A] border border-white/[0.08] text-[11px] font-mono text-gray-300 flex items-center justify-between overflow-hidden">
+                <span className="truncate">{targetUrl}</span>
+                <a
+                  href={targetUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-400 hover:text-amber-300 p-1 shrink-0 ml-2"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
               </div>
             </div>
-          )}
-
-          <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-3">
-            <h4 className="text-xs font-extrabold text-amber-400 uppercase tracking-wider">Target Scan Link</h4>
-            <div className="p-3 bg-dark-base rounded-xl border border-dark-border break-all font-mono text-xs text-gray-300">
-              {targetUrl}
-            </div>
-            <a
-              href={targetUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center space-x-1 text-xs text-amber-400 font-semibold hover:underline"
-            >
-              <span>Test destination link in browser</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
           </div>
         </div>
 
-        {/* Print-Ready Card Display */}
-        <div className="lg:col-span-7 flex justify-center">
+        {/* Right Column: Printable Card Preview */}
+        <div className="lg:col-span-2 flex justify-center">
           <PrintableQRCard
-            restaurant={restaurant}
+            restaurantName={restaurant.name}
+            logoUrl={restaurant.logo}
+            qrCodeUrl={targetUrl}
             tableNumber={activeTable}
-            targetUrl={targetUrl}
+            tagline={restaurant.tagline}
           />
         </div>
       </div>

@@ -360,14 +360,14 @@ export default function PublicMenuPage() {
                   return (
                     <div
                       key={item._id}
-                      className={`p-4 rounded-3xl bg-white text-slate-900 border transition-all flex space-x-3.5 relative overflow-hidden shadow-lg hover:shadow-xl ${
+                      className={`p-4 rounded-3xl bg-[#13151D] text-white border transition-all flex space-x-3.5 relative overflow-hidden shadow-xl ${
                         item.isAvailable
-                          ? 'border-slate-200/90 hover:border-amber-500/60'
-                          : 'border-red-200 bg-red-50/90'
+                          ? 'border-white/[0.08] hover:border-amber-500/40'
+                          : 'border-red-900/40 bg-red-950/20'
                       }`}
                     >
                       {/* Food Image */}
-                      <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200/80 shadow-inner">
+                      <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-[#0A0B0E] flex-shrink-0 border border-white/[0.08] shadow-inner">
                         {(() => {
                           const fallback = getCategoryFallbackImage(
                             item.categoryId?.name,
@@ -390,7 +390,7 @@ export default function PublicMenuPage() {
 
                         {/* SOLD OUT Overlay */}
                         {!item.isAvailable && (
-                          <div className="absolute inset-0 bg-slate-900/80 flex items-center justify-center">
+                          <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
                             <span className="text-[10px] font-black text-red-400 uppercase tracking-widest border border-red-500/40 px-2 py-0.5 rounded-full bg-red-500/20">
                               SOLD OUT
                             </span>
@@ -404,36 +404,36 @@ export default function PublicMenuPage() {
                           <div className="flex items-center space-x-2 mb-1">
                             {/* Dietary dot */}
                             {item.vegType === 'veg' ? (
-                              <span className="w-3.5 h-3.5 rounded-sm border border-emerald-600 flex items-center justify-center p-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                              <span className="w-3.5 h-3.5 rounded-sm border border-emerald-500 flex items-center justify-center p-0.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                               </span>
                             ) : (
-                              <span className="w-3.5 h-3.5 rounded-sm border border-red-600 flex items-center justify-center p-0.5">
-                                <span className="w-0 h-0 border-l-[2.5px] border-l-transparent border-r-[2.5px] border-r-transparent border-b-[5px] border-b-red-600"></span>
+                              <span className="w-3.5 h-3.5 rounded-sm border border-red-500 flex items-center justify-center p-0.5">
+                                <span className="w-0 h-0 border-l-[2.5px] border-l-transparent border-r-[2.5px] border-r-transparent border-b-[5px] border-b-red-500"></span>
                               </span>
                             )}
 
-                            <h3 className="text-sm font-extrabold text-slate-900 truncate">{item.name}</h3>
+                            <h3 className="text-sm font-extrabold text-white truncate">{item.name}</h3>
                           </div>
 
-                          <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                          <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">
                             {item.description}
                           </p>
 
                           {/* Badges */}
                           <div className="flex flex-wrap gap-1 mt-1.5">
                             {item.isBestseller && (
-                              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[9px] font-extrabold uppercase">
+                              <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[9px] font-extrabold uppercase">
                                 Bestseller
                               </span>
                             )}
                             {item.isChefSpecial && (
-                              <span className="px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 text-[9px] font-extrabold uppercase">
+                              <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[9px] font-extrabold uppercase">
                                 Chef Special
                               </span>
                             )}
                             {item.spicyLevel > 0 && (
-                              <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-700 text-[9px] font-extrabold flex items-center">
+                              <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[9px] font-extrabold flex items-center">
                                 <Flame className="w-2.5 h-2.5 mr-0.5" />
                                 <span>Spicy</span>
                               </span>
@@ -442,13 +442,13 @@ export default function PublicMenuPage() {
                         </div>
 
                         {/* Price & Add Button */}
-                        <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                        <div className="flex items-center justify-between pt-2 border-t border-white/[0.08]">
                           <div className="flex items-baseline space-x-1.5">
-                            <span className="text-sm font-black text-amber-600">
+                            <span className="text-sm font-black text-amber-400">
                               {restaurant.currency || '₹'}{item.discountPrice || item.price}
                             </span>
                             {item.discountPrice && (
-                              <span className="text-[10px] text-slate-400 line-through">
+                              <span className="text-[10px] text-gray-500 line-through">
                                 {restaurant.currency || '₹'}{item.price}
                               </span>
                             )}
@@ -464,7 +464,7 @@ export default function PublicMenuPage() {
                             ) : (
                               <button
                                 onClick={() => addToCart(item)}
-                                className="px-3.5 py-1.5 rounded-xl bg-amber-500 text-black hover:bg-amber-400 text-xs font-black transition-all flex items-center space-x-1 shadow-sm hover:scale-105 active:scale-95"
+                                className="px-3.5 py-1.5 rounded-xl bg-amber-500 text-black hover:bg-amber-400 text-xs font-black transition-all flex items-center space-x-1 shadow-md hover:scale-105 active:scale-95"
                               >
                                 <Plus className="w-3.5 h-3.5" />
                                 <span>ADD</span>

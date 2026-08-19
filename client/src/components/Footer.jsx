@@ -50,11 +50,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} FlashMenu SaaS. All rights reserved.</p>
-          <p className="mt-2 sm:mt-0 text-[11px] font-mono text-gray-400">
-            Minimalist Digital Dining Platform
-          </p>
+        <div className="pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400">
+          <p>© {new Date().getFullYear()} FlashMenu. All rights reserved.</p>
+          <div className="mt-4 sm:mt-0 flex items-center space-x-6">
+            <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
+            <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
+            <a href="mailto:support@flashmenu.com" className="hover:text-white transition-colors">Contact Us</a>
+          </div>
         </div>
       </div>
     </footer>

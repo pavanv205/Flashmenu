@@ -68,12 +68,14 @@ export default function LandingPage() {
               <span>Get Started</span>
             </Link>
 
-            <Link
-              to="/menu/spice-garden"
+            <a
+              href="https://wa.me/919999999999?text=Hello%20FlashMenu!%20I%20would%20like%20to%20book%20a%20live%20demo%20for%20my%20restaurant."
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-transparent border border-white/20 text-white font-bold text-sm transition-all hover:bg-white/10"
             >
               <span>Book a Demo</span>
-            </Link>
+            </a>
           </div>
 
           {/* Realistic Product Mockup Showcase */}

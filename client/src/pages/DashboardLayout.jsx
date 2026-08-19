@@ -21,7 +21,7 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0F17] flex overflow-hidden">
+    <div className="min-h-screen bg-[#08080A] flex overflow-hidden font-sans">
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">
         <DashboardSidebar />

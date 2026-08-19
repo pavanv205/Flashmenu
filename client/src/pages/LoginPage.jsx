@@ -34,6 +34,13 @@ export default function LoginPage({ initialRole }) {
     }
   }, [user, navigate]);
 
+  const handleEmailChange = (val) => {
+    setEmail(val);
+    if (val.trim().toLowerCase() === 'pavanvadapalli26@gmail.com' && activeRole !== 'admin') {
+      setActiveRole('admin');
+    }
+  };
+
   const handleRoleSwitch = (role) => {
     setActiveRole(role);
     setError('');
@@ -54,6 +61,7 @@ export default function LoginPage({ initialRole }) {
     try {
       const resData = await login(email.trim().toLowerCase(), password);
       if (resData?.requires2FA) {
+        setActiveRole('admin');
         setStep2FA(true);
         setAdminEmail2FA(resData.email || email);
         setSuccess2FAMsg(resData.message || 'Security confirmation code sent to pavanvadapalli26@gmail.com!');
@@ -77,6 +85,8 @@ export default function LoginPage({ initialRole }) {
       const resData = await verifyAdmin2FA(adminEmail2FA, adminOtp);
       if (resData?.role === 'admin') {
         navigate('/dashboard/admin');
+      } else {
+        navigate('/dashboard');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid 2FA verification code. Please check your email inbox.');
@@ -211,7 +221,7 @@ export default function LoginPage({ initialRole }) {
                 </>
               ) : (
                 <>
-                  <span>Verify & Grant Admin Access</span>
+                  <span>Verify & Open Admin Dashboard</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -223,7 +233,7 @@ export default function LoginPage({ initialRole }) {
                 onClick={() => setStep2FA(false)}
                 className="text-xs text-gray-400 hover:text-white font-semibold transition-colors"
               >
-                &larr; Back to Admin Sign In
+                &larr; Back to Sign In
               </button>
             </div>
           </form>
@@ -241,7 +251,7 @@ export default function LoginPage({ initialRole }) {
                   required
                   placeholder={activeRole === 'admin' ? 'pavanvadapalli26@gmail.com' : 'owner@restaurant.com'}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => handleEmailChange(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#08080A] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-amber-500 font-medium"
                 />
               </div>
@@ -286,7 +296,7 @@ export default function LoginPage({ initialRole }) {
                 </>
               ) : (
                 <>
-                  <span>{activeRole === 'admin' ? 'Login as Master Admin' : 'Sign In'}</span>
+                  <span>Sign In</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}

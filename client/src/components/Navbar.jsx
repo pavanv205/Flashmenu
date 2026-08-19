@@ -49,21 +49,12 @@ export default function Navbar() {
               <span>{user.role === 'admin' ? 'Master Admin' : 'Dashboard'}</span>
             </Link>
           ) : (
-            <>
-              <Link
-                to="/login"
-                className="px-3.5 py-2 text-xs font-bold text-gray-300 hover:text-white transition-colors"
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-white text-black font-extrabold text-xs transition-all hover:bg-gray-200 shadow-md hover:scale-[1.02]"
-              >
-                <span>Get Started</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </>
+            <Link
+              to="/login"
+              className="px-3.5 py-2 text-xs font-bold text-gray-300 hover:text-white transition-colors"
+            >
+              Login
+            </Link>
           )}
         </div>
       </div>

@@ -51,13 +51,6 @@ export default function Navbar() {
           ) : (
             <>
               <Link
-                to="/login?role=admin"
-                className="hidden sm:inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-xs font-bold text-amber-400 hover:bg-amber-500/20 transition-all"
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Admin Login</span>
-              </Link>
-              <Link
                 to="/login"
                 className="px-3.5 py-2 text-xs font-bold text-gray-300 hover:text-white transition-colors"
               >

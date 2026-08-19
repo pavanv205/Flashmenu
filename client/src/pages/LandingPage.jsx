@@ -45,7 +45,7 @@ export default function LandingPage() {
       <Navbar />
 
       {/* 1. HERO SECTION */}
-      <section className="relative pt-24 pb-28 overflow-hidden border-b border-white/[0.08]">
+      <section id="about" className="relative pt-24 pb-28 overflow-hidden border-b border-white/[0.08]">
         {/* Ambient Minimal Glow */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-tr from-amber-500/10 via-transparent to-white/5 rounded-full blur-[170px] pointer-events-none" />
 

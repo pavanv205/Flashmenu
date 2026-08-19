@@ -26,10 +26,9 @@ export default function Navbar() {
 
         {/* Center Nav Links */}
         <nav className="hidden md:flex items-center space-x-8 text-xs font-bold text-gray-400">
-          <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
+          <a href="#about" className="hover:text-white transition-colors">About</a>
           <a href="#features" className="hover:text-white transition-colors">Features</a>
-          <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-          <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
+          <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
         </nav>
 
         {/* Action Buttons */}

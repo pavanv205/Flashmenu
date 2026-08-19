@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function WhatsAppButton({ phoneNumber = '+916301592025', message = 'Hello FlashMenu! I would like to inquire about your QR digital menu platform.' }) {
+  const location = useLocation();
   const [showTooltip, setShowTooltip] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
+  // Hide WhatsApp button on menu pages and dashboard pages
+  const isMenuOrDashboard = location.pathname.startsWith('/menu') || location.pathname.startsWith('/dashboard');
+
   useEffect(() => {
+    if (isMenuOrDashboard) {
+      setIsVisible(false);
+      return;
+    }
     const handleScroll = () => {
       const pricingElem = document.getElementById('pricing');
       if (pricingElem) {
@@ -27,8 +36,9 @@ export default function WhatsAppButton({ phoneNumber = '+916301592025', message 
 
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isMenuOrDashboard]);
+
+  if (isMenuOrDashboard) return null;
 
   const encodedMsg = encodeURIComponent(message);
   const whatsappUrl = `https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}?text=${encodedMsg}`;

@@ -3,382 +3,501 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import {
-  Zap,
+  Sparkles,
+  Bot,
+  Wand2,
+  Cpu,
+  Layers,
   QrCode,
   Smartphone,
+  Zap,
   CheckCircle,
-  TrendingUp,
   BarChart2,
-  Globe,
-  Layers,
   ArrowRight,
-  ChevronDown,
-  Sparkles,
-  ShieldCheck,
-  Crown,
+  RefreshCw,
+  Check,
+  MessageCircle,
+  Sliders,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 export default function LandingPage() {
-  const [openFaq, setOpenFaq] = useState(null);
+  // Live AI Prompt Playground State
+  const [promptText, setPromptText] = useState('Artisanal Bistro & Fine Dining');
+  const [selectedTheme, setSelectedTheme] = useState('midnight');
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const faqs = [
-    {
-      q: 'Do customers need to download an app or log in?',
-      a: 'No! That is the magic of FlashMenu. Customers simply open their phone camera, scan the table QR code, and your menu opens instantly in any browser.',
-    },
-    {
-      q: 'What happens when an item is sold out?',
-      a: 'You can instantly toggle any item as "SOLD OUT" from your restaurant dashboard. It immediately shows a clear "SOLD OUT" badge on the digital menu without needing to reprint anything.',
-    },
-    {
-      q: 'Can I generate unique QR codes for each table?',
-      a: 'Yes! Premium Restaurant plan allows you to create table-specific QR codes (e.g., Table 1 to 50). When scanned, the customer menu knows their exact table number.',
-    },
-    {
-      q: 'How fast does the menu load on customer phones?',
-      a: 'FlashMenu is built for extreme speed. Public menus load in under 1 second even on 3G mobile networks, using optimized assets and lightweight code.',
-    },
-    {
-      q: 'Can customers request a waiter or water from their phone?',
-      a: 'Yes, Premium Restaurant plan includes a built-in "Call Waiter" feature where customers can tap to request water, their bill, or staff assistance directly from their table.',
-    },
+  // Sample Generated Output State based on Prompt
+  const promptPresets = [
+    { title: 'Artisanal Bistro & Fine Dining', theme: 'midnight' },
+    { title: 'Tokyo Ramen & Sushi Bar', theme: 'cyber' },
+    { title: 'South Indian Tiffin House', theme: 'amber' },
+    { title: 'Sleek Cocktail Lounge & Tapas', theme: 'purple' },
   ];
 
+  const themeStyles = {
+    midnight: {
+      bg: 'bg-[#0F131F]',
+      border: 'border-indigo-500/40',
+      badge: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40',
+      accent: 'text-indigo-400',
+    },
+    cyber: {
+      bg: 'bg-[#09151A]',
+      border: 'border-cyan-500/40',
+      badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
+      accent: 'text-cyan-400',
+    },
+    amber: {
+      bg: 'bg-[#181109]',
+      border: 'border-amber-500/40',
+      badge: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+      accent: 'text-amber-400',
+    },
+    purple: {
+      bg: 'bg-[#140B1E]',
+      border: 'border-purple-500/40',
+      badge: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
+      accent: 'text-purple-400',
+    },
+  };
+
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      setIsGenerating(false);
+    }, 800);
+  };
+
   return (
-    <div className="min-h-screen bg-[#0B0F17] text-white flex flex-col">
+    <div className="min-h-screen bg-[#060709] text-white flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative pt-16 pb-24 overflow-hidden border-b border-gray-800/60">
-        {/* Background glow effects */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-500/10 rounded-full blur-[140px] pointer-events-none" />
+      {/* 1. STITCH AI HERO SECTION */}
+      <section className="relative pt-20 pb-24 overflow-hidden text-center border-b border-indigo-500/20">
+        {/* Ambient Glowing Orbs */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-tr from-indigo-600/15 via-purple-600/15 to-amber-500/10 rounded-full blur-[150px] pointer-events-none" />
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
-          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-400 text-xs font-extrabold uppercase tracking-widest">
-            <Zap className="w-4 h-4 text-brand-500 fill-brand-500" />
-            <span>Next-Gen QR Menu Platform</span>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
+          {/* AI Partner Badge */}
+          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-amber-500/10 border border-indigo-500/30 shadow-lg">
+            <Sparkles className="w-4 h-4 text-indigo-400 fill-indigo-400 animate-pulse" />
+            <span className="text-xs font-extrabold uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-200 to-amber-300">
+              STITCH AI ENGINE • GOOGLE LABS INTEGRATION
+            </span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight font-sans leading-tight">
-            Flash<span className="gold-gradient-text">Menu</span><br />
-            <span className="text-white">Scan Tap Dine</span>
+          {/* Main Headline */}
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.1] text-white">
+            AI-Powered Digital Menus. <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-amber-400">
+              Generated in Seconds with Stitch.
+            </span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto font-normal leading-relaxed">
-            Turn your restaurant menu into a fast, beautiful digital experience. Customers scan your table QR code and instantly view your menu on their phones — zero downloads or signups required.
+          <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            Transform paper menus or raw dish ideas into stunning, interactive QR menus using Google Gemini & Stitch AI design capabilities.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 pt-2">
+          {/* Interactive AI Prompt Input Bar */}
+          <div className="max-w-2xl mx-auto pt-4">
+            <div className="bg-[#0D0F17]/90 border border-indigo-500/30 p-2 sm:p-3 rounded-3xl shadow-2xl backdrop-blur-xl flex flex-col sm:flex-row items-center gap-3">
+              <div className="flex items-center space-x-2 px-3 w-full sm:w-auto flex-1">
+                <Wand2 className="w-5 h-5 text-indigo-400 shrink-0" />
+                <input
+                  type="text"
+                  value={promptText}
+                  onChange={(e) => setPromptText(e.target.value)}
+                  placeholder="Type cuisine (e.g. Italian Bistro, Sushi Bar...)"
+                  className="bg-transparent text-white text-xs sm:text-sm focus:outline-none w-full placeholder-gray-500 font-medium"
+                />
+              </div>
+              <button
+                onClick={handleGenerate}
+                disabled={isGenerating}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-600 to-amber-500 text-white font-extrabold text-xs transition-all hover:scale-105 shadow-xl shadow-indigo-500/25 flex items-center justify-center space-x-2 shrink-0 disabled:opacity-50"
+              >
+                {isGenerating ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Stitching Menu...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 fill-white" />
+                    <span>Generate AI Menu</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Prompt Presets Pills */}
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
+              <span className="text-[11px] text-gray-400 font-semibold mr-1">Try AI Prompts:</span>
+              {promptPresets.map((preset, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setPromptText(preset.title);
+                    setSelectedTheme(preset.theme);
+                    handleGenerate();
+                  }}
+                  className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 hover:border-indigo-400 text-gray-300 hover:text-white text-[11px] font-medium transition-all"
+                >
+                  {preset.title}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. LIVE INTERACTIVE STITCH AI PLAYGROUND / PREVIEW WIDGET */}
+      <section id="ai-generator" className="py-20 bg-[#040507] border-b border-indigo-500/20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="text-center space-y-3">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold uppercase tracking-wider">
+              <Cpu className="w-3.5 h-3.5" />
+              <span>Real-Time Neural Preview</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Stitch AI Live Preview Canvas</h2>
+            <p className="text-xs sm:text-sm text-gray-400 max-w-xl mx-auto">
+              Watch Stitch AI dynamically compose food items, pricing tiers, and dietary badges for <span className="text-indigo-400 font-bold">"{promptText}"</span>.
+            </p>
+          </div>
+
+          {/* Canvas Box */}
+          <div className="bg-[#0B0D14] border border-indigo-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+            <div className="flex flex-col lg:flex-row gap-8 items-center justify-between">
+              
+              {/* Left Control Column */}
+              <div className="space-y-6 w-full lg:w-1/3 text-left">
+                <div className="space-y-2">
+                  <span className="text-[10px] font-extrabold uppercase text-indigo-400 tracking-wider">Active Prompt</span>
+                  <div className="p-3.5 rounded-2xl bg-[#060709] border border-indigo-500/20 text-xs font-mono text-indigo-200">
+                    "{promptText}"
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-[10px] font-extrabold uppercase text-gray-400 tracking-wider">Stitch UI Theme Palette</span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.keys(themeStyles).map((tKey) => (
+                      <button
+                        key={tKey}
+                        onClick={() => setSelectedTheme(tKey)}
+                        className={`p-2.5 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all text-center ${
+                          selectedTheme === tKey
+                            ? 'bg-indigo-500/20 border-indigo-400 text-white shadow-lg'
+                            : 'bg-[#060709] border-gray-800 text-gray-400 hover:text-white'
+                        }`}
+                      >
+                        {tKey}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 space-y-2">
+                  <div className="flex items-center space-x-2 text-indigo-300 text-xs font-bold">
+                    <Bot className="w-4 h-4 text-indigo-400" />
+                    <span>Gemini 2.0 Flash Verification</span>
+                  </div>
+                  <p className="text-[11px] text-gray-300 leading-relaxed">
+                    Auto-generated dietary flags (Veg / Non-Veg / Vegan / Gluten Free) & caloric estimates applied automatically.
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Live Mobile Menu Output */}
+              <div className="w-full lg:w-1/2 flex justify-center">
+                <div className={`w-full max-w-sm rounded-[36px] p-4 border-2 shadow-2xl transition-all duration-500 ${themeStyles[selectedTheme].bg} ${themeStyles[selectedTheme].border}`}>
+                  <div className="w-16 h-1 bg-gray-800 rounded-full mx-auto mb-3" />
+
+                  {/* Header inside mobile preview */}
+                  <div className="text-left space-y-2 pb-3 border-b border-white/10">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-extrabold text-sm text-white">{promptText}</h4>
+                      <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full border ${themeStyles[selectedTheme].badge}`}>
+                        STITCH AI MENU
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-gray-400">Scan to order at Table #04 • Powered by FlashMenu</p>
+                  </div>
+
+                  {/* Food Items Generated */}
+                  <div className="space-y-2.5 pt-3 text-left">
+                    <div className="p-3 rounded-2xl bg-[#05060A]/80 border border-white/10 flex items-center justify-between hover:border-indigo-500/40 transition-all">
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                          <p className="text-xs font-bold text-white">Truffle Wild Mushroom Risotto</p>
+                        </div>
+                        <p className="text-[10px] text-gray-400">Arborio rice, porcini dust, shaved parmesan</p>
+                        <span className="text-[9px] text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">VEGETARIAN</span>
+                      </div>
+                      <span className={`text-xs font-extrabold ${themeStyles[selectedTheme].accent}`}>₹420</span>
+                    </div>
+
+                    <div className="p-3 rounded-2xl bg-[#05060A]/80 border border-white/10 flex items-center justify-between hover:border-indigo-500/40 transition-all">
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <span className="w-2 h-2 rounded-full bg-red-400" />
+                          <p className="text-xs font-bold text-white">Flame-Grilled Salmon Fillet</p>
+                        </div>
+                        <p className="text-[10px] text-gray-400">Lemon butter glaze, asparagus spears</p>
+                        <span className="text-[9px] text-amber-400 font-bold bg-amber-500/10 px-1.5 py-0.5 rounded">BEST SELLER</span>
+                      </div>
+                      <span className={`text-xs font-extrabold ${themeStyles[selectedTheme].accent}`}>₹680</span>
+                    </div>
+
+                    <div className="p-3 rounded-2xl bg-[#05060A]/80 border border-white/10 flex items-center justify-between hover:border-indigo-500/40 transition-all">
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                          <p className="text-xs font-bold text-white">Artisanal Match Parfait</p>
+                        </div>
+                        <p className="text-[10px] text-gray-400">Matcha cream, candied ginger crumble</p>
+                        <span className="text-[9px] text-indigo-400 font-bold bg-indigo-500/10 px-1.5 py-0.5 rounded">CHEF SPECIAL</span>
+                      </div>
+                      <span className={`text-xs font-extrabold ${themeStyles[selectedTheme].accent}`}>₹290</span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Action inside preview */}
+                  <div className="pt-4 text-center">
+                    <Link
+                      to="/signup"
+                      className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-amber-500 text-white font-extrabold text-xs block text-center shadow-lg"
+                    >
+                      Publish This AI Menu &rarr;
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. CORE STITCH AI CAPABILITIES */}
+      <section id="capabilities" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-center">
+        <div className="max-w-2xl mx-auto space-y-3">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider">
+            <Layers className="w-3.5 h-3.5" />
+            <span>AI Platform Capabilities</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Stitch AI Engine Features</h2>
+          <p className="text-xs sm:text-sm text-gray-400">Everything needed to run a next-generation digital menu system.</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+          <div className="bg-[#0B0D14] border border-indigo-500/20 p-8 rounded-3xl space-y-4 hover:border-indigo-400 transition-all">
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+              <Wand2 className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-white">Instant Prompt Parsing</h3>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Upload paper PDFs or type dish prompts. Gemini Flash 2.0 extracts categories and prices automatically.
+            </p>
+          </div>
+
+          <div className="bg-[#0B0D14] border border-indigo-500/20 p-8 rounded-3xl space-y-4 hover:border-indigo-400 transition-all">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+              <Sliders className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-white">Adaptive Stitch UI</h3>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Dynamic color palettes, typography, and card layouts that adjust automatically for fast customer loading.
+            </p>
+          </div>
+
+          <div className="bg-[#0B0D14] border border-indigo-500/20 p-8 rounded-3xl space-y-4 hover:border-indigo-400 transition-all">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+              <ImageIcon className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-white">Generative Food Photos</h3>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              AI creates high-resolution visual previews for dishes so customers can visualize every food item.
+            </p>
+          </div>
+
+          <div className="bg-[#0B0D14] border border-indigo-500/20 p-8 rounded-3xl space-y-4 hover:border-indigo-400 transition-all">
+            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+              <BarChart2 className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-white">Predictive Analytics</h3>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Track table QR scans, customer demand trends, and peak dining hours with real-time AI dashboards.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. HOW IT WORKS / 3-STEP PIPELINE */}
+      <section id="how-it-works" className="py-24 bg-[#040507] border-y border-indigo-500/20 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+          <div className="max-w-2xl mx-auto space-y-3">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">The 3-Step AI Pipeline</h2>
+            <p className="text-xs sm:text-sm text-gray-400">Launch your digital menu in under 2 minutes.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+            <div className="bg-[#0B0D14] border border-indigo-500/20 p-8 rounded-3xl space-y-4 relative">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-extrabold flex items-center justify-center text-sm">
+                1
+              </div>
+              <h3 className="text-lg font-bold text-white">Prompt or Upload</h3>
+              <p className="text-xs text-gray-400 leading-relaxed">
+                Drop your existing paper menu PDF or type your restaurant concept into the Stitch AI Prompt Studio.
+              </p>
+            </div>
+
+            <div className="bg-[#0B0D14] border border-indigo-500/20 p-8 rounded-3xl space-y-4 relative">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-amber-500 text-white font-extrabold flex items-center justify-center text-sm">
+                2
+              </div>
+              <h3 className="text-lg font-bold text-white">Gemini Flash Processing</h3>
+              <p className="text-xs text-gray-400 leading-relaxed">
+                AI parses categories, translates languages, assigns dietary tags (veg/non-veg) & formats pricing.
+              </p>
+            </div>
+
+            <div className="bg-[#0B0D14] border border-indigo-500/20 p-8 rounded-3xl space-y-4 relative">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-amber-500 to-emerald-500 text-white font-extrabold flex items-center justify-center text-sm">
+                3
+              </div>
+              <h3 className="text-lg font-bold text-white">Publish Table QRs</h3>
+              <p className="text-xs text-gray-400 leading-relaxed">
+                Download printable high-res table QR cards (Table 1 to 50) ready for dining tables immediately.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. PRICING TIERS */}
+      <section id="pricing" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-12">
+        <div className="max-w-2xl mx-auto space-y-3">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Select Restaurant Tier</h2>
+          <p className="text-xs sm:text-sm text-gray-400">Includes full Stitch AI engine access & instant QR code menu setup.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
+          {/* BASIC PLAN */}
+          <div className="bg-[#0B0D14] border border-indigo-500/30 p-8 rounded-3xl space-y-6 flex flex-col justify-between hover:border-indigo-400 transition-all">
+            <div className="space-y-4">
+              <h3 className="text-2xl font-bold text-white">Basic Restaurant</h3>
+              <p className="text-xs text-gray-400">Essential digital QR menu setup for cafes & small dining spots.</p>
+              
+              <div className="grid grid-cols-2 rounded-2xl bg-[#060709] border border-indigo-500/20 divide-x divide-indigo-500/20 overflow-hidden">
+                <div className="p-3 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-gray-400 block">6 MONTHS</span>
+                  <span className="text-xl font-black text-white block">₹2,499</span>
+                </div>
+                <div className="p-3 text-center space-y-1 bg-indigo-500/10">
+                  <span className="text-[10px] font-bold text-amber-400 block">LIFETIME</span>
+                  <span className="text-xl font-black text-amber-400 block">₹9,999</span>
+                </div>
+              </div>
+
+              <ul className="space-y-3 text-xs text-gray-300 pt-4 border-t border-indigo-500/20">
+                <li className="flex items-center space-x-2.5">
+                  <Check className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span>1 Digital Restaurant Menu</span>
+                </li>
+                <li className="flex items-center space-x-2.5">
+                  <Check className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span>Unlimited Dishes & Categories</span>
+                </li>
+                <li className="flex items-center space-x-2.5">
+                  <Check className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span>Instant SOLD OUT Toggle</span>
+                </li>
+              </ul>
+            </div>
+
             <Link
               to="/signup"
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-400 hover:from-brand-400 hover:to-brand-300 text-black font-extrabold text-base shadow-xl shadow-brand-500/25 transition-all hover:scale-105"
+              className="w-full py-3.5 rounded-full bg-white text-black font-extrabold text-xs transition-all hover:bg-gray-200 text-center block"
             >
-              <span>Start Free Trial</span>
-              <ArrowRight className="w-5 h-5" />
+              Get Started with Basic
             </Link>
+          </div>
+
+          {/* PREMIUM PLAN */}
+          <div className="bg-[#0B0D14] border-2 border-indigo-500 p-8 rounded-3xl space-y-6 flex flex-col justify-between relative shadow-2xl shadow-indigo-500/10">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full bg-gradient-to-r from-indigo-500 to-amber-500 text-white text-[10px] font-black uppercase tracking-wider">
+              RECOMMENDED PRO TIER
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-2xl font-bold text-white">Premium Restaurant</h3>
+              <p className="text-xs text-gray-400">Complete QR platform with Stitch AI studio & table management.</p>
+              
+              <div className="grid grid-cols-2 rounded-2xl bg-[#060709] border border-indigo-500/30 divide-x divide-indigo-500/30 overflow-hidden">
+                <div className="p-3 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-gray-400 block">6 MONTHS</span>
+                  <span className="text-xl font-black text-white block">₹5,999</span>
+                </div>
+                <div className="p-3 text-center space-y-1 bg-indigo-500/20">
+                  <span className="text-[10px] font-bold text-amber-400 block">LIFETIME</span>
+                  <span className="text-xl font-black text-amber-400 block">₹24,999</span>
+                </div>
+              </div>
+
+              <ul className="space-y-3 text-xs text-gray-300 pt-4 border-t border-indigo-500/20">
+                <li className="flex items-center space-x-2.5">
+                  <Check className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span>Everything in Basic Plan</span>
+                </li>
+                <li className="flex items-center space-x-2.5">
+                  <Check className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span>Table-Specific QR Codes (Table 1-25)</span>
+                </li>
+                <li className="flex items-center space-x-2.5">
+                  <Check className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span>Call Waiter & Bill Request Alerts</span>
+                </li>
+                <li className="flex items-center space-x-2.5">
+                  <Check className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span>Stitch AI Dish Generator Access</span>
+                </li>
+              </ul>
+            </div>
 
             <Link
-              to="/menu/spice-garden"
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-2xl bg-dark-card border border-gray-700 hover:border-brand-500/50 text-white font-bold text-base transition-all hover:bg-dark-hover"
+              to="/signup"
+              className="w-full py-3.5 rounded-full bg-gradient-to-r from-indigo-500 via-purple-600 to-amber-500 text-white font-extrabold text-xs transition-all hover:opacity-90 text-center block shadow-lg"
             >
-              <QrCode className="w-5 h-5 text-brand-400" />
-              <span>View Live Demo</span>
+              Get Premium AI Plan
             </Link>
           </div>
-
-          {/* Social Proof Stats */}
-          <div className="pt-10 border-t border-gray-800/80 grid grid-cols-3 gap-6 text-center max-w-2xl mx-auto">
-            <div>
-              <h4 className="text-2xl sm:text-3xl font-extrabold text-white">100%</h4>
-              <p className="text-xs text-gray-400 font-medium">No App Download</p>
-            </div>
-            <div>
-              <h4 className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">&lt; 1s</h4>
-              <p className="text-xs text-gray-400 font-medium">Lightning Scan Speed</p>
-            </div>
-            <div>
-              <h4 className="text-2xl sm:text-3xl font-extrabold text-white">Instant</h4>
-              <p className="text-xs text-gray-400 font-medium">Sold Out Toggle</p>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* How FlashMenu Works */}
-      <section className="py-20 bg-[#0E1420] border-b border-gray-800/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <h2 className="text-xs font-extrabold text-brand-400 uppercase tracking-widest">3 Simple Steps</h2>
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-white">How FlashMenu Works</h3>
-            <p className="text-gray-400 text-sm sm:text-base">
-              Set up your restaurant in under 5 minutes and offer your diners a premium contactless menu.
-            </p>
+      {/* 6. AI STUDIO CONTACT / WHATSAPP */}
+      <section className="py-24 bg-[#040507] border-t border-indigo-500/20 text-center">
+        <div className="max-w-3xl mx-auto px-4 space-y-6">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto border border-indigo-500/30">
+            <MessageCircle className="w-6 h-6" />
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-dark-card border border-dark-border p-8 rounded-3xl relative hover:border-brand-500/40 transition-all group">
-              <div className="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center font-extrabold text-xl mb-6 border border-brand-500/20 group-hover:bg-brand-500 group-hover:text-black transition-all">
-                01
-              </div>
-              <h4 className="text-xl font-bold text-white mb-3">Create Your Menu</h4>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Add categories, food photos, prices, dietary badges (veg/non-veg), and spicy levels easily with drag & drop reordering.
-              </p>
-            </div>
-
-            <div className="bg-dark-card border border-dark-border p-8 rounded-3xl relative hover:border-brand-500/40 transition-all group">
-              <div className="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center font-extrabold text-xl mb-6 border border-brand-500/20 group-hover:bg-brand-500 group-hover:text-black transition-all">
-                02
-              </div>
-              <h4 className="text-xl font-bold text-white mb-3">Place Table QR Codes</h4>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Download high-res printable QR cards customized for each table and place them on your dining tables or standees.
-              </p>
-            </div>
-
-            <div className="bg-dark-card border border-dark-border p-8 rounded-3xl relative hover:border-brand-500/40 transition-all group">
-              <div className="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center font-extrabold text-xl mb-6 border border-brand-500/20 group-hover:bg-brand-500 group-hover:text-black transition-all">
-                03
-              </div>
-              <h4 className="text-xl font-bold text-white mb-3">Customers Scan & View</h4>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Diners scan with any camera app. The menu opens immediately in their mobile browser with instant category search.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-20 border-b border-gray-800/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <h2 className="text-xs font-extrabold text-brand-400 uppercase tracking-widest">Built For Restaurants</h2>
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-white">Everything You Need To Flourish</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-2xl bg-dark-card border border-dark-border space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
-                <QrCode className="w-5 h-5" />
-              </div>
-              <h4 className="font-bold text-white text-base">Table-Specific QRs</h4>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Generate unique QR codes for Table 1 to 50 so you always know where orders and waiter calls originate.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-dark-card border border-dark-border space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
-                <Zap className="w-5 h-5" />
-              </div>
-              <h4 className="font-bold text-white text-base">Instant Sold-Out Toggle</h4>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Run out of an ingredient? Mark dishes as SOLD OUT instantly without reprinting paper menus.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-dark-card border border-dark-border space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
-                <BarChart2 className="w-5 h-5" />
-              </div>
-              <h4 className="font-bold text-white text-base">Menu Analytics</h4>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Track daily menu scans, unique visitors, peak dining hours, and your most popular dishes.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-dark-card border border-dark-border space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
-                <Smartphone className="w-5 h-5" />
-              </div>
-              <h4 className="font-bold text-white text-base">Call Waiter Button</h4>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Allow customers to request water, their check, or waiter assistance right from their mobile browser.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 border-b border-gray-800/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <h2 className="text-xs font-extrabold text-amber-400 uppercase tracking-widest">Simple Transparent Pricing</h2>
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-white">Choose Your Restaurant Plan</h3>
-            <p className="text-xs sm:text-sm text-gray-400">
-              No hidden fees. Full digital menu setup with instant QR code ordering.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* CARD 1: BASIC RESTAURANT */}
-            <div className="bg-dark-card border border-dark-border p-8 rounded-3xl relative hover:border-amber-500/50 transition-all flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
-                <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
-                  <Zap className="w-4 h-4 text-amber-400" />
-                  <span>Standard Tier</span>
-                </div>
-                <h4 className="text-2xl font-extrabold text-white">Basic Restaurant</h4>
-                <p className="text-xs text-gray-400">Essential digital QR menu setup for cafes & small dining spots.</p>
-                
-                {/* Durations (Divided in Middle with Vertical Line) */}
-                <div className="grid grid-cols-2 rounded-2xl bg-dark-base border border-dark-border divide-x divide-dark-border overflow-hidden">
-                  <div className="p-3 text-center space-y-1">
-                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
-                    <span className="text-xl font-black text-white block">₹2,499</span>
-                    <Link
-                      to="/signup"
-                      className="w-full py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black text-[10px] font-extrabold transition-all border border-amber-500/30 block mt-1"
-                    >
-                      Demo Pay ₹2,499
-                    </Link>
-                  </div>
-                  <div className="p-3 text-center space-y-1 bg-amber-500/5">
-                    <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                    <span className="text-xl font-black text-amber-400 block">₹9,999</span>
-                    <Link
-                      to="/signup"
-                      className="w-full py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-black transition-all block mt-1 shadow-sm"
-                    >
-                      Demo Pay ₹9,999
-                    </Link>
-                  </div>
-                </div>
-
-                <ul className="space-y-3 text-xs text-gray-300 pt-4 border-t border-dark-border">
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>1 Digital Restaurant Menu</span>
-                  </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Unlimited Dishes & Categories</span>
-                  </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>High-Resolution Master Table QR Code</span>
-                  </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Instant SOLD OUT Toggle Switch</span>
-                  </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Fast Mobile Customer View</span>
-                  </li>
-                </ul>
-              </div>
-
-              <Link
-                to="/signup"
-                className="w-full py-3.5 rounded-2xl bg-dark-base hover:bg-dark-hover border border-dark-border text-white font-extrabold text-xs transition-all text-center block"
-              >
-                Get Started with Basic &rarr;
-              </Link>
-            </div>
-
-            {/* CARD 2: PREMIUM RESTAURANT */}
-            <div className="bg-gradient-to-b from-dark-card via-[#162238] to-dark-card border-2 border-amber-500 p-8 rounded-3xl relative gold-glow flex flex-col justify-between space-y-6">
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-500 text-black text-[11px] font-black uppercase tracking-wider flex items-center space-x-1 shadow-lg">
-                <Crown className="w-3.5 h-3.5 text-black fill-black" />
-                <span>Recommended</span>
-              </div>
-
-              <div className="space-y-4 pt-1">
-                <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
-                  <span>Full Pro Suite</span>
-                </div>
-                <h4 className="text-2xl font-extrabold text-white">Premium Restaurant</h4>
-                <p className="text-xs text-gray-300">Complete QR platform for busy restaurants & fine dining.</p>
-                
-                {/* Durations (Divided in Middle with Vertical Line) */}
-                <div className="grid grid-cols-2 rounded-2xl bg-dark-base border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
-                  <div className="p-3 text-center space-y-1">
-                    <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
-                    <span className="text-xl font-black text-white block">₹5,999</span>
-                    <Link
-                      to="/signup"
-                      className="w-full py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black text-[10px] font-extrabold transition-all border border-amber-500/30 block mt-1"
-                    >
-                      Demo Pay ₹5,999
-                    </Link>
-                  </div>
-                  <div className="p-3 text-center space-y-1 bg-amber-500/10">
-                    <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                    <span className="text-xl font-black text-amber-400 block">₹24,999</span>
-                    <Link
-                      to="/signup"
-                      className="w-full py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-black transition-all block mt-1 shadow-sm"
-                    >
-                      Demo Pay ₹24,999
-                    </Link>
-                  </div>
-                </div>
-
-                <ul className="space-y-3 text-xs text-gray-200 pt-4 border-t border-amber-500/20">
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Everything in Basic Plan</span>
-                  </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Table-Specific QR Codes (Table 1 to 25)</span>
-                  </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Real-Time Table Ordering & Kitchen Display</span>
-                  </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Call Waiter & Bill Request Alerts</span>
-                  </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Customer Feedback & Rating System</span>
-                  </li>
-                </ul>
-              </div>
-
-              <Link
-                to="/signup"
-                className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all text-center block shadow-lg shadow-amber-500/20"
-              >
-                Get Premium Restaurant &rarr;
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="py-20 border-b border-gray-800/60">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 space-y-3">
-            <h2 className="text-xs font-extrabold text-brand-400 uppercase tracking-widest">Questions & Answers</h2>
-            <h3 className="text-3xl font-extrabold text-white">Frequently Asked Questions</h3>
-          </div>
-
-          <div className="space-y-4">
-            {faqs.map((faq, idx) => (
-              <div key={idx} className="bg-dark-card border border-dark-border rounded-2xl overflow-hidden">
-                <button
-                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full p-6 text-left font-bold text-white flex items-center justify-between hover:text-brand-400 transition-colors"
-                >
-                  <span>{faq.q}</span>
-                  <ChevronDown className={`w-5 h-5 transition-transform ${openFaq === idx ? 'rotate-180 text-brand-400' : 'text-gray-400'}`} />
-                </button>
-                {openFaq === idx && (
-                  <div className="px-6 pb-6 text-sm text-gray-400 leading-relaxed border-t border-dark-border/50 pt-4">
-                    {faq.a}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+            Need Custom AI Menu Setup?
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-400 max-w-lg mx-auto">
+            Our team will configure Stitch AI and import your existing paper menu within 10 minutes.
+          </p>
+          <a
+            href="https://wa.me/919876543210?text=Hi%20FlashMenu%20Stitch%20AI%20Team,%20I%20want%20to%20setup%20my%20restaurant%20menu!"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center space-x-2.5 px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-sm transition-all shadow-xl"
+          >
+            <MessageCircle className="w-5 h-5 fill-black" />
+            <span>Chat with AI Setup Specialist</span>
+          </a>
         </div>
       </section>
 

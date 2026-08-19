@@ -76,12 +76,12 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          {/* Ecosystem Architecture Showcase */}
-          <div className="pt-8 max-w-3xl mx-auto">
+          {/* Realistic Product Mockup Showcase */}
+          <div className="pt-8 max-w-2xl mx-auto">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
               <img
-                src="/ecosystem_diagram.png"
-                alt="FlashMenu Ecosystem Architecture"
+                src="/mockup_preview.png"
+                alt="FlashMenu QR Code Standee and Live Mobile App Interface"
                 className="w-full h-auto object-cover rounded-3xl transform hover:scale-[1.01] transition-transform duration-500"
               />
             </div>

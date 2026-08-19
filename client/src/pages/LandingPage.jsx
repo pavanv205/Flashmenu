@@ -62,17 +62,17 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 pt-2">
             <Link
-              to="/menu/spice-garden"
+              to="/signup"
               className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-white text-black font-extrabold text-sm transition-all hover:bg-gray-200 shadow-xl"
             >
-              <span>Book a Demo</span>
+              <span>Get Started</span>
             </Link>
 
             <Link
-              to="/signup"
+              to="/menu/spice-garden"
               className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-transparent border border-white/20 text-white font-bold text-sm transition-all hover:bg-white/10"
             >
-              <span>Get Started</span>
+              <span>Book a Demo</span>
             </Link>
           </div>
 

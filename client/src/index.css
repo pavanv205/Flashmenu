@@ -4,11 +4,11 @@
 
 @layer base {
   body {
-    @apply bg-[#0B0F17] text-gray-100 antialiased;
+    @apply bg-[#08080A] text-gray-100 antialiased selection:bg-white selection:text-black;
   }
 }
 
-/* Custom scrollbars for mobile horizontally scrollable categories */
+/* Custom scrollbars for mobile categories */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -17,31 +17,33 @@
   scrollbar-width: none;
 }
 
-/* Glassmorphism utilities */
+/* Minimalist Glassmorphism & UI utilities */
 .glass-panel {
-  background: rgba(19, 27, 46, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(13, 13, 18, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .gold-gradient-text {
-  background: linear-gradient(135deg, #FDE047 0%, #F59E0B 100%);
+  background: linear-gradient(135deg, #FFF 0%, #F59E0B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gold-glow {
-  box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
 }
 
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.8; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.03); }
+.minimal-card {
+  background: #0E0E14;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.animate-pulse-glow {
-  animation: pulseGlow 3s infinite ease-in-out;
+.minimal-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
 }
 
 /* Print Styles: Only show the Printable QR Card */

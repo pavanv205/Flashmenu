@@ -379,8 +379,7 @@ const forgotPassword = async (req, res) => {
       });
 
       return res.json({
-        message: 'Password reset code sent to your email!',
-        codeDemo: resetCode, // Included for easy testing
+        message: 'Password reset code sent to your email address!',
       });
     } else {
       // Mock store fallback
@@ -389,7 +388,7 @@ const forgotPassword = async (req, res) => {
         const resetCode = '123456';
         user.resetPasswordToken = resetCode;
         user.resetPasswordExpires = Date.now() + 3600000;
-        return res.json({ message: 'Reset code sent!', codeDemo: resetCode });
+        return res.json({ message: 'Reset code sent to your email address!' });
       }
       return res.json({ message: 'If an account exists with this email, a reset code has been sent.' });
     }

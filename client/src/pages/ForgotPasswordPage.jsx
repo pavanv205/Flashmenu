@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Zap, Mail, ArrowRight, CheckCircle2, ShieldCheck, KeyRound, Loader2 } from 'lucide-react';
+import { Zap, Mail, ArrowRight, CheckCircle2, KeyRound, Loader2 } from 'lucide-react';
 import { authAPI } from '../services/api';
 
 export default function ForgotPasswordPage() {
@@ -8,7 +8,6 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-  const [demoCode, setDemoCode] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -19,10 +18,7 @@ export default function ForgotPasswordPage() {
 
     try {
       const res = await authAPI.forgotPassword({ email });
-      setSuccessMsg(res.data?.message || 'Password reset instructions sent!');
-      if (res.data?.codeDemo) {
-        setDemoCode(res.data.codeDemo);
-      }
+      setSuccessMsg(res.data?.message || 'Password reset code has been sent to your email address!');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to send password reset email. Please try again.');
     } finally {
@@ -49,7 +45,7 @@ export default function ForgotPasswordPage() {
             <span>Forgot Password?</span>
           </h2>
           <p className="text-xs text-gray-400">
-            Enter your account email to receive a 6-digit SMTP verification code.
+            Enter your account email to receive a 6-digit verification code.
           </p>
         </div>
 
@@ -64,22 +60,16 @@ export default function ForgotPasswordPage() {
             <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <h3 className="text-lg font-bold text-white">Reset Code Sent!</h3>
-              <p className="text-xs text-gray-300">{successMsg}</p>
+              <p className="text-xs text-gray-300">
+                A 6-digit security verification code has been sent directly to{' '}
+                <span className="text-amber-400 font-bold">{email}</span>. Please check your inbox or spam folder.
+              </p>
             </div>
 
-            {demoCode && (
-              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-center space-y-1">
-                <span className="text-[10px] font-black uppercase text-amber-400 tracking-wider">
-                  SMTP / Security Reset Code
-                </span>
-                <p className="text-2xl font-black font-mono text-white tracking-widest">{demoCode}</p>
-              </div>
-            )}
-
             <button
-              onClick={() => navigate(`/reset-password?email=${encodeURIComponent(email)}&token=${demoCode}`)}
+              onClick={() => navigate(`/reset-password?email=${encodeURIComponent(email)}`)}
               className="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2"
             >
               <span>Enter Code & Set New Password</span>
@@ -113,7 +103,7 @@ export default function ForgotPasswordPage() {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Sending Code via SMTP...</span>
+                  <span>Sending Code via Email...</span>
                 </>
               ) : (
                 <>

@@ -8,7 +8,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-[#08080A]/90 backdrop-blur-xl border-b border-white/[0.08]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between relative">
         {/* Brand Logo */}
         <Link to="/" className="flex items-center space-x-3 group">
           <div className="w-9 h-9 rounded-xl bg-white text-black flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
@@ -24,8 +24,8 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Center Nav Links */}
-        <nav className="hidden md:flex items-center space-x-8 text-xs font-bold text-gray-400">
+        {/* Center Nav Links - Absolute Dead Center */}
+        <nav className="hidden md:flex items-center space-x-8 text-xs font-bold text-gray-400 absolute left-1/2 -translate-x-1/2">
           <a href="#about" className="hover:text-white transition-colors">About</a>
           <a href="#features" className="hover:text-white transition-colors">Features</a>
           <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>

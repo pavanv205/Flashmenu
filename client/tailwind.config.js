@@ -18,10 +18,10 @@ export default {
           900: '#451a03',
         },
         dark: {
-          base: '#0B0F17',
-          card: '#131B2E',
-          hover: '#1E293B',
-          border: '#1F293D',
+          base: '#08080A',
+          card: '#0E0E14',
+          hover: '#14141E',
+          border: 'rgba(255, 255, 255, 0.08)',
         },
       },
       fontFamily: {

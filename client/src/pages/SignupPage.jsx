@@ -88,7 +88,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center p-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[#08080A] flex items-center justify-center p-4 py-12 relative overflow-hidden font-sans">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-brand-500/10 rounded-full blur-[160px] pointer-events-none" />
 
       {/* STEP 1: RESTAURANT ACCOUNT CREATION FORM */}
@@ -96,7 +96,7 @@ export default function SignupPage() {
         <div className="w-full max-w-xl bg-dark-card border border-dark-border rounded-3xl p-8 shadow-2xl relative z-10 space-y-6">
           <div className="text-center space-y-2">
             <Link to="/" className="inline-flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+              <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center shadow-lg">
                 <Zap className="w-6 h-6 text-black fill-black" />
               </div>
               <span className="font-extrabold text-2xl text-white">

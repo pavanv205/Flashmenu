@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function WhatsAppButton({ phoneNumber = '+919999999999', message = 'Hello FlashMenu! I would like to inquire about your QR digital menu platform.' }) {
+export default function WhatsAppButton({ phoneNumber = '+916301592025', message = 'Hello FlashMenu! I would like to inquire about your QR digital menu platform.' }) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 

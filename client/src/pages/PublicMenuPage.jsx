@@ -229,15 +229,15 @@ export default function PublicMenuPage() {
   const cartTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-[#0A0E17] text-white pb-28 max-w-md mx-auto relative shadow-2xl border-x border-gray-900 selection:bg-amber-500 selection:text-black">
+    <div className="min-h-screen bg-[#08080A] text-white pb-28 max-w-md mx-auto relative shadow-2xl border-x border-white/[0.08] selection:bg-amber-500 selection:text-black font-sans">
       {/* Top Cover Banner */}
-      <div className="relative h-48 w-full bg-dark-card overflow-hidden">
+      <div className="relative h-48 w-full bg-[#0E0E14] overflow-hidden">
         {restaurant.coverImage ? (
           <img src={restaurant.coverImage} alt={restaurant.name} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full bg-gradient-to-r from-amber-600 to-amber-800" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E17] via-[#0A0E17]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#08080A] via-[#08080A]/40 to-transparent" />
 
         {/* Table Badge */}
         {tableParam && (

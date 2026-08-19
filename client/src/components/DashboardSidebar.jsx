@@ -44,33 +44,33 @@ export default function DashboardSidebar({ closeMobileMenu }) {
         ];
 
   return (
-    <aside className="w-64 bg-dark-card border-r border-dark-border flex flex-col h-full">
+    <aside className="w-64 bg-[#08080A] border-r border-white/[0.08] flex flex-col h-full">
       {/* Brand Header */}
-      <div className="p-6 border-b border-dark-border flex items-center justify-between">
+      <div className="p-6 border-b border-white/[0.08] flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+          <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
             <Zap className="w-5 h-5 text-black fill-black" />
           </div>
           <div>
             <h1 className="font-extrabold text-xl text-white tracking-tight">FlashMenu</h1>
-            <p className="text-[11px] text-brand-400 font-semibold uppercase tracking-wider">Owner Portal</p>
+            <p className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Owner Portal</p>
           </div>
         </div>
       </div>
 
       {/* Restaurant quick card */}
       {restaurant && (
-        <div className="p-4 mx-4 my-4 rounded-xl bg-dark-base border border-dark-border space-y-2">
+        <div className="p-4 mx-4 my-4 rounded-2xl bg-[#0E0E14] border border-white/[0.07] space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Active Restaurant</span>
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Active Restaurant</span>
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           </div>
-          <p className="text-sm font-bold text-white truncate">{restaurant.name}</p>
+          <p className="text-xs font-extrabold text-white truncate">{restaurant.name}</p>
           <a
             href={`/menu/${restaurant.slug}?preview=true`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center space-x-1.5 text-xs text-brand-400 font-medium hover:underline"
+            className="inline-flex items-center space-x-1 text-[11px] text-amber-400 font-bold hover:underline"
           >
             <span>View Public Menu</span>
             <ExternalLink className="w-3 h-3" />
@@ -79,7 +79,7 @@ export default function DashboardSidebar({ closeMobileMenu }) {
       )}
 
       {/* Nav links */}
-      <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
@@ -87,19 +87,19 @@ export default function DashboardSidebar({ closeMobileMenu }) {
             end={item.exact}
             onClick={closeMobileMenu}
             className={({ isActive }) =>
-              `flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+              `flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold transition-all ${
                 isActive
-                  ? 'bg-brand-500 text-black font-bold shadow-md shadow-brand-500/20'
-                  : 'text-gray-400 hover:text-white hover:bg-dark-hover'
+                  ? 'bg-amber-500 text-black font-extrabold shadow-lg shadow-amber-500/20'
+                  : 'text-gray-400 hover:text-white hover:bg-white/[0.05]'
               }`
             }
           >
             <div className="flex items-center space-x-3">
-              <item.icon className="w-5 h-5" />
+              <item.icon className="w-4 h-4" />
               <span>{item.name}</span>
             </div>
             {item.badge && (
-              <span className="text-[9px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded uppercase tracking-wider shadow">
+              <span className="text-[9px] font-black bg-amber-500/20 text-amber-400 border border-amber-500/40 px-1.5 py-0.5 rounded uppercase tracking-wider">
                 {item.badge}
               </span>
             )}
@@ -108,12 +108,12 @@ export default function DashboardSidebar({ closeMobileMenu }) {
       </nav>
 
       {/* Logout Footer */}
-      <div className="p-4 border-t border-dark-border">
+      <div className="p-4 border-t border-white/[0.08]">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all"
+          className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-bold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all"
         >
-          <LogOut className="w-5 h-5" />
+          <LogOut className="w-4 h-4" />
           <span>Sign Out</span>
         </button>
       </div>

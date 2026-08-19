@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ['owner', 'admin'], default: 'owner' },
     resetPasswordToken: { type: String, default: null },
     resetPasswordExpires: { type: Date, default: null },
+    adminOtpCode: { type: String, default: null },
+    adminOtpExpires: { type: Date, default: null },
   },
   { timestamps: true }
 );

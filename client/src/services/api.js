@@ -18,6 +18,7 @@ export const authAPI = {
   getMe: () => API.get('/auth/me'),
   forgotPassword: (data) => API.post('/auth/forgot-password', data),
   resetPassword: (data) => API.post('/auth/reset-password', data),
+  verifyAdmin2FA: (data) => API.post('/auth/verify-admin-2fa', data),
 };
 
 export const restaurantAPI = {

@@ -19,6 +19,8 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
           console.error('Auth verification failed:', error);
           localStorage.removeItem('flashmenu_token');
+          setUser(null);
+          setRestaurant(null);
         }
       }
       setLoading(false);
@@ -28,6 +30,17 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const res = await authAPI.login({ email, password });
+    if (res.data.requires2FA) {
+      return res.data;
+    }
+    localStorage.setItem('flashmenu_token', res.data.token);
+    setUser({ _id: res.data._id, name: res.data.name, email: res.data.email, role: res.data.role });
+    setRestaurant(res.data.restaurant);
+    return res.data;
+  };
+
+  const verifyAdmin2FA = async (email, otp) => {
+    const res = await authAPI.verifyAdmin2FA({ email, otp });
     localStorage.setItem('flashmenu_token', res.data.token);
     setUser({ _id: res.data._id, name: res.data.name, email: res.data.email, role: res.data.role });
     setRestaurant(res.data.restaurant);
@@ -59,6 +72,7 @@ export const AuthProvider = ({ children }) => {
         restaurant,
         loading,
         login,
+        verifyAdmin2FA,
         register,
         logout,
         updateRestaurantState,

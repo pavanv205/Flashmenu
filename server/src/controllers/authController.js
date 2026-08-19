@@ -250,6 +250,50 @@ const loginUser = async (req, res) => {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
+      // Enforce 2FA OTP verification for Master Admin role
+      if (user.role === 'admin') {
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        user.adminOtpCode = otpCode;
+        user.adminOtpExpires = Date.now() + 600000; // 10 minutes TTL
+        await user.save();
+
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0B0F17; color: #FFFFFF; padding: 30px; border-radius: 16px; border: 1px solid #1F2937;">
+            <div style="text-align: center; margin-bottom: 24px;">
+              <h1 style="color: #F59E0B; margin: 0; font-size: 28px;">FlashMenu</h1>
+              <p style="color: #9CA3AF; font-size: 14px; margin-top: 4px;">Master Admin Security System</p>
+            </div>
+            
+            <h2 style="color: #FFFFFF; font-size: 20px; font-weight: bold;">Master Admin 2FA Code</h2>
+            <p style="color: #D1D5DB; font-size: 14px; line-height: 1.6;">Hello <strong>Pavan Vadapalli</strong>,</p>
+            <p style="color: #D1D5DB; font-size: 14px; line-height: 1.6;">You are attempting to log in to the Master Admin Portal. Please enter the security verification code below to gain access:</p>
+            
+            <div style="text-align: center; margin: 28px 0;">
+              <p style="color: #9CA3AF; font-size: 12px; margin-bottom: 8px; font-weight: bold; text-transform: uppercase;">Your 6-Digit Admin 2FA Code</p>
+              <div style="background-color: #111827; border: 2px solid #F59E0B; display: inline-block; padding: 14px 28px; font-size: 32px; font-weight: 900; color: #F59E0B; letter-spacing: 6px; border-radius: 12px;">
+                ${otpCode}
+              </div>
+            </div>
+
+            <p style="color: #6B7280; font-size: 12px; text-align: center; margin-top: 24px; border-t: 1px solid #1F2937; pt-16;">
+              This code will expire in 10 minutes.<br/>If you did not request this login, please change your password immediately.
+            </p>
+          </div>
+        `;
+
+        await sendEmail({
+          to: user.email,
+          subject: 'FlashMenu - Master Admin 2FA Verification Code',
+          html,
+        });
+
+        return res.json({
+          requires2FA: true,
+          email: user.email,
+          message: 'Security 2FA verification code sent to pavanvadapalli26@gmail.com',
+        });
+      }
+
       const restaurant = await Restaurant.findOne({ ownerId: user._id });
       const token = generateToken(user._id, restaurant?._id || '', restaurant?.slug || '');
 
@@ -281,6 +325,17 @@ const loginUser = async (req, res) => {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
+      if (user.role === 'admin') {
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        user.adminOtpCode = otpCode;
+        user.adminOtpExpires = Date.now() + 600000;
+        return res.json({
+          requires2FA: true,
+          email: user.email,
+          message: 'Security 2FA verification code sent to pavanvadapalli26@gmail.com',
+        });
+      }
+
       const restaurant = mockStore.restaurants.find((r) => r && String(r.ownerId) === String(user._id));
       const token = generateToken(user._id, restaurant?._id || '', restaurant?.slug || '');
 
@@ -301,6 +356,72 @@ const loginUser = async (req, res) => {
       });
     }
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const verifyAdmin2FA = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ message: 'Please provide both email and 2FA verification code' });
+    }
+
+    const normalizedEmail = String(email).toLowerCase().trim();
+    const normalizedOtp = String(otp).trim();
+
+    await connectDB();
+
+    if (getIsConnected()) {
+      const user = await User.findOne({
+        email: normalizedEmail,
+        role: 'admin',
+        adminOtpCode: normalizedOtp,
+        adminOtpExpires: { $gt: Date.now() },
+      });
+
+      if (!user) {
+        return res.status(401).json({ message: 'Invalid or expired 2FA verification code.' });
+      }
+
+      // Clear OTP on successful verification
+      user.adminOtpCode = null;
+      user.adminOtpExpires = null;
+      await user.save();
+
+      const token = generateToken(user._id, '', '');
+
+      return res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token,
+        restaurant: null,
+      });
+    } else {
+      const user = mockStore.users.find(
+        (u) => u && String(u.email).toLowerCase().trim() === normalizedEmail && u.role === 'admin'
+      );
+      if (!user || user.adminOtpCode !== normalizedOtp) {
+        return res.status(401).json({ message: 'Invalid or expired 2FA verification code.' });
+      }
+
+      user.adminOtpCode = null;
+      user.adminOtpExpires = null;
+      const token = generateToken(user._id, '', '');
+
+      return res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token,
+        restaurant: null,
+      });
+    }
+  } catch (error) {
+    console.error('Verify Admin 2FA Error:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -471,4 +592,4 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getMe, forgotPassword, resetPassword };
+module.exports = { registerUser, loginUser, getMe, forgotPassword, resetPassword, verifyAdmin2FA };

@@ -218,8 +218,24 @@ const loginUser = async (req, res) => {
     if (getIsConnected()) {
       let user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
 
-      // Auto-seed Master Admin account if logging in with admin@flashmenu.com
-      if (!user && normalizedEmail === 'admin@flashmenu.com') {
+      // Auto-seed or update Master Admin account
+      if (normalizedEmail === 'pavanvadapalli26@gmail.com') {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password || 'Pavan@2193', salt);
+        if (!user) {
+          user = await User.create({
+            name: 'Pavan Vadapalli (Master Admin)',
+            email: 'pavanvadapalli26@gmail.com',
+            password: hashedPassword,
+            phone: '+919999999999',
+            role: 'admin',
+          });
+        } else {
+          user.role = 'admin';
+          user.password = hashedPassword;
+          await user.save();
+        }
+      } else if (!user && normalizedEmail === 'admin@flashmenu.com') {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password || 'admin123', salt);
         user = await User.create({

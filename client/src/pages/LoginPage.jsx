@@ -127,7 +127,7 @@ export default function LoginPage({ initialRole }) {
               <input
                 type="email"
                 required
-                placeholder={activeRole === 'admin' ? 'admin@flashmenu.com' : 'owner@restaurant.com'}
+                placeholder={activeRole === 'admin' ? 'pavanvadapalli26@gmail.com' : 'owner@restaurant.com'}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
@@ -140,12 +140,14 @@ export default function LoginPage({ initialRole }) {
               <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
                 Password
               </label>
-              <Link
-                to="/forgot-password"
-                className="text-[11px] font-semibold text-amber-400 hover:text-amber-300 transition-colors"
-              >
-                Forgot Password?
-              </Link>
+              {activeRole !== 'admin' && (
+                <Link
+                  to="/forgot-password"
+                  className="text-[11px] font-semibold text-amber-400 hover:text-amber-300 transition-colors"
+                >
+                  Forgot Password?
+                </Link>
+              )}
             </div>
             <div className="relative">
               <Lock className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
@@ -169,29 +171,6 @@ export default function LoginPage({ initialRole }) {
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
-
-        {/* Admin Quick Credentials Hint */}
-        {activeRole === 'admin' ? (
-          <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-500/30 text-center space-y-1">
-            <p className="text-[11px] font-black text-amber-400 uppercase tracking-wider">Master Admin Credentials</p>
-            <p className="text-xs text-gray-300">
-              Email: <span className="font-mono text-white">admin@flashmenu.com</span>
-            </p>
-            <p className="text-xs text-gray-300">
-              Password: <span className="font-mono text-white">admin123</span>
-            </p>
-          </div>
-        ) : (
-          <div className="p-3 bg-dark-base rounded-xl border border-dark-border text-center space-y-1">
-            <p className="text-[11px] font-semibold text-amber-400 uppercase tracking-wider">Demo Credentials</p>
-            <p className="text-xs text-gray-300">
-              Email: <span className="font-mono text-white">demo@flashmenu.com</span>
-            </p>
-            <p className="text-xs text-gray-300">
-              Password: <span className="font-mono text-white">password123</span>
-            </p>
-          </div>
-        )}
 
         <p className="text-center text-xs text-gray-400 pt-2">
           Don't have a FlashMenu account?{' '}

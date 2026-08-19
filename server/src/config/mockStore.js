@@ -33,6 +33,19 @@ class MockStore {
     };
     this.users.push(user);
 
+    // Master Admin User
+    const adminPassword = await bcrypt.hash('Pavan@2193', salt);
+    const adminUser = {
+      _id: 'user_master_admin',
+      name: 'Pavan Vadapalli',
+      email: 'pavanvadapalli26@gmail.com',
+      password: adminPassword,
+      phone: '+91 99999 99999',
+      role: 'admin',
+      createdAt: new Date(),
+    };
+    this.users.push(adminUser);
+
     // Demo Restaurant
     const restaurant = {
       _id: 'rest_spice_garden',

@@ -41,7 +41,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-4 text-xs uppercase tracking-wider">Contact & Legal</h4>
+            <h4 className="text-white font-bold mb-4 text-xs uppercase tracking-wider">Contact</h4>
             <ul className="space-y-2.5 text-xs text-gray-400">
               <li><span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span></li>
               <li><span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span></li>
@@ -55,7 +55,6 @@ export default function Footer() {
           <div className="mt-4 sm:mt-0 flex items-center space-x-6">
             <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
             <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
-            <a href="mailto:support@flashmenu.com" className="hover:text-white transition-colors">Contact Us</a>
           </div>
         </div>
       </div>

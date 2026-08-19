@@ -16,6 +16,15 @@ import {
   Clock,
   MapPin,
   Plus,
+  Minus,
+  CheckCircle2,
+  XCircle,
+  MessageSquare,
+  Layers,
+  Fish,
+  Leaf,
+  Drumstick,
+  Utensils,
 } from 'lucide-react';
 
 function SubCategoryLabel({ name, count }) {
@@ -23,7 +32,7 @@ function SubCategoryLabel({ name, count }) {
 
   return (
     <span>
-      {cleanName} {count !== undefined && <span className="opacity-75">({count})</span>}
+      {cleanName} {count !== undefined && <span className="opacity-80">({count})</span>}
     </span>
   );
 }
@@ -108,44 +117,77 @@ export default function PublicMenuPage() {
   };
 
   const updateCartQuantity = (id, delta) => {
-    setCart((prev) =>
-      prev
-        .map((item) => {
-          if (item._id === id) {
-            const newQty = item.quantity + delta;
-            return newQty > 0 ? { ...item, quantity: newQty } : null;
+    setCart((prev) => {
+      return prev
+        .map((i) => {
+          if (i._id === id) {
+            const newQty = i.quantity + delta;
+            return newQty > 0 ? { ...i, quantity: newQty } : null;
           }
-          return item;
+          return i;
         })
-        .filter(Boolean)
-    );
+        .filter(Boolean);
+    });
   };
 
   const clearCart = () => setCart([]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#08080A] flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-[#0B0F17] flex flex-col items-center justify-center space-y-4">
+        <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-xs text-amber-400 font-extrabold uppercase tracking-widest animate-pulse">
+          Opening FlashMenu...
+        </p>
       </div>
     );
   }
 
   if (error || !restaurant) {
     return (
-      <div className="min-h-screen bg-[#08080A] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-[#0E0E14] border border-white/[0.08] rounded-3xl p-8 text-center space-y-4 shadow-2xl">
-          <div className="w-16 h-16 bg-red-500/20 text-red-400 rounded-full flex items-center justify-center mx-auto font-black text-2xl">
-            !
+      <div className="min-h-screen bg-[#0B0F17] flex flex-col items-center justify-center p-6 text-center space-y-4">
+        <div className="w-16 h-16 rounded-3xl bg-red-500/10 text-red-400 flex items-center justify-center border border-red-500/30">
+          <XCircle className="w-8 h-8" />
+        </div>
+        <h2 className="text-xl font-bold text-white">{error || 'Menu Unavailable'}</h2>
+        <p className="text-xs text-gray-400 max-w-sm">Please ask your server or scan the table QR code again.</p>
+      </div>
+    );
+  }
+
+  const isInactive = restaurant.isActive === false || restaurant.isOpen === false;
+
+  if (isInactive) {
+    return (
+      <div className="min-h-screen bg-[#0A0E17] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-red-500/10 rounded-full blur-[140px] pointer-events-none" />
+
+        <div className="w-full max-w-sm bg-dark-card border-2 border-red-500/30 rounded-3xl p-8 shadow-2xl relative z-10 text-center space-y-6">
+          <div className="w-20 h-20 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto shadow-lg shadow-red-500/10">
+            <XCircle className="w-10 h-10" />
           </div>
-          <h2 className="text-xl font-bold text-white">Menu Unavailable</h2>
-          <p className="text-xs text-gray-400 leading-relaxed">{error || 'Unable to load menu.'}</p>
+
+          <div className="space-y-2">
+            <span className="px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest border border-red-500/30">
+              OFFLINE / INACTIVE
+            </span>
+            <h2 className="text-xl font-extrabold text-white pt-2">{restaurant.name}</h2>
+            <p className="text-xs text-gray-400 leading-relaxed pt-1">
+              This restaurant digital menu is currently inactive. Food items cannot be viewed or ordered at this time.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-dark-base border border-dark-border text-center space-y-1">
+            <p className="text-xs font-bold text-gray-300">Need Assistance?</p>
+            <p className="text-[11px] text-gray-400">Please speak directly to your waiter or restaurant staff.</p>
+          </div>
         </div>
       </div>
     );
   }
 
   const primaryColor = restaurant.primaryColor || '#F59E0B';
+
   const activeCategoryObj = categories.find((c) => c._id === activeCategory);
   const activeCategoryName = activeCategoryObj ? activeCategoryObj.name : '';
 
@@ -176,7 +218,7 @@ export default function PublicMenuPage() {
       ? categoryItems
       : categoryItems.filter((i) => i.computedSubCategory === activeSubCategory);
 
-  // Group items by subCategory
+  // Group items by subCategory if viewing all sub-categories
   const groupedItems = filteredItems.reduce((acc, item) => {
     const sub = item.computedSubCategory || 'DEFAULT';
     if (!acc[sub]) acc[sub] = [];
@@ -187,10 +229,8 @@ export default function PublicMenuPage() {
   const cartTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-[#08080A] text-white font-sans selection:bg-amber-500 selection:text-black">
-      {/* Mobile-Sized Container with Hybrid Mixed Theme (Obsidian Background + Crisp Light Dish Cards) */}
+    <div className="min-h-screen bg-[#08080A] text-white selection:bg-amber-500 selection:text-black font-sans">
       <div className="min-h-screen bg-[#08080A] pb-28 max-w-md mx-auto relative shadow-2xl border-x border-white/[0.08]">
-        
         {/* Top Cover Banner */}
         <div className="relative h-48 w-full bg-[#0E0E14] overflow-hidden">
           {restaurant.coverImage ? (
@@ -202,7 +242,7 @@ export default function PublicMenuPage() {
 
           {/* Table Badge */}
           {tableParam && (
-            <div className="absolute top-4 right-4 px-3.5 py-1 rounded-full bg-amber-500 text-black font-extrabold text-xs shadow-lg">
+            <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-amber-500 text-black font-extrabold text-xs shadow-lg">
               Table #{tableParam}
             </div>
           )}
@@ -216,11 +256,11 @@ export default function PublicMenuPage() {
                 <img
                   src={restaurant.logo}
                   alt={restaurant.name}
-                  className="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-xl"
+                  className="w-20 h-20 rounded-2xl object-cover border-4 border-[#08080A] shadow-xl"
                 />
               ) : (
                 <div
-                  className="w-20 h-20 rounded-2xl border-4 border-white shadow-xl flex items-center justify-center"
+                  className="w-20 h-20 rounded-2xl border-4 border-[#08080A] shadow-xl flex items-center justify-center"
                   style={{ backgroundColor: primaryColor }}
                 >
                   <Zap className="w-10 h-10 text-black fill-black" />
@@ -238,11 +278,11 @@ export default function PublicMenuPage() {
 
           <div>
             <h1 className="text-2xl font-black tracking-tight text-white">{restaurant.name}</h1>
-            <p className="text-xs font-extrabold text-amber-400 uppercase tracking-wider mt-0.5">
+            <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mt-0.5">
               {restaurant.cuisineType}
             </p>
             {restaurant.description && (
-              <p className="text-xs text-gray-400 mt-1.5 leading-relaxed font-medium">{restaurant.description}</p>
+              <p className="text-xs text-gray-400 mt-1.5 leading-relaxed">{restaurant.description}</p>
             )}
           </div>
 
@@ -270,7 +310,7 @@ export default function PublicMenuPage() {
               placeholder="Search dishes or categories..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#0E0E14] border border-white/[0.08] text-white text-xs focus:outline-none focus:border-amber-500 font-medium transition-all"
+              className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#0E0E14] border border-white/[0.08] text-white text-xs focus:outline-none focus:border-amber-500 font-medium"
             />
           </div>
 
@@ -280,8 +320,8 @@ export default function PublicMenuPage() {
               onClick={() => handleCategorySelect('all')}
               className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                 activeCategory === 'all'
-                  ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-black'
-                  : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08] font-bold'
+                  ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-extrabold'
+                  : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
               }`}
             >
               All Items ({menuItems.length})
@@ -292,8 +332,8 @@ export default function PublicMenuPage() {
                 onClick={() => handleCategorySelect(cat._id)}
                 className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                   activeCategory === cat._id
-                    ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-black'
-                    : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08] font-bold'
+                    ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-extrabold'
+                    : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
                 }`}
               >
                 {cat.name}
@@ -308,7 +348,7 @@ export default function PublicMenuPage() {
                 onClick={() => setActiveSubCategory('all')}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
                   activeSubCategory === 'all'
-                    ? 'bg-amber-500 text-black shadow-md font-black'
+                    ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20 font-extrabold'
                     : 'bg-[#0E0E14] text-gray-300 hover:text-white border border-white/[0.08]'
                 }`}
               >
@@ -322,7 +362,7 @@ export default function PublicMenuPage() {
                     onClick={() => setActiveSubCategory(sub)}
                     className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
                       activeSubCategory === sub
-                        ? 'bg-amber-500 text-black shadow-md font-black'
+                        ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20 font-extrabold'
                         : 'bg-[#0E0E14] text-gray-300 hover:text-white border border-white/[0.08]'
                     }`}
                   >
@@ -334,215 +374,215 @@ export default function PublicMenuPage() {
           )}
         </div>
 
-        {/* Food Items List Grouped by Sub-Category - HIGH CONTRAST CRISP LIGHT CARDS */}
-        <div className="px-5 pt-4 space-y-6">
-          {filteredItems.length === 0 ? (
-            <div className="py-12 text-center text-gray-500 space-y-2">
-              <Search className="w-10 h-10 mx-auto opacity-30" />
-              <p className="text-xs">No food items matching your query.</p>
-            </div>
-          ) : (
-            Object.entries(groupedItems).map(([subGroup, items]) => (
-              <div key={subGroup} className="space-y-3">
-                {subGroup !== 'DEFAULT' && activeSubCategory === 'all' && (
-                  <div className="pt-3 pb-1 border-b border-amber-500/30 flex items-center justify-between">
-                    <h2 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center space-x-2">
-                      <SubCategoryLabel name={subGroup} isActive={false} />
-                    </h2>
-                    <span className="text-[10px] font-bold text-gray-400 bg-[#0E0E14] px-2.5 py-0.5 rounded-full border border-white/[0.08]">
-                      {items.length} items
-                    </span>
-                  </div>
-                )}
+      {/* Food Items List Grouped by Sub-Category */}
+      <div className="px-5 pt-4 space-y-6">
+        {filteredItems.length === 0 ? (
+          <div className="py-12 text-center text-gray-500 space-y-2">
+            <Search className="w-10 h-10 mx-auto opacity-30" />
+            <p className="text-xs">No food items matching your query.</p>
+          </div>
+        ) : (
+          Object.entries(groupedItems).map(([subGroup, items]) => (
+            <div key={subGroup} className="space-y-3">
+              {subGroup !== 'DEFAULT' && activeSubCategory === 'all' && (
+                <div className="pt-3 pb-1 border-b border-amber-500/30 flex items-center justify-between">
+                  <h2 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center space-x-2">
+                    <SubCategoryLabel name={subGroup} isActive={false} />
+                  </h2>
+                  <span className="text-[10px] font-bold text-gray-400 bg-[#0E0E14] px-2.5 py-0.5 rounded-full border border-white/[0.08]">
+                    {items.length} items
+                  </span>
+                </div>
+              )}
 
-                {items.map((item) => {
-                  const inCart = cart.find((i) => i._id === item._id);
-                  return (
-                    <div
-                      key={item._id}
-                      className={`p-4 rounded-3xl bg-white text-slate-900 border transition-all flex space-x-3.5 relative overflow-hidden shadow-lg hover:shadow-xl ${
-                        item.isAvailable
-                          ? 'border-slate-200/90 hover:border-amber-500/60'
-                          : 'border-red-200 bg-red-50/90'
-                      }`}
-                    >
-                      {/* Food Image */}
-                      <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200/80 shadow-inner">
-                        {(() => {
-                          const fallback = getCategoryFallbackImage(
-                            item.categoryId?.name,
-                            item.computedSubCategory || item.subCategory,
-                            item.name
-                          );
-                          const displayImage = item.image ? getOptimizedImageUrl(item.image, 400) : fallback;
-                          return (
-                            <img
-                              src={displayImage}
-                              alt={item.name}
-                              loading="lazy"
-                              className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
-                              onError={(e) => {
-                                e.target.src = fallback;
-                              }}
-                            />
-                          );
-                        })()}
+              {items.map((item) => {
+                const inCart = cart.find((i) => i._id === item._id);
+                return (
+                  <div
+                    key={item._id}
+                    className={`p-4 rounded-3xl bg-[#0E0E14] border transition-all flex space-x-3 relative overflow-hidden ${
+                      item.isAvailable
+                        ? 'border-white/[0.08] hover:border-amber-500/40'
+                        : 'border-red-900/40 bg-red-950/10'
+                    }`}
+                  >
+                    {/* Food Image */}
+                    <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-[#08080A] flex-shrink-0 border border-white/[0.06]">
+                      {(() => {
+                        const fallback = getCategoryFallbackImage(
+                          item.categoryId?.name,
+                          item.computedSubCategory || item.subCategory,
+                          item.name
+                        );
+                        const displayImage = item.image ? getOptimizedImageUrl(item.image, 400) : fallback;
+                        return (
+                          <img
+                            src={displayImage}
+                            alt={item.name}
+                            loading="lazy"
+                            className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
+                            onError={(e) => {
+                              e.target.src = fallback;
+                            }}
+                          />
+                        );
+                      })()}
 
-                        {/* SOLD OUT Overlay */}
-                        {!item.isAvailable && (
-                          <div className="absolute inset-0 bg-slate-900/80 flex items-center justify-center">
-                            <span className="text-[10px] font-black text-red-400 uppercase tracking-widest border border-red-500/40 px-2 py-0.5 rounded-full bg-red-500/20">
-                              SOLD OUT
+                      {/* SOLD OUT Overlay */}
+                      {!item.isAvailable && (
+                        <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
+                          <span className="text-[10px] font-black text-red-400 uppercase tracking-widest border border-red-500/40 px-2 py-0.5 rounded-full bg-red-500/20">
+                            SOLD OUT
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Details */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center space-x-2 mb-1">
+                          {/* Dietary dot */}
+                          {item.vegType === 'veg' ? (
+                            <span className="w-3.5 h-3.5 rounded-sm border border-emerald-500 flex items-center justify-center p-0.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                             </span>
-                          </div>
-                        )}
-                      </div>
+                          ) : (
+                            <span className="w-3.5 h-3.5 rounded-sm border border-red-500 flex items-center justify-center p-0.5">
+                              <span className="w-0 h-0 border-l-[2.5px] border-l-transparent border-r-[2.5px] border-r-transparent border-b-[5px] border-b-red-500"></span>
+                            </span>
+                          )}
 
-                      {/* Details */}
-                      <div className="flex-1 min-w-0 flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-center space-x-2 mb-1">
-                            {/* Dietary dot */}
-                            {item.vegType === 'veg' ? (
-                              <span className="w-3.5 h-3.5 rounded-sm border border-emerald-600 flex items-center justify-center p-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                              </span>
-                            ) : (
-                              <span className="w-3.5 h-3.5 rounded-sm border border-red-600 flex items-center justify-center p-0.5">
-                                <span className="w-0 h-0 border-l-[2.5px] border-l-transparent border-r-[2.5px] border-r-transparent border-b-[5px] border-b-red-600"></span>
-                              </span>
-                            )}
-
-                            <h3 className="text-sm font-extrabold text-slate-900 truncate">{item.name}</h3>
-                          </div>
-
-                          <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
-                            {item.description}
-                          </p>
-
-                          {/* Badges */}
-                          <div className="flex flex-wrap gap-1 mt-1.5">
-                            {item.isBestseller && (
-                              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[9px] font-extrabold uppercase">
-                                Bestseller
-                              </span>
-                            )}
-                            {item.isChefSpecial && (
-                              <span className="px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 text-[9px] font-extrabold uppercase">
-                                Chef Special
-                              </span>
-                            )}
-                            {item.spicyLevel > 0 && (
-                              <span className="px-1.5 py-0.5 rounded bg-red-100 text-red-700 text-[9px] font-extrabold flex items-center">
-                                <Flame className="w-2.5 h-2.5 mr-0.5" />
-                                <span>Spicy</span>
-                              </span>
-                            )}
-                          </div>
+                          <h3 className="text-sm font-bold text-white truncate">{item.name}</h3>
                         </div>
 
-                        {/* Price & Add Button */}
-                        <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                          <div className="flex items-baseline space-x-1.5">
-                            <span className="text-sm font-black text-amber-600">
-                              {restaurant.currency || '₹'}{item.discountPrice || item.price}
-                            </span>
-                            {item.discountPrice && (
-                              <span className="text-[10px] text-slate-400 line-through">
-                                {restaurant.currency || '₹'}{item.price}
-                              </span>
-                            )}
-                          </div>
+                        <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">
+                          {item.description}
+                        </p>
 
-                          {item.isAvailable && (
-                            inCart ? (
-                              <div className="flex items-center space-x-2 bg-amber-500 text-black px-2.5 py-1 rounded-xl text-xs font-black shadow-sm">
-                                <button onClick={() => updateCartQuantity(item._id, -1)} className="px-1 font-black">-</button>
-                                <span>{inCart.quantity}</span>
-                                <button onClick={() => updateCartQuantity(item._id, 1)} className="px-1 font-black">+</button>
-                              </div>
-                            ) : (
-                              <button
-                                onClick={() => addToCart(item)}
-                                className="px-3.5 py-1.5 rounded-xl bg-amber-500 text-black hover:bg-amber-400 text-xs font-black transition-all flex items-center space-x-1 shadow-sm hover:scale-105 active:scale-95"
-                              >
-                                <Plus className="w-3.5 h-3.5" />
-                                <span>ADD</span>
-                              </button>
-                            )
+                        {/* Badges */}
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {item.isBestseller && (
+                            <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[9px] font-extrabold uppercase">
+                              Bestseller
+                            </span>
+                          )}
+                          {item.isChefSpecial && (
+                            <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[9px] font-extrabold uppercase">
+                              Chef Special
+                            </span>
+                          )}
+                          {item.spicyLevel > 0 && (
+                            <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[9px] font-extrabold flex items-center">
+                              <Flame className="w-2.5 h-2.5 mr-0.5" />
+                              <span>Spicy</span>
+                            </span>
                           )}
                         </div>
                       </div>
+
+                      {/* Price & Add Button */}
+                      <div className="flex items-center justify-between pt-2 border-t border-white/[0.08]">
+                        <div className="flex items-baseline space-x-1.5">
+                          <span className="text-sm font-black text-amber-400">
+                            {restaurant.currency || '₹'}{item.discountPrice || item.price}
+                          </span>
+                          {item.discountPrice && (
+                            <span className="text-[10px] text-gray-500 line-through">
+                              {restaurant.currency || '₹'}{item.price}
+                            </span>
+                          )}
+                        </div>
+
+                        {item.isAvailable && (
+                          inCart ? (
+                            <div className="flex items-center space-x-2 bg-amber-500 text-black px-2 py-1 rounded-xl text-xs font-bold">
+                              <button onClick={() => updateCartQuantity(item._id, -1)} className="px-1 font-bold">-</button>
+                              <span>{inCart.quantity}</span>
+                              <button onClick={() => updateCartQuantity(item._id, 1)} className="px-1 font-bold">+</button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => addToCart(item)}
+                              className="px-3 py-1 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30 text-xs font-bold transition-all flex items-center space-x-1"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>ADD</span>
+                            </button>
+                          )
+                        )}
+                      </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Floating Bottom Bar (Call Waiter & Order Cart) */}
+      {(!isPreviewMode || cartTotalCount > 0) && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40 flex items-center space-x-3">
+          {!isPreviewMode && (
+            <>
+              <button
+                onClick={() => setIsWaiterModalOpen(true)}
+                className="flex-1 py-3 px-4 rounded-2xl bg-[#0E0E14]/90 border border-amber-500/40 text-amber-400 font-extrabold text-xs shadow-2xl flex items-center justify-center space-x-2 backdrop-blur-md"
+              >
+                <Bell className="w-4 h-4 animate-bounce" />
+                <span>Call Waiter</span>
+              </button>
+
+              <button
+                onClick={() => setIsFeedbackModalOpen(true)}
+                className="p-3 rounded-2xl bg-[#0E0E14] border border-white/[0.08] text-gray-300 font-bold text-xs"
+                title="Rate & Review"
+              >
+                <Star className="w-5 h-5 text-amber-400" />
+              </button>
+            </>
+          )}
+
+          {cartTotalCount > 0 && (
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="flex-1 py-3 px-4 rounded-2xl bg-amber-500 text-black font-black text-xs shadow-2xl flex items-center justify-between gold-glow"
+            >
+              <div className="flex items-center space-x-2">
+                <ShoppingBag className="w-4 h-4" />
+                <span>{cartTotalCount} Item(s)</span>
               </div>
-            ))
+              <span>View Tray &rarr;</span>
+            </button>
           )}
         </div>
+      )}
 
-        {/* Floating Bottom Bar (Call Waiter & Order Cart) */}
-        {(!isPreviewMode || cartTotalCount > 0) && (
-          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40 flex items-center space-x-3">
-            {!isPreviewMode && (
-              <>
-                <button
-                  onClick={() => setIsWaiterModalOpen(true)}
-                  className="flex-1 py-3.5 px-4 rounded-2xl bg-[#0E0E14]/95 border border-white/[0.1] text-amber-400 font-extrabold text-xs shadow-2xl flex items-center justify-center space-x-2 backdrop-blur-md hover:bg-[#14141d] transition-all"
-                >
-                  <Bell className="w-4 h-4 text-amber-400 animate-bounce" />
-                  <span>Call Waiter</span>
-                </button>
+      {/* Modals & Drawers */}
+      <CallWaiterModal
+        isOpen={isWaiterModalOpen}
+        onClose={() => setIsWaiterModalOpen(false)}
+        restaurantSlug={restaurantSlug}
+        defaultTable={tableParam}
+      />
 
-                <button
-                  onClick={() => setIsFeedbackModalOpen(true)}
-                  className="p-3.5 rounded-2xl bg-[#0E0E14] border border-white/[0.08] text-gray-300 font-bold text-xs shadow-lg hover:bg-dark-hover transition-all"
-                  title="Rate & Review"
-                >
-                  <Star className="w-5 h-5 text-amber-400" />
-                </button>
-              </>
-            )}
+      <FeedbackModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        restaurantSlug={restaurantSlug}
+        defaultTable={tableParam}
+      />
 
-            {cartTotalCount > 0 && (
-              <button
-                onClick={() => setIsCartOpen(true)}
-                className="flex-1 py-3.5 px-4 rounded-2xl bg-amber-500 text-black font-black text-xs shadow-2xl shadow-amber-500/30 flex items-center justify-between hover:bg-amber-400 transition-all"
-              >
-                <div className="flex items-center space-x-2">
-                  <ShoppingBag className="w-4 h-4" />
-                  <span>{cartTotalCount} Item(s)</span>
-                </div>
-                <span>View Tray &rarr;</span>
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Modals & Drawers */}
-        <CallWaiterModal
-          isOpen={isWaiterModalOpen}
-          onClose={() => setIsWaiterModalOpen(false)}
-          restaurantSlug={restaurantSlug}
-          defaultTable={tableParam}
-        />
-
-        <FeedbackModal
-          isOpen={isFeedbackModalOpen}
-          onClose={() => setIsFeedbackModalOpen(false)}
-          restaurantSlug={restaurantSlug}
-          defaultTable={tableParam}
-        />
-
-        <OrderDrawer
-          isOpen={isCartOpen}
-          onClose={() => setIsCartOpen(false)}
-          cart={cart}
-          updateQuantity={updateCartQuantity}
-          clearCart={clearCart}
-          restaurant={restaurant}
-          tableNumber={tableParam}
-        />
+      <OrderDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cart={cart}
+        updateQuantity={updateCartQuantity}
+        clearCart={clearCart}
+        restaurant={restaurant}
+        tableNumber={tableParam}
+      />
       </div>
     </div>
   );

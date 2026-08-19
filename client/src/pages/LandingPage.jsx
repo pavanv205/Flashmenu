@@ -60,8 +60,8 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight font-sans leading-tight">
-            Flash<span className="gold-gradient-text">Menu</span> — <br />
-            <span className="text-white">Scan. Tap. Dine.</span>
+            Flash<span className="gold-gradient-text">Menu</span> <br />
+            <span className="text-white">Scan Tap Dine</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto font-normal leading-relaxed">

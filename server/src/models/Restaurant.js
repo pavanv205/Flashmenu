@@ -5,7 +5,7 @@ const restaurantSchema = new mongoose.Schema(
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
-    tagline: { type: String, default: 'Scan. Tap. Dine.' },
+    tagline: { type: String, default: 'Scan Tap Dine' },
     description: { type: String, default: '' },
     logo: { type: String, default: '' },
     logoPublicId: { type: String, default: '' },

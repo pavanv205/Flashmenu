@@ -134,7 +134,7 @@ export default function ProfilePage() {
               <input
                 type="text"
                 name="tagline"
-                placeholder="e.g. Scan. Tap. Dine."
+                placeholder="e.g. Scan Tap Dine"
                 value={formData.tagline}
                 onChange={handleChange}
                 className="w-full px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm"

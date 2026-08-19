@@ -19,7 +19,7 @@ export default function Navbar() {
               Flash<span className="gold-gradient-text">Menu</span>
             </span>
             <span className="block text-[10px] text-gray-400 tracking-wider font-semibold uppercase -mt-1">
-              Scan. See. Dine.
+              Scan. Tap. Dine.
             </span>
           </div>
         </Link>

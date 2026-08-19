@@ -78,17 +78,12 @@ export default function LandingPage() {
 
           {/* Realistic Product Mockup Showcase */}
           <div className="pt-8 max-w-2xl mx-auto relative">
-            {/* Ambient Background Glow */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/10 via-transparent to-white/5 rounded-3xl blur-2xl pointer-events-none" />
-
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-[#08080A]">
+            <div className="relative">
               <img
                 src="/mockup_preview.png"
                 alt="FlashMenu QR Code Standee and Live Mobile App Interface"
-                className="w-full h-auto object-cover rounded-3xl brightness-[0.85] contrast-[1.05] hover:brightness-100 transition-all duration-500"
+                className="w-full h-auto object-contain brightness-[0.88] contrast-[1.05] hover:brightness-100 transition-all duration-500 [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)]"
               />
-              {/* Subtle Ambient Blend Vignette */}
-              <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-[#08080A]/60 via-transparent to-transparent rounded-3xl" />
             </div>
           </div>
         </div>

@@ -159,7 +159,7 @@ export default function PublicMenuPage() {
 
   if (isInactive) {
     return (
-      <div className="min-h-screen bg-[#0A0E17] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <div className="min-h-screen bg-[#08080A] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-red-500/10 rounded-full blur-[140px] pointer-events-none" />
 
         <div className="w-full max-w-sm bg-dark-card border-2 border-red-500/30 rounded-3xl p-8 shadow-2xl relative z-10 text-center space-y-6">
@@ -255,11 +255,11 @@ export default function PublicMenuPage() {
               <img
                 src={restaurant.logo}
                 alt={restaurant.name}
-                className="w-20 h-20 rounded-2xl object-cover border-4 border-[#0A0E17] shadow-xl"
+                className="w-20 h-20 rounded-2xl object-cover border-4 border-[#08080A] shadow-xl"
               />
             ) : (
               <div
-                className="w-20 h-20 rounded-2xl border-4 border-[#0A0E17] shadow-xl flex items-center justify-center"
+                className="w-20 h-20 rounded-2xl border-4 border-[#08080A] shadow-xl flex items-center justify-center"
                 style={{ backgroundColor: primaryColor }}
               >
                 <Zap className="w-10 h-10 text-black fill-black" />
@@ -285,7 +285,7 @@ export default function PublicMenuPage() {
           )}
         </div>
 
-        <div className="flex items-center space-x-4 text-xs text-gray-400 pt-1 border-t border-gray-800/80">
+        <div className="flex items-center space-x-4 text-xs text-gray-400 pt-1 border-t border-white/[0.08]">
           <div className="flex items-center space-x-1">
             <Clock className="w-3.5 h-3.5 text-gray-500" />
             <span>{restaurant.openingHours}</span>
@@ -300,7 +300,7 @@ export default function PublicMenuPage() {
       </div>
 
       {/* Sticky Search & Category Bar */}
-      <div className="sticky top-0 z-30 bg-[#0A0E17]/95 backdrop-blur-md pt-4 pb-2 px-5 border-b border-gray-800/80 space-y-2 mt-4">
+      <div className="sticky top-0 z-30 bg-[#08080A]/95 backdrop-blur-md pt-4 pb-2 px-5 border-b border-white/[0.08] space-y-2 mt-4">
         {/* Search input */}
         <div className="relative">
           <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-3" />

@@ -12,7 +12,6 @@ export default function SubscriptionPage() {
   const currentPlan = restaurant?.subscriptionPlan || 'basic';
 
   const handleSelectPlan = async (planKey) => {
-    if (planKey === currentPlan) return;
     setLoadingPlan(planKey);
     try {
       const res = await restaurantAPI.updateMyRestaurant({ subscriptionPlan: planKey });

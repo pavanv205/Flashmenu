@@ -77,8 +77,8 @@ export default function LandingPage() {
           </div>
 
           {/* Realistic Product Mockup Showcase */}
-          <div className="pt-10 max-w-4xl mx-auto">
-            <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-[#0E0E14] shadow-2xl group hover:border-amber-500/30 transition-all">
+          <div className="pt-8 max-w-2xl mx-auto">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl">
               <img
                 src="/mockup_preview.png"
                 alt="FlashMenu QR Code Standee and Live Mobile App Interface"

@@ -35,7 +35,7 @@ export default function Navbar() {
         <div className="flex items-center space-x-3 sm:space-x-4">
           <Link
             to="/menu/spice-garden"
-            className="hidden sm:inline-flex items-center px-4 py-2 text-xs font-bold text-gray-300 hover:text-white transition-colors"
+            className="inline-flex items-center px-3 sm:px-4 py-2 text-xs font-bold text-gray-300 hover:text-white transition-colors"
           >
             Live Demo
           </Link>

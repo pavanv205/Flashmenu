@@ -1,14 +1,46 @@
-import React, { useState } from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 
 export default function WhatsAppButton({ phoneNumber = '+919999999999', message = 'Hello FlashMenu! I would like to inquire about your QR digital menu platform.' }) {
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const pricingElem = document.getElementById('pricing');
+      if (pricingElem) {
+        const rect = pricingElem.getBoundingClientRect();
+        // Visible from the moment the pricing section enters the viewport
+        if (rect.top <= window.innerHeight * 0.85) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
+      } else {
+        // Fallback for other pages if scrolled down
+        if (window.scrollY > 700) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
+      }
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const encodedMsg = encodeURIComponent(message);
   const whatsappUrl = `https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}?text=${encodedMsg}`;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3">
+    <div
+      className={`fixed bottom-6 right-6 z-50 flex items-center space-x-3 transition-all duration-500 ease-out transform ${
+        isVisible
+          ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+          : 'opacity-0 translate-y-8 scale-75 pointer-events-none'
+      }`}
+    >
       {/* Popover / Tooltip preview */}
       <div className="relative group">
         <a

@@ -50,10 +50,6 @@ export default function LandingPage() {
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-tr from-amber-500/10 via-transparent to-white/5 rounded-full blur-[170px] pointer-events-none" />
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/[0.05] border border-white/10 text-gray-300 text-xs font-bold uppercase tracking-widest">
-            <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span>Next-Gen QR Menu Platform</span>
-          </div>
 
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.08]">
             Flash<span className="gold-gradient-text">Menu</span> <br />

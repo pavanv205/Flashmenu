@@ -16,8 +16,6 @@ import {
   Clock,
   MapPin,
   Plus,
-  Sun,
-  Moon,
 } from 'lucide-react';
 
 function SubCategoryLabel({ name, count }) {
@@ -41,9 +39,6 @@ export default function PublicMenuPage() {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  // Theme State ('dark' | 'light')
-  const [theme, setTheme] = useState('dark');
 
   // UI state
   const [activeCategory, setActiveCategory] = useState('all');
@@ -130,7 +125,7 @@ export default function PublicMenuPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#08080A] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center">
         <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -138,13 +133,13 @@ export default function PublicMenuPage() {
 
   if (error || !restaurant) {
     return (
-      <div className="min-h-screen bg-[#08080A] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-[#0E0E14] border border-white/[0.08] rounded-3xl p-8 text-center space-y-4 shadow-2xl">
+      <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-[#101828] border border-slate-800 rounded-3xl p-8 text-center space-y-4 shadow-2xl">
           <div className="w-16 h-16 bg-red-500/20 text-red-400 rounded-full flex items-center justify-center mx-auto font-black text-2xl">
             !
           </div>
           <h2 className="text-xl font-bold text-white">Menu Unavailable</h2>
-          <p className="text-xs text-gray-400 leading-relaxed">{error || 'Unable to load menu.'}</p>
+          <p className="text-xs text-slate-400 leading-relaxed">{error || 'Unable to load menu.'}</p>
         </div>
       </div>
     );
@@ -191,31 +186,23 @@ export default function PublicMenuPage() {
 
   const cartTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const isDark = theme === 'dark';
-
   return (
-    <div className={`min-h-screen bg-[#08080A] font-sans selection:bg-amber-500 selection:text-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
-      {/* Mobile-Sized Container with Dynamic Light/Dark Theme Switcher */}
-      <div className={`min-h-screen pb-28 max-w-md mx-auto relative shadow-2xl transition-colors duration-300 ${
-        isDark 
-          ? 'bg-[#08080A] border-x border-white/[0.08]' 
-          : 'bg-[#FAFAFA] border-x border-slate-200/80'
-      }`}>
+    <div className="min-h-screen bg-[#0B0F17] text-white font-sans selection:bg-amber-500 selection:text-black">
+      {/* Mobile-Sized Container with Exact FlashMenu Application Theme (#0B0F17 Canvas + #101828 Cards) */}
+      <div className="min-h-screen bg-[#0B0F17] pb-28 max-w-md mx-auto relative shadow-2xl border-x border-slate-800/80">
         
         {/* Top Cover Banner */}
-        <div className={`relative h-48 w-full overflow-hidden ${isDark ? 'bg-[#0E0E14]' : 'bg-slate-200'}`}>
+        <div className="relative h-48 w-full bg-[#101828] overflow-hidden">
           {restaurant.coverImage ? (
             <img src={restaurant.coverImage} alt={restaurant.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-gradient-to-r from-amber-600 to-amber-800" />
           )}
-          <div className={`absolute inset-0 bg-gradient-to-t ${
-            isDark ? 'from-[#08080A] via-[#08080A]/40' : 'from-[#FAFAFA] via-[#FAFAFA]/40'
-          } to-transparent`} />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F17] via-[#0B0F17]/40 to-transparent" />
 
           {/* Table Badge */}
           {tableParam && (
-            <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-amber-500 text-black font-extrabold text-xs shadow-lg">
+            <div className="absolute top-4 right-4 px-3.5 py-1 rounded-full bg-amber-500 text-slate-950 font-black text-xs shadow-lg">
               Table #{tableParam}
             </div>
           )}
@@ -229,15 +216,11 @@ export default function PublicMenuPage() {
                 <img
                   src={restaurant.logo}
                   alt={restaurant.name}
-                  className={`w-20 h-20 rounded-2xl object-cover border-4 shadow-xl ${
-                    isDark ? 'border-[#08080A]' : 'border-white'
-                  }`}
+                  className="w-20 h-20 rounded-2xl object-cover border-4 border-[#0B0F17] shadow-xl"
                 />
               ) : (
                 <div
-                  className={`w-20 h-20 rounded-2xl border-4 shadow-xl flex items-center justify-center ${
-                    isDark ? 'border-[#08080A]' : 'border-white'
-                  }`}
+                  className="w-20 h-20 rounded-2xl border-4 border-[#0B0F17] shadow-xl flex items-center justify-center"
                   style={{ backgroundColor: primaryColor }}
                 >
                   <Zap className="w-10 h-10 text-black fill-black" />
@@ -245,62 +228,32 @@ export default function PublicMenuPage() {
               )}
             </div>
 
-            {/* Action Badges & Light/Dark Theme Switcher */}
             <div className="flex items-center space-x-2">
-              <span className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-[11px] font-bold ${
-                isDark 
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                  : 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
-              }`}>
+              <span className="inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span>Open Now</span>
               </span>
-
-              {/* Light / Dark Mode Toggle Switch */}
-              <button
-                onClick={() => setTheme(isDark ? 'light' : 'dark')}
-                className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold transition-all shadow-md active:scale-95 ${
-                  isDark
-                    ? 'bg-[#0E0E14] text-amber-400 border border-amber-500/30 hover:bg-white/10'
-                    : 'bg-white text-slate-800 border border-slate-300 hover:bg-slate-100 shadow-sm'
-                }`}
-                title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
-              >
-                {isDark ? (
-                  <>
-                    <Sun className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Light</span>
-                  </>
-                ) : (
-                  <>
-                    <Moon className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>Dark</span>
-                  </>
-                )}
-              </button>
             </div>
           </div>
 
           <div>
-            <h1 className={`text-2xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>{restaurant.name}</h1>
-            <p className={`text-xs font-semibold uppercase tracking-wider mt-0.5 ${isDark ? 'text-amber-400' : 'text-amber-600 font-bold'}`}>
+            <h1 className="text-2xl font-black tracking-tight text-white">{restaurant.name}</h1>
+            <p className="text-xs font-extrabold text-amber-400 uppercase tracking-wider mt-0.5">
               {restaurant.cuisineType}
             </p>
             {restaurant.description && (
-              <p className={`text-xs mt-1.5 leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-500 font-medium'}`}>{restaurant.description}</p>
+              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed font-medium">{restaurant.description}</p>
             )}
           </div>
 
-          <div className={`flex items-center space-x-4 text-xs pt-1 border-t ${
-            isDark ? 'text-gray-400 border-white/[0.08]' : 'text-slate-500 border-slate-200'
-          }`}>
+          <div className="flex items-center space-x-4 text-xs text-slate-400 pt-1 border-t border-slate-800">
             <div className="flex items-center space-x-1">
-              <Clock className={`w-3.5 h-3.5 ${isDark ? 'text-gray-500' : 'text-slate-400'}`} />
+              <Clock className="w-3.5 h-3.5 text-slate-500" />
               <span>{restaurant.openingHours}</span>
             </div>
             {restaurant.city && (
               <div className="flex items-center space-x-1">
-                <MapPin className={`w-3.5 h-3.5 ${isDark ? 'text-gray-500' : 'text-slate-400'}`} />
+                <MapPin className="w-3.5 h-3.5 text-slate-500" />
                 <span>{restaurant.city}</span>
               </div>
             )}
@@ -308,24 +261,16 @@ export default function PublicMenuPage() {
         </div>
 
         {/* Sticky Search & Category Bar */}
-        <div className={`sticky top-0 z-30 backdrop-blur-md pt-4 pb-2 px-5 border-b space-y-2 mt-4 transition-colors ${
-          isDark 
-            ? 'bg-[#08080A]/95 border-white/[0.08]' 
-            : 'bg-white/95 border-slate-200/80 shadow-sm'
-        }`}>
+        <div className="sticky top-0 z-30 bg-[#0B0F17]/95 backdrop-blur-md pt-4 pb-2 px-5 border-b border-slate-800 space-y-2 mt-4 shadow-md">
           {/* Search input */}
           <div className="relative">
-            <Search className={`w-4 h-4 absolute left-3.5 top-3 ${isDark ? 'text-gray-500' : 'text-slate-400'}`} />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
             <input
               type="text"
               placeholder="Search dishes or categories..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2 rounded-xl text-xs focus:outline-none focus:border-amber-500 font-medium transition-all ${
-                isDark 
-                  ? 'bg-[#0E0E14] border border-white/[0.08] text-white placeholder:text-gray-500' 
-                  : 'bg-slate-100 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:bg-white'
-              }`}
+              className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#0A0F1D] border border-slate-800 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-amber-500 font-medium transition-all"
             />
           </div>
 
@@ -335,10 +280,8 @@ export default function PublicMenuPage() {
               onClick={() => handleCategorySelect('all')}
               className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                 activeCategory === 'all'
-                  ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-black'
-                  : isDark
-                  ? 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80'
+                  ? 'bg-amber-500 text-slate-950 font-black shadow-lg shadow-amber-500/20'
+                  : 'bg-[#101828] text-slate-300 hover:text-white border border-slate-800'
               }`}
             >
               All Items ({menuItems.length})
@@ -349,10 +292,8 @@ export default function PublicMenuPage() {
                 onClick={() => handleCategorySelect(cat._id)}
                 className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                   activeCategory === cat._id
-                    ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-black'
-                    : isDark
-                    ? 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80'
+                    ? 'bg-amber-500 text-slate-950 font-black shadow-lg shadow-amber-500/20'
+                    : 'bg-[#101828] text-slate-300 hover:text-white border border-slate-800'
                 }`}
               >
                 {cat.name}
@@ -362,17 +303,13 @@ export default function PublicMenuPage() {
 
           {/* Sub-Category horizontal scroll pills */}
           {activeCategory !== 'all' && availableSubCategories.length > 0 && (
-            <div className={`flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-2 pb-1 border-t ${
-              isDark ? 'border-white/[0.08]' : 'border-slate-200/60'
-            }`}>
+            <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-2 pb-1 border-t border-slate-800/80">
               <button
                 onClick={() => setActiveSubCategory('all')}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
                   activeSubCategory === 'all'
-                    ? 'bg-amber-500 text-black shadow-md font-black'
-                    : isDark
-                    ? 'bg-[#0E0E14] text-gray-300 hover:text-white border border-white/[0.08]'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+                    ? 'bg-amber-500 text-slate-950 font-black shadow-md'
+                    : 'bg-[#101828] text-slate-300 hover:text-white border border-slate-800'
                 }`}
               >
                 All ({categoryItems.length})
@@ -385,10 +322,8 @@ export default function PublicMenuPage() {
                     onClick={() => setActiveSubCategory(sub)}
                     className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
                       activeSubCategory === sub
-                        ? 'bg-amber-500 text-black shadow-md font-black'
-                        : isDark
-                        ? 'bg-[#0E0E14] text-gray-300 hover:text-white border border-white/[0.08]'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+                        ? 'bg-amber-500 text-slate-950 font-black shadow-md'
+                        : 'bg-[#101828] text-slate-300 hover:text-white border border-slate-800'
                     }`}
                   >
                     <SubCategoryLabel name={sub} count={count} isActive={activeSubCategory === sub} />
@@ -399,10 +334,10 @@ export default function PublicMenuPage() {
           )}
         </div>
 
-        {/* Food Items List Grouped by Sub-Category */}
+        {/* Food Items List Grouped by Sub-Category - MATCHING SIGNUP/APPLICATION COLOR SYSTEM */}
         <div className="px-5 pt-4 space-y-6">
           {filteredItems.length === 0 ? (
-            <div className={`py-12 text-center space-y-2 ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>
+            <div className="py-12 text-center text-slate-500 space-y-2">
               <Search className="w-10 h-10 mx-auto opacity-30" />
               <p className="text-xs">No food items matching your query.</p>
             </div>
@@ -410,19 +345,11 @@ export default function PublicMenuPage() {
             Object.entries(groupedItems).map(([subGroup, items]) => (
               <div key={subGroup} className="space-y-3">
                 {subGroup !== 'DEFAULT' && activeSubCategory === 'all' && (
-                  <div className={`pt-3 pb-1 flex items-center justify-between border-b ${
-                    isDark ? 'border-amber-500/30' : 'border-amber-500/40'
-                  }`}>
-                    <h2 className={`text-xs font-black uppercase tracking-widest flex items-center space-x-2 ${
-                      isDark ? 'text-amber-400' : 'text-amber-600'
-                    }`}>
+                  <div className="pt-3 pb-1 border-b border-amber-500/30 flex items-center justify-between">
+                    <h2 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center space-x-2">
                       <SubCategoryLabel name={subGroup} isActive={false} />
                     </h2>
-                    <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
-                      isDark 
-                        ? 'text-gray-400 bg-[#0E0E14] border-white/[0.08]' 
-                        : 'text-slate-500 bg-slate-100 border-slate-200'
-                    }`}>
+                    <span className="text-[10px] font-bold text-slate-400 bg-[#101828] px-2.5 py-0.5 rounded-full border border-slate-800">
                       {items.length} items
                     </span>
                   </div>
@@ -433,20 +360,14 @@ export default function PublicMenuPage() {
                   return (
                     <div
                       key={item._id}
-                      className={`p-4 rounded-3xl border transition-all flex space-x-3.5 relative overflow-hidden ${
-                        isDark
-                          ? item.isAvailable
-                            ? 'bg-[#0E0E14] text-white border-white/[0.08] hover:border-amber-500/40'
-                            : 'bg-red-950/10 border-red-900/40 text-gray-300'
-                          : item.isAvailable
-                            ? 'bg-white text-slate-900 border-slate-200/90 shadow-sm hover:shadow-md hover:border-amber-500/50'
-                            : 'bg-red-50/50 border-red-200 text-slate-700'
+                      className={`p-4 rounded-3xl bg-[#101828] border transition-all flex space-x-3.5 relative overflow-hidden shadow-xl ${
+                        item.isAvailable
+                          ? 'border-slate-800/90 hover:border-amber-500/50'
+                          : 'border-red-900/40 bg-red-950/20'
                       }`}
                     >
                       {/* Food Image */}
-                      <div className={`relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border ${
-                        isDark ? 'bg-[#08080A] border-white/[0.06]' : 'bg-slate-100 border-slate-200/60 shadow-inner'
-                      }`}>
+                      <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-[#0A0F1D] flex-shrink-0 border border-slate-800/80 shadow-inner">
                         {(() => {
                           const fallback = getCategoryFallbackImage(
                             item.categoryId?.name,
@@ -469,9 +390,7 @@ export default function PublicMenuPage() {
 
                         {/* SOLD OUT Overlay */}
                         {!item.isAvailable && (
-                          <div className={`absolute inset-0 flex items-center justify-center ${
-                            isDark ? 'bg-black/80' : 'bg-slate-900/70'
-                          }`}>
+                          <div className="absolute inset-0 bg-[#0B0F17]/85 flex items-center justify-center">
                             <span className="text-[10px] font-black text-red-400 uppercase tracking-widest border border-red-500/40 px-2 py-0.5 rounded-full bg-red-500/20">
                               SOLD OUT
                             </span>
@@ -494,33 +413,27 @@ export default function PublicMenuPage() {
                               </span>
                             )}
 
-                            <h3 className={`text-sm font-extrabold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>{item.name}</h3>
+                            <h3 className="text-sm font-extrabold text-white truncate">{item.name}</h3>
                           </div>
 
-                          <p className={`text-[11px] line-clamp-2 leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
+                          <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
                             {item.description}
                           </p>
 
                           {/* Badges */}
                           <div className="flex flex-wrap gap-1 mt-1.5">
                             {item.isBestseller && (
-                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase ${
-                                isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-800'
-                              }`}>
+                              <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[9px] font-extrabold uppercase border border-amber-500/30">
                                 Bestseller
                               </span>
                             )}
                             {item.isChefSpecial && (
-                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase ${
-                                isDark ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-800'
-                              }`}>
+                              <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[9px] font-extrabold uppercase border border-purple-500/30">
                                 Chef Special
                               </span>
                             )}
                             {item.spicyLevel > 0 && (
-                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold flex items-center ${
-                                isDark ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-700'
-                              }`}>
+                              <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[9px] font-extrabold flex items-center border border-red-500/30">
                                 <Flame className="w-2.5 h-2.5 mr-0.5" />
                                 <span>Spicy</span>
                               </span>
@@ -529,15 +442,13 @@ export default function PublicMenuPage() {
                         </div>
 
                         {/* Price & Add Button */}
-                        <div className={`flex items-center justify-between pt-2 border-t ${
-                          isDark ? 'border-white/[0.08]' : 'border-slate-100'
-                        }`}>
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
                           <div className="flex items-baseline space-x-1.5">
-                            <span className={`text-sm font-black ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>
+                            <span className="text-sm font-black text-amber-400">
                               {restaurant.currency || '₹'}{item.discountPrice || item.price}
                             </span>
                             {item.discountPrice && (
-                              <span className={`text-[10px] line-through ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>
+                              <span className="text-[10px] text-slate-500 line-through">
                                 {restaurant.currency || '₹'}{item.price}
                               </span>
                             )}
@@ -545,7 +456,7 @@ export default function PublicMenuPage() {
 
                           {item.isAvailable && (
                             inCart ? (
-                              <div className="flex items-center space-x-2 bg-amber-500 text-black px-2.5 py-1 rounded-xl text-xs font-black shadow-sm">
+                              <div className="flex items-center space-x-2 bg-amber-500 text-slate-950 px-2.5 py-1 rounded-xl text-xs font-black shadow-md">
                                 <button onClick={() => updateCartQuantity(item._id, -1)} className="px-1 font-black">-</button>
                                 <span>{inCart.quantity}</span>
                                 <button onClick={() => updateCartQuantity(item._id, 1)} className="px-1 font-black">+</button>
@@ -553,7 +464,7 @@ export default function PublicMenuPage() {
                             ) : (
                               <button
                                 onClick={() => addToCart(item)}
-                                className="px-3.5 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30 text-xs font-bold transition-all flex items-center space-x-1 shadow-sm hover:scale-105 active:scale-95"
+                                className="px-3.5 py-1.5 rounded-xl bg-amber-500 text-slate-950 hover:bg-amber-400 text-xs font-black transition-all flex items-center space-x-1 shadow-md hover:scale-105 active:scale-95"
                               >
                                 <Plus className="w-3.5 h-3.5" />
                                 <span>ADD</span>
@@ -577,11 +488,7 @@ export default function PublicMenuPage() {
               <>
                 <button
                   onClick={() => setIsWaiterModalOpen(true)}
-                  className={`flex-1 py-3.5 px-4 rounded-2xl font-extrabold text-xs shadow-2xl flex items-center justify-center space-x-2 backdrop-blur-md transition-all border ${
-                    isDark
-                      ? 'bg-[#0E0E14]/90 border-amber-500/40 text-amber-400'
-                      : 'bg-slate-900 text-white border-slate-800 shadow-xl'
-                  }`}
+                  className="flex-1 py-3.5 px-4 rounded-2xl bg-[#101828]/95 border border-slate-700/80 text-amber-400 font-extrabold text-xs shadow-2xl flex items-center justify-center space-x-2 backdrop-blur-md hover:bg-[#142036] transition-all"
                 >
                   <Bell className="w-4 h-4 text-amber-400 animate-bounce" />
                   <span>Call Waiter</span>
@@ -589,11 +496,7 @@ export default function PublicMenuPage() {
 
                 <button
                   onClick={() => setIsFeedbackModalOpen(true)}
-                  className={`p-3.5 rounded-2xl font-bold text-xs shadow-lg transition-all border ${
-                    isDark
-                      ? 'bg-[#0E0E14] border-white/[0.08] text-gray-300'
-                      : 'bg-white border-slate-200 text-slate-700'
-                  }`}
+                  className="p-3.5 rounded-2xl bg-[#101828] border border-slate-700/80 text-slate-300 font-bold text-xs shadow-xl hover:bg-[#142036] transition-all"
                   title="Rate & Review"
                 >
                   <Star className="w-5 h-5 text-amber-400" />
@@ -604,7 +507,7 @@ export default function PublicMenuPage() {
             {cartTotalCount > 0 && (
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="flex-1 py-3.5 px-4 rounded-2xl bg-amber-500 text-black font-black text-xs shadow-2xl shadow-amber-500/30 flex items-center justify-between hover:bg-amber-400 transition-all"
+                className="flex-1 py-3.5 px-4 rounded-2xl bg-amber-500 text-slate-950 font-black text-xs shadow-2xl shadow-amber-500/30 flex items-center justify-between hover:bg-amber-400 transition-all"
               >
                 <div className="flex items-center space-x-2">
                   <ShoppingBag className="w-4 h-4" />

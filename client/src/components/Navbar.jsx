@@ -54,7 +54,7 @@ export default function Navbar() {
                 to="/login"
                 className="px-3.5 py-2 text-xs font-bold text-gray-300 hover:text-white transition-colors"
               >
-                Sign In
+                Login
               </Link>
               <Link
                 to="/signup"

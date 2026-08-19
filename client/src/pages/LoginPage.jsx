@@ -88,7 +88,7 @@ export default function LoginPage() {
           <p className="text-xs text-gray-400">
             {step2FA
               ? 'Enter the 6-digit confirmation code sent to your email to gain access'
-              : 'Sign in to manage your digital restaurant menu'}
+              : 'Log in to manage your digital restaurant menu'}
           </p>
         </div>
 
@@ -169,7 +169,7 @@ export default function LoginPage() {
                 onClick={() => setStep2FA(false)}
                 className="text-xs text-gray-400 hover:text-white font-semibold transition-colors"
               >
-                &larr; Back to Sign In
+                &larr; Back to Login
               </button>
             </div>
           </form>
@@ -226,11 +226,11 @@ export default function LoginPage() {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Signing In...</span>
+                  <span>Logging In...</span>
                 </>
               ) : (
                 <>
-                  <span>Sign In</span>
+                  <span>Login</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}

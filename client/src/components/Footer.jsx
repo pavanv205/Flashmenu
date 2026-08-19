@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="mt-4 sm:mt-0 flex items-center space-x-6">
           <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
           <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
-          <a href="mailto:support@flashmenu.com" className="hover:text-white transition-colors font-medium">Contact Us</a>
+          <a href="mailto:flashmenu07@gmail.com" className="hover:text-white transition-colors font-medium">Contact Us</a>
         </div>
       </div>
     </footer>

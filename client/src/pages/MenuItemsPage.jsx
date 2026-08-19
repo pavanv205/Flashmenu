@@ -305,7 +305,7 @@ export default function MenuItemsPage() {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+              className="grid grid-cols-1 gap-3.5 max-w-4xl"
             >
               {filteredItems.length === 0 ? (
                 <div className="col-span-full py-16 text-center space-y-3 bg-dark-card rounded-3xl border border-dark-border">

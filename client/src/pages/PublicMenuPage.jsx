@@ -16,7 +16,6 @@ import {
   Clock,
   MapPin,
   Plus,
-  CheckCircle2,
 } from 'lucide-react';
 
 function SubCategoryLabel({ name, count }) {
@@ -135,12 +134,12 @@ export default function PublicMenuPage() {
   if (error || !restaurant) {
     return (
       <div className="min-h-screen bg-[#08080A] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-3xl p-8 text-center space-y-4 shadow-2xl">
-          <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto font-black text-2xl">
+        <div className="max-w-md w-full bg-[#0E0E14] border border-white/[0.08] rounded-3xl p-8 text-center space-y-4 shadow-2xl">
+          <div className="w-16 h-16 bg-red-500/20 text-red-400 rounded-full flex items-center justify-center mx-auto font-black text-2xl">
             !
           </div>
-          <h2 className="text-xl font-bold text-slate-900">Menu Unavailable</h2>
-          <p className="text-xs text-slate-600 leading-relaxed">{error || 'Unable to load menu.'}</p>
+          <h2 className="text-xl font-bold text-white">Menu Unavailable</h2>
+          <p className="text-xs text-gray-400 leading-relaxed">{error || 'Unable to load menu.'}</p>
         </div>
       </div>
     );
@@ -188,22 +187,22 @@ export default function PublicMenuPage() {
   const cartTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-[#08080A] text-slate-900 font-sans selection:bg-amber-500 selection:text-black">
-      {/* Mobile-Sized Container with Light Theme */}
-      <div className="min-h-screen bg-[#FAFAFA] pb-28 max-w-md mx-auto relative shadow-2xl border-x border-slate-200/80">
+    <div className="min-h-screen bg-[#08080A] text-white font-sans selection:bg-amber-500 selection:text-black">
+      {/* Mobile-Sized Container with Hybrid Mixed Theme (Obsidian Background + Crisp Light Dish Cards) */}
+      <div className="min-h-screen bg-[#08080A] pb-28 max-w-md mx-auto relative shadow-2xl border-x border-white/[0.08]">
         
         {/* Top Cover Banner */}
-        <div className="relative h-48 w-full bg-slate-200 overflow-hidden">
+        <div className="relative h-48 w-full bg-[#0E0E14] overflow-hidden">
           {restaurant.coverImage ? (
             <img src={restaurant.coverImage} alt={restaurant.name} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full bg-gradient-to-r from-amber-500 to-amber-700" />
+            <div className="w-full h-full bg-gradient-to-r from-amber-600 to-amber-800" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#08080A] via-[#08080A]/40 to-transparent" />
 
           {/* Table Badge */}
           {tableParam && (
-            <div className="absolute top-4 right-4 px-3.5 py-1 rounded-full bg-slate-900 text-white font-extrabold text-xs shadow-lg">
+            <div className="absolute top-4 right-4 px-3.5 py-1 rounded-full bg-amber-500 text-black font-extrabold text-xs shadow-lg">
               Table #{tableParam}
             </div>
           )}
@@ -230,7 +229,7 @@ export default function PublicMenuPage() {
             </div>
 
             <div className="flex items-center space-x-2">
-              <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold shadow-sm">
+              <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span>Open Now</span>
               </span>
@@ -238,23 +237,23 @@ export default function PublicMenuPage() {
           </div>
 
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900">{restaurant.name}</h1>
-            <p className="text-xs font-extrabold text-amber-600 uppercase tracking-wider mt-0.5">
+            <h1 className="text-2xl font-black tracking-tight text-white">{restaurant.name}</h1>
+            <p className="text-xs font-extrabold text-amber-400 uppercase tracking-wider mt-0.5">
               {restaurant.cuisineType}
             </p>
             {restaurant.description && (
-              <p className="text-xs text-slate-500 mt-1.5 leading-relaxed font-medium">{restaurant.description}</p>
+              <p className="text-xs text-gray-400 mt-1.5 leading-relaxed font-medium">{restaurant.description}</p>
             )}
           </div>
 
-          <div className="flex items-center space-x-4 text-xs text-slate-500 pt-1 border-t border-slate-200">
+          <div className="flex items-center space-x-4 text-xs text-gray-400 pt-1 border-t border-white/[0.08]">
             <div className="flex items-center space-x-1">
-              <Clock className="w-3.5 h-3.5 text-slate-400" />
+              <Clock className="w-3.5 h-3.5 text-gray-500" />
               <span>{restaurant.openingHours}</span>
             </div>
             {restaurant.city && (
               <div className="flex items-center space-x-1">
-                <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                <MapPin className="w-3.5 h-3.5 text-gray-500" />
                 <span>{restaurant.city}</span>
               </div>
             )}
@@ -262,16 +261,16 @@ export default function PublicMenuPage() {
         </div>
 
         {/* Sticky Search & Category Bar */}
-        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md pt-4 pb-2 px-5 border-b border-slate-200/80 space-y-2 mt-4 shadow-sm">
+        <div className="sticky top-0 z-30 bg-[#08080A]/95 backdrop-blur-md pt-4 pb-2 px-5 border-b border-white/[0.08] space-y-2 mt-4">
           {/* Search input */}
           <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+            <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-3" />
             <input
               type="text"
               placeholder="Search dishes or categories..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 placeholder:text-slate-400 text-xs focus:outline-none focus:border-amber-500 focus:bg-white font-medium transition-all"
+              className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#0E0E14] border border-white/[0.08] text-white text-xs focus:outline-none focus:border-amber-500 font-medium transition-all"
             />
           </div>
 
@@ -281,8 +280,8 @@ export default function PublicMenuPage() {
               onClick={() => handleCategorySelect('all')}
               className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                 activeCategory === 'all'
-                  ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20 font-black'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80 font-bold'
+                  ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-black'
+                  : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08] font-bold'
               }`}
             >
               All Items ({menuItems.length})
@@ -293,8 +292,8 @@ export default function PublicMenuPage() {
                 onClick={() => handleCategorySelect(cat._id)}
                 className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                   activeCategory === cat._id
-                    ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20 font-black'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80 font-bold'
+                    ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-black'
+                    : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08] font-bold'
                 }`}
               >
                 {cat.name}
@@ -304,13 +303,13 @@ export default function PublicMenuPage() {
 
           {/* Sub-Category horizontal scroll pills */}
           {activeCategory !== 'all' && availableSubCategories.length > 0 && (
-            <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-2 pb-1 border-t border-slate-200/60">
+            <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pt-2 pb-1 border-t border-white/[0.08]">
               <button
                 onClick={() => setActiveSubCategory('all')}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
                   activeSubCategory === 'all'
-                    ? 'bg-slate-900 text-white shadow-md font-extrabold'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+                    ? 'bg-amber-500 text-black shadow-md font-black'
+                    : 'bg-[#0E0E14] text-gray-300 hover:text-white border border-white/[0.08]'
                 }`}
               >
                 All ({categoryItems.length})
@@ -323,8 +322,8 @@ export default function PublicMenuPage() {
                     onClick={() => setActiveSubCategory(sub)}
                     className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
                       activeSubCategory === sub
-                        ? 'bg-slate-900 text-white shadow-md font-extrabold'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+                        ? 'bg-amber-500 text-black shadow-md font-black'
+                        : 'bg-[#0E0E14] text-gray-300 hover:text-white border border-white/[0.08]'
                     }`}
                   >
                     <SubCategoryLabel name={sub} count={count} isActive={activeSubCategory === sub} />
@@ -335,10 +334,10 @@ export default function PublicMenuPage() {
           )}
         </div>
 
-        {/* Food Items List Grouped by Sub-Category */}
+        {/* Food Items List Grouped by Sub-Category - HIGH CONTRAST CRISP LIGHT CARDS */}
         <div className="px-5 pt-4 space-y-6">
           {filteredItems.length === 0 ? (
-            <div className="py-12 text-center text-slate-400 space-y-2">
+            <div className="py-12 text-center text-gray-500 space-y-2">
               <Search className="w-10 h-10 mx-auto opacity-30" />
               <p className="text-xs">No food items matching your query.</p>
             </div>
@@ -346,11 +345,11 @@ export default function PublicMenuPage() {
             Object.entries(groupedItems).map(([subGroup, items]) => (
               <div key={subGroup} className="space-y-3">
                 {subGroup !== 'DEFAULT' && activeSubCategory === 'all' && (
-                  <div className="pt-3 pb-1 border-b border-slate-200 flex items-center justify-between">
-                    <h2 className="text-xs font-black text-amber-600 uppercase tracking-widest flex items-center space-x-2">
+                  <div className="pt-3 pb-1 border-b border-amber-500/30 flex items-center justify-between">
+                    <h2 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center space-x-2">
                       <SubCategoryLabel name={subGroup} isActive={false} />
                     </h2>
-                    <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
+                    <span className="text-[10px] font-bold text-gray-400 bg-[#0E0E14] px-2.5 py-0.5 rounded-full border border-white/[0.08]">
                       {items.length} items
                     </span>
                   </div>
@@ -361,14 +360,14 @@ export default function PublicMenuPage() {
                   return (
                     <div
                       key={item._id}
-                      className={`p-4 rounded-3xl bg-white border transition-all flex space-x-3.5 relative overflow-hidden shadow-sm hover:shadow-md ${
+                      className={`p-4 rounded-3xl bg-white text-slate-900 border transition-all flex space-x-3.5 relative overflow-hidden shadow-lg hover:shadow-xl ${
                         item.isAvailable
-                          ? 'border-slate-200/90 hover:border-amber-500/50'
-                          : 'border-red-200 bg-red-50/50'
+                          ? 'border-slate-200/90 hover:border-amber-500/60'
+                          : 'border-red-200 bg-red-50/90'
                       }`}
                     >
                       {/* Food Image */}
-                      <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200/60 shadow-inner">
+                      <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200/80 shadow-inner">
                         {(() => {
                           const fallback = getCategoryFallbackImage(
                             item.categoryId?.name,
@@ -391,8 +390,8 @@ export default function PublicMenuPage() {
 
                         {/* SOLD OUT Overlay */}
                         {!item.isAvailable && (
-                          <div className="absolute inset-0 bg-slate-900/70 flex items-center justify-center">
-                            <span className="text-[10px] font-black text-red-400 uppercase tracking-widest border border-red-400/40 px-2 py-0.5 rounded-full bg-red-500/20">
+                          <div className="absolute inset-0 bg-slate-900/80 flex items-center justify-center">
+                            <span className="text-[10px] font-black text-red-400 uppercase tracking-widest border border-red-500/40 px-2 py-0.5 rounded-full bg-red-500/20">
                               SOLD OUT
                             </span>
                           </div>
@@ -465,7 +464,7 @@ export default function PublicMenuPage() {
                             ) : (
                               <button
                                 onClick={() => addToCart(item)}
-                                className="px-3.5 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-700 hover:text-black border border-amber-500/30 text-xs font-extrabold transition-all flex items-center space-x-1 shadow-sm"
+                                className="px-3.5 py-1.5 rounded-xl bg-amber-500 text-black hover:bg-amber-400 text-xs font-black transition-all flex items-center space-x-1 shadow-sm hover:scale-105 active:scale-95"
                               >
                                 <Plus className="w-3.5 h-3.5" />
                                 <span>ADD</span>
@@ -489,7 +488,7 @@ export default function PublicMenuPage() {
               <>
                 <button
                   onClick={() => setIsWaiterModalOpen(true)}
-                  className="flex-1 py-3.5 px-4 rounded-2xl bg-slate-900 text-white font-extrabold text-xs shadow-2xl flex items-center justify-center space-x-2 backdrop-blur-md hover:bg-slate-800 transition-all border border-slate-800"
+                  className="flex-1 py-3.5 px-4 rounded-2xl bg-[#0E0E14]/95 border border-white/[0.1] text-amber-400 font-extrabold text-xs shadow-2xl flex items-center justify-center space-x-2 backdrop-blur-md hover:bg-[#14141d] transition-all"
                 >
                   <Bell className="w-4 h-4 text-amber-400 animate-bounce" />
                   <span>Call Waiter</span>
@@ -497,10 +496,10 @@ export default function PublicMenuPage() {
 
                 <button
                   onClick={() => setIsFeedbackModalOpen(true)}
-                  className="p-3.5 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold text-xs shadow-lg hover:bg-slate-50 transition-all"
+                  className="p-3.5 rounded-2xl bg-[#0E0E14] border border-white/[0.08] text-gray-300 font-bold text-xs shadow-lg hover:bg-dark-hover transition-all"
                   title="Rate & Review"
                 >
-                  <Star className="w-5 h-5 text-amber-500" />
+                  <Star className="w-5 h-5 text-amber-400" />
                 </button>
               </>
             )}

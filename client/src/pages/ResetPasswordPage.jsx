@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Zap, Lock, KeyRound, ArrowRight, CheckCircle2, Loader2, Mail } from 'lucide-react';
+import { Zap, Lock, KeyRound, ArrowRight, CheckCircle2, Loader2, Mail, RefreshCw } from 'lucide-react';
 import { authAPI } from '../services/api';
 
 export default function ResetPasswordPage() {
@@ -13,6 +13,11 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // Resend OTP state
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendMsg, setResendMsg] = useState('');
+  const [resendTimer, setResendTimer] = useState(0);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,6 +26,39 @@ export default function ResetPasswordPage() {
     if (qEmail) setEmail(qEmail);
     if (qToken) setToken(qToken);
   }, [searchParams]);
+
+  useEffect(() => {
+    let interval = null;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
+
+  const handleResendOTP = async () => {
+    if (!email) {
+      setError('Please provide your account email address first.');
+      return;
+    }
+
+    setError('');
+    setResendMsg('');
+    setResendLoading(true);
+
+    try {
+      const res = await authAPI.forgotPassword({ email });
+      setResendMsg(res.data?.message || 'A new 6-digit verification code has been sent to your email!');
+      setResendTimer(30); // 30s cooldown
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to resend verification code. Please try again.');
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -80,6 +118,13 @@ export default function ResetPasswordPage() {
           </div>
         )}
 
+        {resendMsg && (
+          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold text-center flex items-center justify-center space-x-1.5">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <span>{resendMsg}</span>
+          </div>
+        )}
+
         {isSuccess ? (
           <div className="space-y-5 text-center py-4">
             <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border-2 border-emerald-500 flex items-center justify-center mx-auto animate-bounce">
@@ -120,9 +165,31 @@ export default function ResetPasswordPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                6-Digit Security Code
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                  6-Digit Security Code
+                </label>
+                <button
+                  type="button"
+                  onClick={handleResendOTP}
+                  disabled={resendLoading || resendTimer > 0}
+                  className="text-[11px] font-bold text-amber-400 hover:text-amber-300 transition-colors disabled:opacity-50 flex items-center space-x-1"
+                >
+                  {resendLoading ? (
+                    <span className="flex items-center space-x-1">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <span>Sending...</span>
+                    </span>
+                  ) : resendTimer > 0 ? (
+                    <span className="text-gray-400 font-mono">Resend in {resendTimer}s</span>
+                  ) : (
+                    <span className="flex items-center space-x-1 underline">
+                      <RefreshCw className="w-3 h-3" />
+                      <span>Resend OTP Code</span>
+                    </span>
+                  )}
+                </button>
+              </div>
               <div className="relative">
                 <KeyRound className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
                 <input

@@ -161,9 +161,30 @@ export default function LoginPage({ initialRole }) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                6-Digit Confirmation Code
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                  6-Digit Confirmation Code
+                </label>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setError('');
+                    setLoading(true);
+                    try {
+                      const resData = await login('pavanvadapalli26@gmail.com', 'Pavan@2193');
+                      setSuccess2FAMsg(resData.message || 'New 2FA verification code sent to pavanvadapalli26@gmail.com!');
+                    } catch (err) {
+                      setError(err.response?.data?.message || 'Failed to resend code');
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  disabled={loading}
+                  className="text-[11px] font-bold text-amber-400 hover:text-amber-300 transition-colors disabled:opacity-50 underline"
+                >
+                  Resend 2FA Code
+                </button>
+              </div>
               <div className="relative">
                 <KeyRound className="w-4 h-4 text-amber-400 absolute left-3.5 top-3.5" />
                 <input

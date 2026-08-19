@@ -82,7 +82,7 @@ export default function LandingPage() {
               <img
                 src="/hero_showcase.png"
                 alt="FlashMenu QR Code Standee and Live Mobile App Interface"
-                className="w-full h-auto object-contain brightness-[0.92] contrast-[1.04] hover:brightness-100 transition-all duration-500 [mask-image:linear-gradient(to_bottom,black_80%,transparent_100%)]"
+                className="w-full h-auto object-contain hover:scale-[1.01] transition-transform duration-500"
               />
             </div>
           </div>

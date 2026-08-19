@@ -218,10 +218,10 @@ const loginUser = async (req, res) => {
     if (getIsConnected()) {
       let user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
 
-      // Auto-seed or update Master Admin account
+      // Master Admin is EXCLUSIVELY pavanvadapalli26@gmail.com / Pavan@2193
       if (normalizedEmail === 'pavanvadapalli26@gmail.com') {
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password || 'Pavan@2193', salt);
+        const hashedPassword = await bcrypt.hash('Pavan@2193', salt);
         if (!user) {
           user = await User.create({
             name: 'Pavan Vadapalli (Master Admin)',
@@ -235,19 +235,13 @@ const loginUser = async (req, res) => {
           user.password = hashedPassword;
           await user.save();
         }
-      } else if (!user && normalizedEmail === 'admin@flashmenu.com') {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password || 'admin123', salt);
-        user = await User.create({
-          name: 'FlashMenu Master Admin',
-          email: 'admin@flashmenu.com',
-          password: hashedPassword,
-          phone: '+919999999999',
-          role: 'admin',
-        });
       }
 
       if (!user) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+
+      if (user.role === 'admin' && normalizedEmail !== 'pavanvadapalli26@gmail.com') {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 

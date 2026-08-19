@@ -7,14 +7,10 @@ import {
   QrCode,
   Smartphone,
   CheckCircle,
-  TrendingUp,
   BarChart2,
-  Globe,
-  Layers,
   ArrowRight,
   ChevronDown,
   Sparkles,
-  ShieldCheck,
   Crown,
 } from 'lucide-react';
 
@@ -45,103 +41,103 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0B0F17] text-white flex flex-col">
+    <div className="min-h-screen bg-[#090C10] text-white flex flex-col font-sans selection:bg-amber-500 selection:text-black">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative pt-16 pb-24 overflow-hidden border-b border-gray-800/60">
-        {/* Background glow effects */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-500/10 rounded-full blur-[140px] pointer-events-none" />
+      {/* 1. HERO SECTION */}
+      <section className="relative pt-20 pb-24 overflow-hidden border-b border-white/[0.08]">
+        {/* Background glow effect */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-amber-500/10 rounded-full blur-[160px] pointer-events-none" />
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
-          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-400 text-xs font-extrabold uppercase tracking-widest">
-            <Zap className="w-4 h-4 text-brand-500 fill-brand-500" />
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-extrabold uppercase tracking-widest">
+            <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />
             <span>Next-Gen QR Menu Platform</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight font-sans leading-tight">
-            Flash<span className="gold-gradient-text">Menu</span><br />
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.1]">
+            Flash<span className="gold-gradient-text">Menu</span> <br />
             <span className="text-white">Scan Tap Dine</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto font-normal leading-relaxed">
+          <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto font-normal leading-relaxed">
             Turn your restaurant menu into a fast, beautiful digital experience. Customers scan your table QR code and instantly view your menu on their phones — zero downloads or signups required.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 pt-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 pt-2">
             <Link
               to="/signup"
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-400 hover:from-brand-400 hover:to-brand-300 text-black font-extrabold text-base shadow-xl shadow-brand-500/25 transition-all hover:scale-105"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-extrabold text-sm shadow-xl shadow-amber-500/20 transition-all hover:scale-105"
             >
               <span>Start Free Trial</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4" />
             </Link>
 
             <Link
               to="/menu/spice-garden"
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-2xl bg-dark-card border border-gray-700 hover:border-brand-500/50 text-white font-bold text-base transition-all hover:bg-dark-hover"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 rounded-2xl bg-dark-card border border-white/10 hover:border-amber-500/50 text-white font-bold text-sm transition-all hover:bg-dark-hover"
             >
-              <QrCode className="w-5 h-5 text-brand-400" />
+              <QrCode className="w-4 h-4 text-amber-400" />
               <span>View Live Demo</span>
             </Link>
           </div>
 
           {/* Social Proof Stats */}
-          <div className="pt-10 border-t border-gray-800/80 grid grid-cols-3 gap-6 text-center max-w-2xl mx-auto">
+          <div className="pt-10 border-t border-white/[0.08] grid grid-cols-3 gap-6 text-center max-w-2xl mx-auto">
             <div>
               <h4 className="text-2xl sm:text-3xl font-extrabold text-white">100%</h4>
-              <p className="text-xs text-gray-400 font-medium">No App Download</p>
+              <p className="text-xs text-gray-400 font-medium mt-1">No App Download</p>
             </div>
             <div>
               <h4 className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">&lt; 1s</h4>
-              <p className="text-xs text-gray-400 font-medium">Lightning Scan Speed</p>
+              <p className="text-xs text-gray-400 font-medium mt-1">Lightning Scan Speed</p>
             </div>
             <div>
               <h4 className="text-2xl sm:text-3xl font-extrabold text-white">Instant</h4>
-              <p className="text-xs text-gray-400 font-medium">Sold Out Toggle</p>
+              <p className="text-xs text-gray-400 font-medium mt-1">Sold Out Toggle</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How FlashMenu Works */}
-      <section className="py-20 bg-[#0E1420] border-b border-gray-800/60">
+      {/* 2. HOW FLASHMENU WORKS */}
+      <section id="how-it-works" className="py-24 bg-[#0B0E14] border-b border-white/[0.08]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <h2 className="text-xs font-extrabold text-brand-400 uppercase tracking-widest">3 Simple Steps</h2>
+            <h2 className="text-xs font-extrabold text-amber-400 uppercase tracking-widest">3 Simple Steps</h2>
             <h3 className="text-3xl sm:text-4xl font-extrabold text-white">How FlashMenu Works</h3>
-            <p className="text-gray-400 text-sm sm:text-base">
+            <p className="text-gray-400 text-xs sm:text-sm">
               Set up your restaurant in under 5 minutes and offer your diners a premium contactless menu.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-dark-card border border-dark-border p-8 rounded-3xl relative hover:border-brand-500/40 transition-all group">
-              <div className="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center font-extrabold text-xl mb-6 border border-brand-500/20 group-hover:bg-brand-500 group-hover:text-black transition-all">
+            <div className="bg-dark-card border border-dark-border p-8 rounded-3xl relative hover:border-amber-500/40 transition-all group">
+              <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-extrabold text-xl mb-6 border border-amber-500/20 group-hover:bg-amber-500 group-hover:text-black transition-all">
                 01
               </div>
               <h4 className="text-xl font-bold text-white mb-3">Create Your Menu</h4>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-gray-400 text-xs leading-relaxed">
                 Add categories, food photos, prices, dietary badges (veg/non-veg), and spicy levels easily with drag & drop reordering.
               </p>
             </div>
 
-            <div className="bg-dark-card border border-dark-border p-8 rounded-3xl relative hover:border-brand-500/40 transition-all group">
-              <div className="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center font-extrabold text-xl mb-6 border border-brand-500/20 group-hover:bg-brand-500 group-hover:text-black transition-all">
+            <div className="bg-dark-card border border-dark-border p-8 rounded-3xl relative hover:border-amber-500/40 transition-all group">
+              <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-extrabold text-xl mb-6 border border-amber-500/20 group-hover:bg-amber-500 group-hover:text-black transition-all">
                 02
               </div>
               <h4 className="text-xl font-bold text-white mb-3">Place Table QR Codes</h4>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-gray-400 text-xs leading-relaxed">
                 Download high-res printable QR cards customized for each table and place them on your dining tables or standees.
               </p>
             </div>
 
-            <div className="bg-dark-card border border-dark-border p-8 rounded-3xl relative hover:border-brand-500/40 transition-all group">
-              <div className="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center font-extrabold text-xl mb-6 border border-brand-500/20 group-hover:bg-brand-500 group-hover:text-black transition-all">
+            <div className="bg-dark-card border border-dark-border p-8 rounded-3xl relative hover:border-amber-500/40 transition-all group">
+              <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-extrabold text-xl mb-6 border border-amber-500/20 group-hover:bg-amber-500 group-hover:text-black transition-all">
                 03
               </div>
               <h4 className="text-xl font-bold text-white mb-3">Customers Scan & View</h4>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-gray-400 text-xs leading-relaxed">
                 Diners scan with any camera app. The menu opens immediately in their mobile browser with instant category search.
               </p>
             </div>
@@ -149,17 +145,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-20 border-b border-gray-800/60">
+      {/* 3. FEATURES GRID */}
+      <section id="features" className="py-24 border-b border-white/[0.08]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <h2 className="text-xs font-extrabold text-brand-400 uppercase tracking-widest">Built For Restaurants</h2>
+            <h2 className="text-xs font-extrabold text-amber-400 uppercase tracking-widest">Built For Restaurants</h2>
             <h3 className="text-3xl sm:text-4xl font-extrabold text-white">Everything You Need To Flourish</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-2xl bg-dark-card border border-dark-border space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
+            <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-3 hover:border-amber-500/40 transition-all">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
                 <QrCode className="w-5 h-5" />
               </div>
               <h4 className="font-bold text-white text-base">Table-Specific QRs</h4>
@@ -168,8 +164,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-dark-card border border-dark-border space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
+            <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-3 hover:border-amber-500/40 transition-all">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
                 <Zap className="w-5 h-5" />
               </div>
               <h4 className="font-bold text-white text-base">Instant Sold-Out Toggle</h4>
@@ -178,8 +174,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-dark-card border border-dark-border space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
+            <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-3 hover:border-amber-500/40 transition-all">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
                 <BarChart2 className="w-5 h-5" />
               </div>
               <h4 className="font-bold text-white text-base">Menu Analytics</h4>
@@ -188,8 +184,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-dark-card border border-dark-border space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
+            <div className="p-6 rounded-3xl bg-dark-card border border-dark-border space-y-3 hover:border-amber-500/40 transition-all">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
                 <Smartphone className="w-5 h-5" />
               </div>
               <h4 className="font-bold text-white text-base">Call Waiter Button</h4>
@@ -201,8 +197,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 border-b border-gray-800/60">
+      {/* 4. PRICING SECTION */}
+      <section id="pricing" className="py-24 border-b border-white/[0.08] bg-[#0B0E14]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
             <h2 className="text-xs font-extrabold text-amber-400 uppercase tracking-widest">Simple Transparent Pricing</h2>
@@ -223,7 +219,7 @@ export default function LandingPage() {
                 <h4 className="text-2xl font-extrabold text-white">Basic Restaurant</h4>
                 <p className="text-xs text-gray-400">Essential digital QR menu setup for cafes & small dining spots.</p>
                 
-                {/* Durations (Divided in Middle with Vertical Line) */}
+                {/* Durations */}
                 <div className="grid grid-cols-2 rounded-2xl bg-dark-base border border-dark-border divide-x divide-dark-border overflow-hidden">
                   <div className="p-3 text-center space-y-1">
                     <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
@@ -280,7 +276,7 @@ export default function LandingPage() {
             </div>
 
             {/* CARD 2: PREMIUM RESTAURANT */}
-            <div className="bg-gradient-to-b from-dark-card via-[#162238] to-dark-card border-2 border-amber-500 p-8 rounded-3xl relative gold-glow flex flex-col justify-between space-y-6">
+            <div className="bg-gradient-to-b from-dark-card via-[#121824] to-dark-card border-2 border-amber-500 p-8 rounded-3xl relative flex flex-col justify-between space-y-6 shadow-xl shadow-amber-500/10">
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-500 text-black text-[11px] font-black uppercase tracking-wider flex items-center space-x-1 shadow-lg">
                 <Crown className="w-3.5 h-3.5 text-black fill-black" />
                 <span>Recommended</span>
@@ -294,7 +290,7 @@ export default function LandingPage() {
                 <h4 className="text-2xl font-extrabold text-white">Premium Restaurant</h4>
                 <p className="text-xs text-gray-300">Complete QR platform for busy restaurants & fine dining.</p>
                 
-                {/* Durations (Divided in Middle with Vertical Line) */}
+                {/* Durations */}
                 <div className="grid grid-cols-2 rounded-2xl bg-dark-base border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
                   <div className="p-3 text-center space-y-1">
                     <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
@@ -353,11 +349,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="py-20 border-b border-gray-800/60">
+      {/* 5. FAQ SECTION */}
+      <section id="faq" className="py-24 border-b border-white/[0.08]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 space-y-3">
-            <h2 className="text-xs font-extrabold text-brand-400 uppercase tracking-widest">Questions & Answers</h2>
+          <div className="text-center mb-16 space-y-3">
+            <h2 className="text-xs font-extrabold text-amber-400 uppercase tracking-widest">Questions & Answers</h2>
             <h3 className="text-3xl font-extrabold text-white">Frequently Asked Questions</h3>
           </div>
 
@@ -366,13 +362,13 @@ export default function LandingPage() {
               <div key={idx} className="bg-dark-card border border-dark-border rounded-2xl overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full p-6 text-left font-bold text-white flex items-center justify-between hover:text-brand-400 transition-colors"
+                  className="w-full p-6 text-left font-bold text-white text-sm flex items-center justify-between hover:text-amber-400 transition-colors"
                 >
                   <span>{faq.q}</span>
-                  <ChevronDown className={`w-5 h-5 transition-transform ${openFaq === idx ? 'rotate-180 text-brand-400' : 'text-gray-400'}`} />
+                  <ChevronDown className={`w-5 h-5 transition-transform ${openFaq === idx ? 'rotate-180 text-amber-400' : 'text-gray-400'}`} />
                 </button>
                 {openFaq === idx && (
-                  <div className="px-6 pb-6 text-sm text-gray-400 leading-relaxed border-t border-dark-border/50 pt-4">
+                  <div className="px-6 pb-6 text-xs text-gray-400 leading-relaxed border-t border-dark-border/50 pt-4">
                     {faq.a}
                   </div>
                 )}

@@ -15,7 +15,7 @@ export default function QRCodesPage() {
   const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
   const baseUrl = window.location.origin;
-  const activeTable = selectedTable;
+  const activeTable = isBasicPlan ? '' : selectedTable;
 
   const targetUrl = activeTable
     ? `${baseUrl}/menu/${restaurant.slug}?table=${activeTable}`
@@ -91,29 +91,56 @@ export default function QRCodesPage() {
           {/* Table Selection Box */}
           <div className="minimal-card p-6 rounded-3xl space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Select Dining Table</h3>
-              <span className="text-[9px] font-extrabold bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/30">
-                25 TABLES ACTIVE
-              </span>
+              <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">
+                {isBasicPlan ? 'Master QR Code' : 'Select Dining Table'}
+              </h3>
+              {isBasicPlan ? (
+                <span className="text-[9px] font-extrabold bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/30">
+                  BASIC TIER
+                </span>
+              ) : (
+                <span className="text-[9px] font-extrabold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                  PREMIUM TIER (25 TABLES)
+                </span>
+              )}
             </div>
 
-            <div className="space-y-3">
-              <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider">
-                Select Table Number (1 - {restaurant?.tableCount || 25})
-              </label>
-              <select
-                value={selectedTable}
-                onChange={(e) => setSelectedTable(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-[#08080A] border border-white/[0.08] text-white text-xs font-bold focus:outline-none focus:border-amber-500"
-              >
-                <option value="">Master QR Code (All Tables)</option>
-                {Array.from({ length: restaurant?.tableCount || 25 }, (_, i) => i + 1).map((num) => (
-                  <option key={num} value={num}>
-                    Table #{num}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {isBasicPlan ? (
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2 text-xs">
+                <div className="flex items-center space-x-2 text-amber-400 font-bold">
+                  <Crown className="w-4 h-4" />
+                  <span>1 Master QR Code Active</span>
+                </div>
+                <p className="text-gray-300 text-[11px] leading-relaxed">
+                  Basic tier includes 1 Master QR code for all tables. Upgrade to Premium to generate unique QR codes for Table 1 to 25 with live table ordering!
+                </p>
+                <Link
+                  to="/dashboard/subscription"
+                  className="inline-flex items-center space-x-1 text-amber-400 font-extrabold hover:underline pt-1"
+                >
+                  <span>Upgrade to Premium Plan</span>
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider">
+                  Select Table Number (1 - {restaurant?.tableCount || 25})
+                </label>
+                <select
+                  value={selectedTable}
+                  onChange={(e) => setSelectedTable(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-[#08080A] border border-white/[0.08] text-white text-xs font-bold focus:outline-none focus:border-amber-500"
+                >
+                  <option value="">Master QR Code (All Tables)</option>
+                  {Array.from({ length: restaurant?.tableCount || 25 }, (_, i) => i + 1).map((num) => (
+                    <option key={num} value={num}>
+                      Table #{num}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Target URL Display Box */}
             <div className="space-y-2 pt-2">

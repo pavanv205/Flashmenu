@@ -215,24 +215,6 @@ export default function SubscriptionPage() {
               </li>
             </ul>
           </div>
-
-          <div className="pt-8">
-            <button
-              onClick={() => handleSelectPlan('basic')}
-              disabled={currentPlan === 'basic' || loadingPlan === 'basic'}
-              className={`w-full py-3.5 rounded-full font-extrabold text-xs transition-all ${
-                currentPlan === 'basic'
-                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 cursor-default'
-                  : 'bg-white text-black hover:bg-gray-200 shadow-md'
-              }`}
-            >
-              {loadingPlan === 'basic'
-                ? 'Updating Plan...'
-                : currentPlan === 'basic'
-                ? 'Active Basic Plan'
-                : 'Select Basic Plan'}
-            </button>
-          </div>
         </div>
 
         {/* CARD 2: PREMIUM RESTAURANT */}
@@ -318,24 +300,6 @@ export default function SubscriptionPage() {
                 <span>Customer Feedback & Rating System</span>
               </li>
             </ul>
-          </div>
-
-          <div className="pt-8">
-            <button
-              onClick={() => handleSelectPlan('premium')}
-              disabled={currentPlan === 'premium' || loadingPlan === 'premium'}
-              className={`w-full py-3.5 rounded-full font-extrabold text-xs transition-all ${
-                currentPlan === 'premium'
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 cursor-default'
-                  : 'bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20'
-              }`}
-            >
-              {loadingPlan === 'premium'
-                ? 'Upgrading Plan...'
-                : currentPlan === 'premium'
-                ? 'Active Premium Plan'
-                : 'Upgrade to Premium Plan'}
-            </button>
           </div>
         </div>
       </div>

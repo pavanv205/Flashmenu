@@ -3,30 +3,37 @@ import { Menu, ExternalLink, QrCode, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
-export default function DashboardHeader({ toggleMobileMenu }) {
-  const { user, restaurant } = useAuth();
+export default function DashboardHeader({ toggleMobileMenu, isExpiredPaywall }) {
+  const { user, restaurant, logout } = useAuth();
 
   return (
     <header className="h-16 bg-[#08080A] border-b border-white/[0.08] px-4 sm:px-8 flex items-center justify-between">
       <div className="flex items-center space-x-4">
-        <button
-          onClick={toggleMobileMenu}
-          className="lg:hidden p-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/[0.05]"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-        <div>
-          <h2 className="text-sm font-extrabold text-white hidden sm:block">
-            {restaurant ? restaurant.name : 'Dashboard'}
-          </h2>
-          <p className="text-[11px] text-gray-400">
-            {restaurant ? `flashmenu.in/menu/${restaurant.slug}` : 'Manage your digital menu'}
-          </p>
+        {!isExpiredPaywall && (
+          <button
+            onClick={toggleMobileMenu}
+            className="lg:hidden p-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/[0.05]"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 rounded-xl bg-amber-500 text-black flex items-center justify-center font-black shadow-md shadow-amber-500/20">
+            ⚡
+          </div>
+          <div>
+            <h2 className="text-sm font-extrabold text-white">
+              {restaurant ? restaurant.name : 'FlashMenu'}
+            </h2>
+            <p className="text-[11px] text-gray-400">
+              {restaurant ? `flashmenu.in/menu/${restaurant.slug}` : 'FlashMenu Owner Portal'}
+            </p>
+          </div>
         </div>
       </div>
 
       <div className="flex items-center space-x-3">
-        {restaurant && (
+        {restaurant && !isExpiredPaywall && (
           <a
             href={`/menu/${restaurant.slug}?preview=true`}
             target="_blank"
@@ -44,6 +51,14 @@ export default function DashboardHeader({ toggleMobileMenu }) {
             {user?.name ? user.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
           </div>
           <span className="text-xs font-bold text-gray-300 hidden md:inline">{user?.name}</span>
+          {isExpiredPaywall && (
+            <button
+              onClick={logout}
+              className="ml-2 text-xs font-semibold text-gray-400 hover:text-red-400 transition-colors underline"
+            >
+              Sign Out
+            </button>
+          )}
         </div>
       </div>
     </header>

@@ -81,82 +81,105 @@ export default function SubscriptionPage() {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto font-sans">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          Subscription & Plan Management
-        </h1>
-        <p className="text-xs sm:text-sm text-gray-400 mt-1">
-          Select or upgrade your FlashMenu tier for your restaurant (<span className="text-amber-400 font-bold">{restaurant?.name || 'My Restaurant'}</span>)
-        </p>
-      </div>
+      {isExpired ? (
+        /* EXPIRED PAYWALL HERO DISPLAY (Matches Screenshot 1) */
+        <div className="text-center py-6 animate-fade-in space-y-4">
+          <div className="w-24 h-24 rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center mx-auto relative shadow-2xl shadow-red-500/10">
+            <div className="w-12 h-14 bg-white/10 rounded-xl border border-white/20 flex flex-col justify-around p-2 space-y-1">
+              <div className="w-full h-1 bg-red-400/80 rounded"></div>
+              <div className="w-3/4 h-1 bg-red-400/60 rounded"></div>
+              <div className="w-full h-1 bg-red-400/80 rounded"></div>
+              <div className="w-1/2 h-1 bg-red-400/40 rounded"></div>
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center font-black text-base border-2 border-[#08080A] shadow-lg">
+              ✕
+            </div>
+          </div>
 
-      {/* Active Subscription Status Banner Card */}
-      <div className={`p-6 rounded-3xl border transition-all ${
-        isExpired
-          ? 'bg-red-950/40 border-2 border-red-500/80 text-red-200 shadow-xl shadow-red-950/30'
-          : isLifetime
-          ? 'bg-amber-500/10 border-amber-500/40 text-amber-300'
-          : 'bg-[#0E0E14] border-white/[0.08] text-white'
-      }`}>
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center space-x-2">
-              <span className={`w-2.5 h-2.5 rounded-full ${
-                isExpired ? 'bg-red-500 animate-ping' : isLifetime ? 'bg-amber-400' : 'bg-emerald-500'
-              }`} />
-              <h2 className="text-base font-extrabold text-white">
-                {isExpired ? (
-                  <span className="text-red-400 font-black">
-                    Your subscription plan has EXPIRED! Select a plan below to activate.
-                  </span>
-                ) : (
-                  <>
+          <div className="space-y-2">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Your subscription plan has
+              <span className="block text-4xl sm:text-6xl font-black text-red-500 tracking-tight mt-1 mb-2 uppercase animate-pulse">
+                EXPIRED!
+              </span>
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
+              Select a plan below to activate and continue enjoying our services.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-center space-x-4 pt-6 max-w-2xl mx-auto">
+            <div className="h-px bg-white/10 flex-1"></div>
+            <span className="text-xs font-extrabold text-gray-400 uppercase tracking-widest px-3">Choose Your Plan</span>
+            <div className="h-px bg-white/10 flex-1"></div>
+          </div>
+        </div>
+      ) : (
+        /* NORMAL ACTIVE PLAN BANNER */
+        <>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Subscription & Plan Management
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-400 mt-1">
+              Select or upgrade your FlashMenu tier for your restaurant (<span className="text-amber-400 font-bold">{restaurant?.name || 'My Restaurant'}</span>)
+            </p>
+          </div>
+
+          {/* Active Subscription Status Banner Card */}
+          <div className={`p-6 rounded-3xl border transition-all ${
+            isLifetime
+              ? 'bg-amber-500/10 border-amber-500/40 text-amber-300'
+              : 'bg-[#0E0E14] border-white/[0.08] text-white'
+          }`}>
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="space-y-1.5">
+                <div className="flex items-center space-x-2">
+                  <span className={`w-2.5 h-2.5 rounded-full ${
+                    isLifetime ? 'bg-amber-400' : 'bg-emerald-500'
+                  }`} />
+                  <h2 className="text-base font-extrabold text-white">
                     Current Plan: <span className="text-amber-400 uppercase font-black">{currentPlan} RESTAURANT</span>
                     <span className="text-gray-400 text-xs ml-2 font-normal">
                       ({isLifetime ? 'Lifetime Access' : '5 Minutes Test Plan'})
                     </span>
-                  </>
+                  </h2>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-4 text-xs text-gray-300 pt-1">
+                  {startDateDate && (
+                    <div className="flex items-center space-x-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                      <span>Started: <strong>{startDateDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
+                    </div>
+                  )}
+
+                  {!isLifetime && expiresAtDate && (
+                    <div className="flex items-center space-x-1.5">
+                      <Clock className="w-3.5 h-3.5 text-gray-400" />
+                      <span>Expires: <strong>{expiresAtDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                {isLifetime ? (
+                  <div className="flex items-center space-x-2 bg-amber-500/20 border border-amber-500/50 px-4 py-2 rounded-2xl text-xs font-black text-amber-400">
+                    <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
+                    <span>Lifetime Unlimited Access</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-2 bg-emerald-500/15 border border-emerald-500/30 px-4 py-2 rounded-2xl text-xs font-black text-emerald-400">
+                    <Clock className="w-4 h-4 animate-spin text-emerald-400" />
+                    <span>Live Countdown: {formatTimer(timeLeftSec)}</span>
+                  </div>
                 )}
-              </h2>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4 text-xs text-gray-300 pt-1">
-              {startDateDate && (
-                <div className="flex items-center space-x-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                  <span>Started: <strong>{startDateDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
-                </div>
-              )}
-
-              {!isLifetime && expiresAtDate && (
-                <div className="flex items-center space-x-1.5">
-                  <Clock className="w-3.5 h-3.5 text-gray-400" />
-                  <span>Expired at: <strong>{expiresAtDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
-                </div>
-              )}
+              </div>
             </div>
           </div>
-
-          <div>
-            {isExpired ? (
-              <div className="flex items-center space-x-2 bg-red-500/20 border border-red-500/60 px-4 py-2.5 rounded-2xl text-xs font-black text-red-400 shadow-md animate-pulse">
-                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-                <span>Subscription Plan Expired - Action Required</span>
-              </div>
-            ) : isLifetime ? (
-              <div className="flex items-center space-x-2 bg-amber-500/20 border border-amber-500/50 px-4 py-2 rounded-2xl text-xs font-black text-amber-400">
-                <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
-                <span>Lifetime Unlimited Access</span>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2 bg-emerald-500/15 border border-emerald-500/30 px-4 py-2 rounded-2xl text-xs font-black text-emerald-400">
-                <Clock className="w-4 h-4 animate-spin text-emerald-400" />
-                <span>Live Countdown: {formatTimer(timeLeftSec)}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+        </>
+      )}
 
       {/* 2 Restaurant Plans Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">

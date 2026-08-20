@@ -9,6 +9,7 @@ export default function OrderHistoryPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [selectedDay, setSelectedDay] = useState('ALL');
 
   const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
@@ -27,15 +28,48 @@ export default function OrderHistoryPage() {
     fetchHistory();
   }, []);
 
-  const total7DayRevenue = orders.reduce((sum, order) => sum + (Number(order.totalAmount) || 0), 0);
-  const completedCount = orders.filter((o) => o.status === 'SERVED' || o.status === 'COMPLETED').length;
-  const avgOrderValue = orders.length > 0 ? Math.round(total7DayRevenue / orders.length) : 0;
+  const get7DayPills = () => {
+    const pills = [{ id: 'ALL', label: 'All 7 Days' }];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      let label = '';
+      if (i === 0) label = `Today (${d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })})`;
+      else if (i === 1) label = `Yesterday (${d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })})`;
+      else label = `${d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}`;
+
+      // Count orders for this specific date
+      const count = orders.filter((o) => {
+        const oDateStr = new Date(o.createdAt).toISOString().split('T')[0];
+        return oDateStr === dateStr;
+      }).length;
+
+      pills.push({ id: dateStr, label: `${label} (${count})` });
+    }
+    return pills;
+  };
 
   const filteredOrders = orders.filter((order) => {
+    // 1. Individual day filter
+    if (selectedDay !== 'ALL') {
+      const orderDateStr = new Date(order.createdAt).toISOString().split('T')[0];
+      if (orderDateStr !== selectedDay) return false;
+    }
+
+    // 2. Status filter
     if (statusFilter === 'COMPLETED') return order.status === 'SERVED' || order.status === 'COMPLETED';
     if (statusFilter === 'ACTIVE') return order.status === 'NEW' || order.status === 'ACCEPTED' || order.status === 'PREPARING';
     return true;
   });
+
+  const displayOrdersForStats = selectedDay === 'ALL' 
+    ? orders 
+    : orders.filter((o) => new Date(o.createdAt).toISOString().split('T')[0] === selectedDay);
+
+  const totalRevenue = displayOrdersForStats.reduce((sum, order) => sum + (Number(order.totalAmount) || 0), 0);
+  const completedCount = displayOrdersForStats.filter((o) => o.status === 'SERVED' || o.status === 'COMPLETED').length;
+  const avgOrderValue = displayOrdersForStats.length > 0 ? Math.round(totalRevenue / displayOrdersForStats.length) : 0;
 
   if (loading) {
     return (
@@ -124,17 +158,17 @@ export default function OrderHistoryPage() {
       {/* 7-Day Stats Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">
-          <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">7-DAY TOTAL REVENUE</span>
+          <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">REVENUE ({selectedDay === 'ALL' ? '7 DAYS' : 'SELECTED DAY'})</span>
           <p className="text-xl sm:text-2xl font-black text-amber-400">
-            {restaurant?.currency || '₹'}{total7DayRevenue.toLocaleString('en-IN')}
+            {restaurant?.currency || '₹'}{totalRevenue.toLocaleString('en-IN')}
           </p>
-          <span className="text-[10px] text-gray-500 block">Total sales in 7 days</span>
+          <span className="text-[10px] text-gray-500 block">Total sales in section</span>
         </div>
 
         <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">
           <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">TOTAL ORDERS</span>
-          <p className="text-xl sm:text-2xl font-black text-white">{orders.length}</p>
-          <span className="text-[10px] text-gray-500 block">Past 7 days history</span>
+          <p className="text-xl sm:text-2xl font-black text-white">{displayOrdersForStats.length}</p>
+          <span className="text-[10px] text-gray-500 block">Filtered day count</span>
         </div>
 
         <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">
@@ -152,37 +186,59 @@ export default function OrderHistoryPage() {
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center space-x-2 border-b border-white/[0.08] pb-3 pt-2">
+      {/* Individual Day-by-Day Selector Pills */}
+      <div className="space-y-2">
+        <label className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">
+          Select Individual Day (Last 7 Days):
+        </label>
+        <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
+          {get7DayPills().map((pill) => (
+            <button
+              key={pill.id}
+              onClick={() => setSelectedDay(pill.id)}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all ${
+                selectedDay === pill.id
+                  ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
+                  : 'bg-[#0E0E14] text-gray-300 hover:text-white border border-white/[0.08] hover:border-amber-500/40'
+              }`}
+            >
+              {pill.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Status Filter Tabs */}
+      <div className="flex items-center space-x-2 border-b border-white/[0.08] pb-3 pt-1">
         <button
           onClick={() => setStatusFilter('ALL')}
-          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
+          className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
             statusFilter === 'ALL'
-              ? 'bg-amber-500 text-black shadow-md'
-              : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
+              ? 'bg-white/10 text-white border border-white/20'
+              : 'text-gray-400 hover:text-white'
           }`}
         >
-          All 7-Day Orders ({orders.length})
+          All Statuses ({displayOrdersForStats.length})
         </button>
         <button
           onClick={() => setStatusFilter('COMPLETED')}
-          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
+          className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
             statusFilter === 'COMPLETED'
-              ? 'bg-emerald-500 text-black shadow-md'
-              : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
+              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+              : 'text-gray-400 hover:text-white'
           }`}
         >
           Completed ({completedCount})
         </button>
         <button
           onClick={() => setStatusFilter('ACTIVE')}
-          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
+          className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
             statusFilter === 'ACTIVE'
-              ? 'bg-cyan-500 text-black shadow-md'
-              : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
+              ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40'
+              : 'text-gray-400 hover:text-white'
           }`}
         >
-          Active / Kitchen ({orders.length - completedCount})
+          Active / Kitchen ({displayOrdersForStats.length - completedCount})
         </button>
       </div>
 

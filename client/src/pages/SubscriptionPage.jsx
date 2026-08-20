@@ -27,7 +27,7 @@ export default function SubscriptionPage() {
     return () => clearInterval(interval);
   }, [restaurant, isLifetime, expiresAtDate]);
 
-  const isExpired = !isLifetime && expiresAtDate && timeLeftSec <= 0;
+  const isExpired = !isLifetime && expiresAtDate && (expiresAtDate.getTime() <= Date.now() || timeLeftSec <= 0);
 
   const formatTimer = (totalSec) => {
     const m = Math.floor(totalSec / 60);
@@ -63,12 +63,12 @@ export default function SubscriptionPage() {
     const isSelectingLifetime = String(duration || '').toLowerCase().includes('lifetime');
     const targetScore = getPlanScore(planKey, isSelectingLifetime, false);
 
-    if (targetScore < currentScore) {
+    if (!isExpired && targetScore < currentScore) {
       alert('Downgrading subscription is not allowed. You can only upgrade your subscription plan.');
       return;
     }
 
-    if (targetScore === currentScore) {
+    if (!isExpired && targetScore === currentScore) {
       alert(`Your ${planKey.toUpperCase()} Restaurant ${isSelectingLifetime ? 'Lifetime' : '5-Minute Test'} plan is already active!`);
       return;
     }
@@ -93,7 +93,7 @@ export default function SubscriptionPage() {
       {/* Active Subscription Status Banner Card */}
       <div className={`p-6 rounded-3xl border transition-all ${
         isExpired
-          ? 'bg-red-950/20 border-red-500/50 text-red-200'
+          ? 'bg-red-950/40 border-2 border-red-500/80 text-red-200 shadow-xl shadow-red-950/30'
           : isLifetime
           ? 'bg-amber-500/10 border-amber-500/40 text-amber-300'
           : 'bg-[#0E0E14] border-white/[0.08] text-white'
@@ -102,13 +102,21 @@ export default function SubscriptionPage() {
           <div className="space-y-1.5">
             <div className="flex items-center space-x-2">
               <span className={`w-2.5 h-2.5 rounded-full ${
-                isExpired ? 'bg-red-500 animate-pulse' : isLifetime ? 'bg-amber-400' : 'bg-emerald-500'
+                isExpired ? 'bg-red-500 animate-ping' : isLifetime ? 'bg-amber-400' : 'bg-emerald-500'
               }`} />
               <h2 className="text-base font-extrabold text-white">
-                Current Plan: <span className="text-amber-400 uppercase font-black">{currentPlan} RESTAURANT</span>
-                <span className="text-gray-400 text-xs ml-2 font-normal">
-                  ({isLifetime ? 'Lifetime Access' : '5 Minutes Test Plan'})
-                </span>
+                {isExpired ? (
+                  <span className="text-red-400 font-black">
+                    Your subscription plan has EXPIRED! Select a plan below to activate.
+                  </span>
+                ) : (
+                  <>
+                    Current Plan: <span className="text-amber-400 uppercase font-black">{currentPlan} RESTAURANT</span>
+                    <span className="text-gray-400 text-xs ml-2 font-normal">
+                      ({isLifetime ? 'Lifetime Access' : '5 Minutes Test Plan'})
+                    </span>
+                  </>
+                )}
               </h2>
             </div>
 
@@ -123,7 +131,7 @@ export default function SubscriptionPage() {
               {!isLifetime && expiresAtDate && (
                 <div className="flex items-center space-x-1.5">
                   <Clock className="w-3.5 h-3.5 text-gray-400" />
-                  <span>Expires: <strong>{expiresAtDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
+                  <span>Expired at: <strong>{expiresAtDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
                 </div>
               )}
             </div>
@@ -131,9 +139,9 @@ export default function SubscriptionPage() {
 
           <div>
             {isExpired ? (
-              <div className="flex items-center space-x-2 bg-red-500/20 border border-red-500/50 px-4 py-2 rounded-2xl text-xs font-black text-red-400">
-                <AlertTriangle className="w-4 h-4 animate-bounce" />
-                <span>Subscription Ended - Pay ₹1 to Renew</span>
+              <div className="flex items-center space-x-2 bg-red-500/20 border border-red-500/60 px-4 py-2.5 rounded-2xl text-xs font-black text-red-400 shadow-md animate-pulse">
+                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                <span>Subscription Plan Expired - Action Required</span>
               </div>
             ) : isLifetime ? (
               <div className="flex items-center space-x-2 bg-amber-500/20 border border-amber-500/50 px-4 py-2 rounded-2xl text-xs font-black text-amber-400">

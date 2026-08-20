@@ -12,6 +12,8 @@ import {
   Bell,
   Star,
   Check,
+  AlertTriangle,
+  Clock,
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 
@@ -24,6 +26,10 @@ export default function DashboardOverview() {
   const [loading, setLoading] = useState(true);
 
   const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
+
+  const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
+  const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
+  const isExpired = !isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now();
 
   const fetchOverview = async () => {
     try {
@@ -72,7 +78,28 @@ export default function DashboardOverview() {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto font-sans">
+      {/* Expiration Notice Banner */}
+      {isExpired && (
+        <div className="p-5 rounded-3xl bg-red-950/40 border-2 border-red-500/80 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl shadow-red-950/30 animate-fade-in">
+          <div className="flex items-center space-x-3.5 text-red-400">
+            <div className="w-10 h-10 rounded-2xl bg-red-500/20 border border-red-500/50 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-5 h-5 text-red-400 animate-bounce" />
+            </div>
+            <div>
+              <p className="font-extrabold text-sm text-white">Your subscription plan has EXPIRED!</p>
+              <p className="text-xs text-red-300 mt-0.5">Please activate or renew a plan to restore full restaurant QR services.</p>
+            </div>
+          </div>
+          <Link
+            to="/dashboard/subscription"
+            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-extrabold text-xs transition-all shrink-0 shadow-lg shadow-red-500/20"
+          >
+            Activate Plan Now →
+          </Link>
+        </div>
+      )}
+
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-8 rounded-3xl bg-[#0E0E14] border border-white/[0.07]">
         <div>

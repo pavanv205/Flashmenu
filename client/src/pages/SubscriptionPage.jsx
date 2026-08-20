@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { restaurantAPI } from '../services/api';
 import { Check, Sparkles, Zap, Crown, Store, CreditCard, Clock, Calendar, AlertTriangle, CheckCircle2 } from 'lucide-react';
@@ -13,9 +13,27 @@ export default function SubscriptionPage() {
   const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
   const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
   const startDateDate = restaurant?.subscriptionStartDate ? new Date(restaurant.subscriptionStartDate) : null;
-  const now = new Date();
-  const daysRemaining = expiresAtDate ? Math.ceil((expiresAtDate - now) / (1000 * 60 * 60 * 24)) : 180;
-  const isExpired = !isLifetime && expiresAtDate && daysRemaining <= 0;
+  
+  const [timeLeftSec, setTimeLeftSec] = useState(0);
+
+  useEffect(() => {
+    if (isLifetime || !expiresAtDate) return;
+    const updateTimer = () => {
+      const diffMs = new Date(restaurant.subscriptionExpiresAt).getTime() - Date.now();
+      setTimeLeftSec(Math.max(0, Math.floor(diffMs / 1000)));
+    };
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [restaurant, isLifetime, expiresAtDate]);
+
+  const isExpired = !isLifetime && expiresAtDate && timeLeftSec <= 0;
+
+  const formatTimer = (totalSec) => {
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  };
 
   const handleSelectPlan = async (planKey) => {
     setLoadingPlan(planKey);
@@ -67,7 +85,7 @@ export default function SubscriptionPage() {
               <h2 className="text-base font-extrabold text-white">
                 Current Plan: <span className="text-amber-400 uppercase font-black">{currentPlan} RESTAURANT</span>
                 <span className="text-gray-400 text-xs ml-2 font-normal">
-                  ({isLifetime ? 'Lifetime Access' : '6 Months Subscription'})
+                  ({isLifetime ? 'Lifetime Access' : '5 Minutes Test Plan'})
                 </span>
               </h2>
             </div>
@@ -76,14 +94,14 @@ export default function SubscriptionPage() {
               {startDateDate && (
                 <div className="flex items-center space-x-1.5">
                   <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                  <span>Started: <strong>{startDateDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</strong></span>
+                  <span>Started: <strong>{startDateDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
                 </div>
               )}
 
               {!isLifetime && expiresAtDate && (
                 <div className="flex items-center space-x-1.5">
                   <Clock className="w-3.5 h-3.5 text-gray-400" />
-                  <span>Expires: <strong>{expiresAtDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</strong></span>
+                  <span>Expires: <strong>{expiresAtDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
                 </div>
               )}
             </div>
@@ -102,8 +120,8 @@ export default function SubscriptionPage() {
               </div>
             ) : (
               <div className="flex items-center space-x-2 bg-emerald-500/15 border border-emerald-500/30 px-4 py-2 rounded-2xl text-xs font-black text-emerald-400">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>{daysRemaining} Days Remaining</span>
+                <Clock className="w-4 h-4 animate-spin text-emerald-400" />
+                <span>Live Countdown: {formatTimer(timeLeftSec)}</span>
               </div>
             )}
           </div>
@@ -142,17 +160,17 @@ export default function SubscriptionPage() {
             <div className="grid grid-cols-2 rounded-2xl bg-[#08080A] border border-white/[0.08] divide-x divide-white/[0.08] overflow-hidden">
               <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
                 <div>
-                  <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
+                  <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">5 MINUTES</span>
                   <p className="text-2xl font-black text-white mt-1">₹1</p>
-                  <span className="text-[10px] text-gray-500">Valid for 6 Mo</span>
+                  <span className="text-[10px] text-gray-500">Valid for 5 Mins</span>
                 </div>
                 <button
                   type="button"
-                  onClick={() => openDemoPayment('basic', 'Basic Restaurant (6 Months)', '6 Months', 1)}
+                  onClick={() => openDemoPayment('basic', 'Basic Restaurant (5 Mins)', '5 Minutes Test', 1)}
                   className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>Pay ₹1</span>
+                  <span>Pay 5 Mins (₹1)</span>
                 </button>
               </div>
 
@@ -168,7 +186,7 @@ export default function SubscriptionPage() {
                   className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>Pay ₹1</span>
+                  <span>Pay Lifetime (₹1)</span>
                 </button>
               </div>
             </div>
@@ -246,17 +264,17 @@ export default function SubscriptionPage() {
             <div className="grid grid-cols-2 rounded-2xl bg-[#08080A] border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
               <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
                 <div>
-                  <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
+                  <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">5 MINUTES</span>
                   <p className="text-2xl font-black text-white mt-1">₹1</p>
-                  <span className="text-[10px] text-gray-400">Valid for 6 Mo</span>
+                  <span className="text-[10px] text-gray-400">Valid for 5 Mins</span>
                 </div>
                 <button
                   type="button"
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months', 1)}
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (5 Mins)', '5 Minutes Test', 1)}
                   className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>Pay ₹1</span>
+                  <span>Pay 5 Mins (₹1)</span>
                 </button>
               </div>
 

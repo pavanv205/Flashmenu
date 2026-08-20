@@ -100,7 +100,7 @@ const verifyPayment = async (req, res) => {
     const isLifetime = String(duration || '').toLowerCase().includes('lifetime');
     const cycle = isLifetime ? 'lifetime' : '6months';
     const startDate = new Date();
-    const expiresAt = isLifetime ? null : new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
+    const expiresAt = isLifetime ? null : new Date(Date.now() + 5 * 60 * 1000);
 
     await connectDB();
 

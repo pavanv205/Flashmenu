@@ -4,7 +4,6 @@ import { publicAPI } from '../services/api';
 import CallWaiterModal from '../components/CallWaiterModal';
 import FeedbackModal from '../components/FeedbackModal';
 import OrderDrawer from '../components/OrderDrawer';
-import DemoPaymentModal from '../components/DemoPaymentModal';
 import { getSubCategory } from '../utils/categoryHelper';
 import { getOptimizedImageUrl, getCategoryFallbackImage } from '../utils/imageHelper';
 import {
@@ -17,12 +16,6 @@ import {
   Clock,
   MapPin,
   Plus,
-  AlertTriangle,
-  Crown,
-  Store,
-  Sparkles,
-  CreditCard,
-  CheckCircle2,
 } from 'lucide-react';
 
 function SubCategoryLabel({ name, count }) {
@@ -56,7 +49,6 @@ export default function PublicMenuPage() {
   const [isWaiterModalOpen, setIsWaiterModalOpen] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
 
   // Cart
   const [cart, setCart] = useState([]);
@@ -121,7 +113,7 @@ export default function PublicMenuPage() {
         .map((item) => {
           if (item._id === id) {
             const newQty = item.quantity + delta;
-            return newQty > 0 ? { ...i, quantity: newQty } : null;
+            return newQty > 0 ? { ...item, quantity: newQty } : null;
           }
           return item;
         })
@@ -130,13 +122,6 @@ export default function PublicMenuPage() {
   };
 
   const clearCart = () => setCart([]);
-
-  const openDemoPayment = (planKey, title, duration, amount) => {
-    setDemoPaymentModal({
-      isOpen: true,
-      planDetails: { planKey, title, duration, amount },
-    });
-  };
 
   if (loading) {
     return (
@@ -156,169 +141,6 @@ export default function PublicMenuPage() {
           <h2 className="text-xl font-bold text-white">Menu Unavailable</h2>
           <p className="text-xs text-slate-400 leading-relaxed">{error || 'Unable to load menu.'}</p>
         </div>
-      </div>
-    );
-  }
-
-  const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
-  const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
-  const isSubscriptionExpired = !isPreviewMode && !isLifetime && expiresAtDate && expiresAtDate < new Date();
-
-  // If Subscription Has Expired, Do NOT Open Menu Website — Directly Show Two Plans & No Scanners
-  if (isSubscriptionExpired) {
-    return (
-      <div className="min-h-screen bg-[#08080A] text-white flex flex-col items-center justify-center p-4 py-12 font-sans relative overflow-hidden">
-        {/* Glow backdrop */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-500/10 rounded-full blur-[140px] pointer-events-none" />
-
-        <div className="max-w-4xl w-full text-center space-y-6 relative z-10">
-          <div className="w-16 h-16 rounded-3xl bg-red-500/20 text-red-400 flex items-center justify-center mx-auto border border-red-500/40 shadow-xl shadow-red-500/10">
-            <AlertTriangle className="w-8 h-8 animate-bounce text-red-400" />
-          </div>
-
-          <div className="space-y-2">
-            <span className="px-3.5 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-black uppercase tracking-wider border border-red-500/30">
-              Subscription Expired
-            </span>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
-              {restaurant.name} Digital Menu is Paused
-            </h1>
-            <p className="text-sm text-gray-400 max-w-lg mx-auto">
-              The 5-minute test subscription for this digital menu has ended. Select a plan below to pay ₹1 and reactivate instant QR menu access.
-            </p>
-          </div>
-
-          {/* TWO PLANS SELECTION */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 text-left">
-            {/* PLAN 1: BASIC RESTAURANT (1 MASTER QR) */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#0E0E14] border border-white/[0.08] flex flex-col justify-between space-y-6 relative hover:border-amber-500/50 transition-all">
-              <div className="space-y-4">
-                <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
-                  <Store className="w-4 h-4 text-amber-400" />
-                  <span>Standard Tier</span>
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-bold text-white">Basic Restaurant</h3>
-                  <p className="text-xs text-gray-400 mt-1">1 Master QR code for your entire restaurant setup.</p>
-                </div>
-
-                <div className="grid grid-cols-2 rounded-2xl bg-[#08080A] border border-white/[0.08] divide-x divide-white/[0.08] overflow-hidden">
-                  <div className="p-3 text-center space-y-1">
-                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">5 MINUTES</span>
-                    <span className="text-xl font-black text-white block">₹1</span>
-                    <span className="text-[10px] text-gray-500 block">Valid for 5 Mins</span>
-                  </div>
-                  <div className="p-3 text-center space-y-1 bg-amber-500/5">
-                    <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                    <span className="text-xl font-black text-amber-400 block">₹1</span>
-                    <span className="text-[10px] text-amber-400/80 block">One-Time Pay</span>
-                  </div>
-                </div>
-
-                <ul className="space-y-2.5 text-xs text-gray-300 pt-2 border-t border-white/[0.08]">
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span><strong>1 Master QR Code Only</strong></span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Unlimited Menu Items & Categories</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => openDemoPayment('basic', 'Basic Restaurant (5 Mins)', '5 Minutes Test', 1)}
-                  className="py-3 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-xs transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
-                >
-                  <CreditCard className="w-4 h-4 shrink-0" />
-                  <span>Pay 5 Mins (₹1)</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime Access', 1)}
-                  className="py-3 px-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all flex items-center justify-center space-x-1 shadow-lg shadow-amber-500/20"
-                >
-                  <CreditCard className="w-4 h-4 shrink-0" />
-                  <span>Pay Lifetime (₹1)</span>
-                </button>
-              </div>
-            </div>
-
-            {/* PLAN 2: PREMIUM RESTAURANT (TABLE QRS 1 TO 50) */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#0E0E14] border-2 border-amber-500 flex flex-col justify-between space-y-6 relative shadow-xl shadow-amber-500/10">
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-500 text-black text-[10px] font-black uppercase tracking-wider flex items-center space-x-1 shadow-lg">
-                <Crown className="w-3.5 h-3.5 text-black fill-black" />
-                <span>Recommended</span>
-              </div>
-
-              <div className="space-y-4 pt-1">
-                <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
-                  <span>Full Pro Suite</span>
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-bold text-white">Premium Restaurant</h3>
-                  <p className="text-xs text-gray-300 mt-1">Table-specific QR codes + full ordering suite.</p>
-                </div>
-
-                <div className="grid grid-cols-2 rounded-2xl bg-[#08080A] border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
-                  <div className="p-3 text-center space-y-1">
-                    <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">5 MINUTES</span>
-                    <span className="text-xl font-black text-white block">₹1</span>
-                    <span className="text-[10px] text-gray-400 block">Valid for 5 Mins</span>
-                  </div>
-                  <div className="p-3 text-center space-y-1 bg-amber-500/10">
-                    <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                    <span className="text-xl font-black text-amber-400 block">₹1</span>
-                    <span className="text-[10px] text-amber-400/90 block">One-Time Pay</span>
-                  </div>
-                </div>
-
-                <ul className="space-y-2.5 text-xs text-gray-200 pt-2 border-t border-amber-500/20">
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span><strong>Table-Specific QRs (Table 1 to 50)</strong></span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Real-Time Kitchen Display & Call Waiter</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (5 Mins)', '5 Minutes Test', 1)}
-                  className="py-3 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-xs transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
-                >
-                  <CreditCard className="w-4 h-4 shrink-0" />
-                  <span>Pay 5 Mins (₹1)</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 1)}
-                  className="py-3 px-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-xs transition-all flex items-center justify-center space-x-1 shadow-lg shadow-amber-500/20"
-                >
-                  <CreditCard className="w-4 h-4 shrink-0" />
-                  <span>Pay Lifetime (₹1)</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <DemoPaymentModal
-          isOpen={demoPaymentModal.isOpen}
-          onClose={() => setDemoPaymentModal({ isOpen: false, planDetails: null })}
-          planDetails={demoPaymentModal.planDetails}
-          onSuccess={() => window.location.reload()}
-        />
       </div>
     );
   }

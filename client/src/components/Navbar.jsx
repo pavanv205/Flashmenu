@@ -10,7 +10,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-[#08080A]/90 backdrop-blur-xl border-b border-white/[0.08]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between relative">
         {/* Brand Logo */}
-        <Link to={user ? (user.role === 'admin' ? '/dashboard/admin' : '/dashboard') : '/'} className="flex items-center space-x-3 group">
+        <Link to="/" className="flex items-center space-x-3 group">
           <div className="w-9 h-9 rounded-xl bg-white text-black flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
             <Zap className="w-5 h-5 text-black fill-black" />
           </div>

@@ -16,12 +16,7 @@ import {
 } from 'lucide-react';
 
 export default function LandingPage() {
-  const { user } = useAuth();
   const [openFaq, setOpenFaq] = useState(null);
-
-  if (user) {
-    return <Navigate to={user.role === 'admin' ? '/dashboard/admin' : '/dashboard'} replace />;
-  }
 
   const faqs = [
     {

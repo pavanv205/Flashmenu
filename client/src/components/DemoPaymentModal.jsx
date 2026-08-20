@@ -267,7 +267,7 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
                 ) : (
                   <>
                     <CreditCard className="w-4 h-4" />
-                    <span>Complete Demo Payment (₹{planDetails.amount.toLocaleString()})</span>
+                    <span>Complete Payment (₹{planDetails.amount.toLocaleString()})</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}

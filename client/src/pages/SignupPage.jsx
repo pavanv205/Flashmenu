@@ -317,24 +317,24 @@ export default function SignupPage() {
                 <div className="grid grid-cols-2 rounded-2xl bg-dark-card border border-dark-border divide-x divide-dark-border overflow-hidden">
                   <div className="p-3 text-center space-y-1">
                     <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
-                    <span className="text-xl font-black text-white block">₹2,499</span>
+                    <span className="text-xl font-black text-white block">₹1</span>
                     <button
                       type="button"
-                      onClick={() => handleOpenDemoPayment('basic', 'Basic Restaurant (6 Months)', '6 Months', 2499)}
+                      onClick={() => handleOpenDemoPayment('basic', 'Basic Restaurant (6 Months)', '6 Months', 1)}
                       className="w-full py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black text-[10px] font-extrabold transition-all border border-amber-500/30 mt-1"
                     >
-                      Demo Pay ₹2,499
+                      Pay ₹1
                     </button>
                   </div>
                   <div className="p-3 text-center space-y-1 bg-amber-500/5">
                     <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                    <span className="text-xl font-black text-amber-400 block">₹9,999</span>
+                    <span className="text-xl font-black text-amber-400 block">₹1</span>
                     <button
                       type="button"
-                      onClick={() => handleOpenDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime One-Time', 9999)}
+                      onClick={() => handleOpenDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime One-Time', 1)}
                       className="w-full py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-black transition-all mt-1 shadow-sm"
                     >
-                      Demo Pay ₹9,999
+                      Pay ₹1
                     </button>
                   </div>
                 </div>
@@ -407,24 +407,24 @@ export default function SignupPage() {
                 <div className="grid grid-cols-2 rounded-2xl bg-dark-card border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
                   <div className="p-3 text-center space-y-1">
                     <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
-                    <span className="text-xl font-black text-white block">₹5,999</span>
+                    <span className="text-xl font-black text-white block">₹1</span>
                     <button
                       type="button"
-                      onClick={() => handleOpenDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months', 5999)}
+                      onClick={() => handleOpenDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months', 1)}
                       className="w-full py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black text-[10px] font-extrabold transition-all border border-amber-500/30 mt-1"
                     >
-                      Demo Pay ₹5,999
+                      Pay ₹1
                     </button>
                   </div>
                   <div className="p-3 text-center space-y-1 bg-amber-500/10">
                     <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                    <span className="text-xl font-black text-amber-400 block">₹24,999</span>
+                    <span className="text-xl font-black text-amber-400 block">₹1</span>
                     <button
                       type="button"
-                      onClick={() => handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 24999)}
+                      onClick={() => handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 1)}
                       className="w-full py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-black transition-all mt-1 shadow-sm"
                     >
-                      Demo Pay ₹24,999
+                      Pay ₹1
                     </button>
                   </div>
                 </div>

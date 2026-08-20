@@ -63,35 +63,6 @@ export default function CallWaiterModal({ isOpen, onClose, restaurantSlug, defau
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Table Number Input */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">
-                  Table Number *
-                </label>
-                {isTableLocked && (
-                  <span className="text-[10px] text-amber-400 font-extrabold flex items-center space-x-1">
-                    <Lock className="w-3 h-3 inline mr-0.5" />
-                    <span>Auto-Detected (Locked)</span>
-                  </span>
-                )}
-              </div>
-              <input
-                type="text"
-                required
-                readOnly={isTableLocked}
-                disabled={isTableLocked}
-                placeholder="e.g. 5 or 12"
-                value={defaultTable || tableNumber}
-                onChange={(e) => !isTableLocked && setTableNumber(e.target.value)}
-                className={`w-full px-4 py-3 rounded-xl border text-sm font-semibold transition-all ${
-                  isTableLocked
-                    ? 'bg-[#14141E] border-amber-500/30 text-amber-400 cursor-not-allowed select-none'
-                    : 'bg-dark-base border-dark-border text-white focus:outline-none focus:border-amber-500'
-                }`}
-              />
-            </div>
-
             {/* Request Type Selector */}
             <div>
               <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">

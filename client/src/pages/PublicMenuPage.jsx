@@ -40,6 +40,8 @@ export default function PublicMenuPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const isPremiumPlan = restaurant?.subscriptionPlan === 'premium';
+
   // UI state
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeSubCategory, setActiveSubCategory] = useState('all');

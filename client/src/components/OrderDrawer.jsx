@@ -148,7 +148,7 @@ export default function OrderDrawer({ isOpen, onClose, cart, updateQuantity, cle
                   <span className="text-amber-400">{restaurant.currency || '₹'}{totalAmount}</span>
                 </div>
 
-                {isPremiumPlan ? (
+                {isPremiumPlan && (
                   <button
                     type="submit"
                     disabled={loading}
@@ -156,11 +156,6 @@ export default function OrderDrawer({ isOpen, onClose, cart, updateQuantity, cle
                   >
                     {loading ? 'Sending Order...' : 'Send Order to Kitchen'}
                   </button>
-                ) : (
-                  <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-center space-y-1">
-                    <p className="text-xs font-extrabold text-amber-400">Digital Menu View Only</p>
-                    <p className="text-[11px] text-gray-400">Direct kitchen ordering is available on the Premium Plan.</p>
-                  </div>
                 )}
               </form>
             )}

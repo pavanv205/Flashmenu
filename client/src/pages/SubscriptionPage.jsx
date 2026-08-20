@@ -54,6 +54,7 @@ export default function SubscriptionPage() {
     const isSelectingLifetime = String(duration || '').toLowerCase().includes('lifetime');
     if (isLifetime && !isSelectingLifetime) {
       alert('You already have active Lifetime Access! Your permanent subscription will stay active as Lifetime.');
+      return;
     }
     setDemoPaymentModal({
       isOpen: true,

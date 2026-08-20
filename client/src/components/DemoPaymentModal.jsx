@@ -38,15 +38,20 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
           razorpay_payment_id: `pay_demo_${Date.now()}`,
           razorpay_signature: `sig_demo_${Date.now()}`,
           planKey: planDetails.planKey,
+          duration: planDetails.duration,
         });
       } catch (e) {
         console.warn('Backend payment verify fallback:', e);
       }
 
-      // 2. Direct restaurant plan update
+      // 2. Direct restaurant plan update fallback
       try {
+        const isLifetime = String(planDetails.duration || '').toLowerCase().includes('lifetime');
         const res = await restaurantAPI.updateMyRestaurant({
           subscriptionPlan: planDetails.planKey,
+          subscriptionCycle: isLifetime ? 'lifetime' : '6months',
+          subscriptionStartDate: new Date(),
+          subscriptionExpiresAt: isLifetime ? null : new Date(Date.now() + 180 * 24 * 60 * 60 * 1000),
         });
         if (res.data && updateRestaurantState) {
           updateRestaurantState(res.data);

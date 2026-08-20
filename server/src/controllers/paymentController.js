@@ -95,7 +95,13 @@ const verifyPayment = async (req, res) => {
     }
 
     // Update restaurant subscription plan in Database
+    const { duration } = req.body;
     const updatedPlan = planKey === 'premium' ? 'premium' : 'basic';
+    const isLifetime = String(duration || '').toLowerCase().includes('lifetime');
+    const cycle = isLifetime ? 'lifetime' : '6months';
+    const startDate = new Date();
+    const expiresAt = isLifetime ? null : new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
+
     await connectDB();
 
     let updatedRestaurant = null;
@@ -103,13 +109,22 @@ const verifyPayment = async (req, res) => {
     if (getIsConnected() && req.user?._id) {
       updatedRestaurant = await Restaurant.findOneAndUpdate(
         { ownerId: req.user._id },
-        { subscriptionPlan: updatedPlan, isActive: true },
+        {
+          subscriptionPlan: updatedPlan,
+          subscriptionCycle: cycle,
+          subscriptionStartDate: startDate,
+          subscriptionExpiresAt: expiresAt,
+          isActive: true,
+        },
         { new: true }
       );
     } else if (req.user?._id) {
       const r = mockStore.restaurants.find((res) => String(res.ownerId) === String(req.user._id));
       if (r) {
         r.subscriptionPlan = updatedPlan;
+        r.subscriptionCycle = cycle;
+        r.subscriptionStartDate = startDate;
+        r.subscriptionExpiresAt = expiresAt;
         r.isActive = true;
         updatedRestaurant = r;
       }

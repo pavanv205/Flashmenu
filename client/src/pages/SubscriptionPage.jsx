@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { restaurantAPI } from '../services/api';
-import { Check, Sparkles, Zap, Crown, Store, CreditCard } from 'lucide-react';
+import { Check, Sparkles, Zap, Crown, Store, CreditCard, Clock, Calendar, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import DemoPaymentModal from '../components/DemoPaymentModal';
 
 export default function SubscriptionPage() {
@@ -10,6 +10,12 @@ export default function SubscriptionPage() {
   const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
 
   const currentPlan = restaurant?.subscriptionPlan || 'basic';
+  const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
+  const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
+  const startDateDate = restaurant?.subscriptionStartDate ? new Date(restaurant.subscriptionStartDate) : null;
+  const now = new Date();
+  const daysRemaining = expiresAtDate ? Math.ceil((expiresAtDate - now) / (1000 * 60 * 60 * 24)) : 180;
+  const isExpired = !isLifetime && expiresAtDate && daysRemaining <= 0;
 
   const handleSelectPlan = async (planKey) => {
     setLoadingPlan(planKey);
@@ -42,6 +48,66 @@ export default function SubscriptionPage() {
         <p className="text-xs sm:text-sm text-gray-400 mt-1">
           Select or upgrade your FlashMenu tier for your restaurant (<span className="text-amber-400 font-bold">{restaurant?.name || 'My Restaurant'}</span>)
         </p>
+      </div>
+
+      {/* Active Subscription Status Banner Card */}
+      <div className={`p-6 rounded-3xl border transition-all ${
+        isExpired
+          ? 'bg-red-950/20 border-red-500/50 text-red-200'
+          : isLifetime
+          ? 'bg-amber-500/10 border-amber-500/40 text-amber-300'
+          : 'bg-[#0E0E14] border-white/[0.08] text-white'
+      }`}>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center space-x-2">
+              <span className={`w-2.5 h-2.5 rounded-full ${
+                isExpired ? 'bg-red-500 animate-pulse' : isLifetime ? 'bg-amber-400' : 'bg-emerald-500'
+              }`} />
+              <h2 className="text-base font-extrabold text-white">
+                Current Plan: <span className="text-amber-400 uppercase font-black">{currentPlan} RESTAURANT</span>
+                <span className="text-gray-400 text-xs ml-2 font-normal">
+                  ({isLifetime ? 'Lifetime Access' : '6 Months Subscription'})
+                </span>
+              </h2>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4 text-xs text-gray-300 pt-1">
+              {startDateDate && (
+                <div className="flex items-center space-x-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                  <span>Started: <strong>{startDateDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</strong></span>
+                </div>
+              )}
+
+              {!isLifetime && expiresAtDate && (
+                <div className="flex items-center space-x-1.5">
+                  <Clock className="w-3.5 h-3.5 text-gray-400" />
+                  <span>Expires: <strong>{expiresAtDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</strong></span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            {isExpired ? (
+              <div className="flex items-center space-x-2 bg-red-500/20 border border-red-500/50 px-4 py-2 rounded-2xl text-xs font-black text-red-400">
+                <AlertTriangle className="w-4 h-4 animate-bounce" />
+                <span>Subscription Ended - Pay ₹1 to Renew</span>
+              </div>
+            ) : isLifetime ? (
+              <div className="flex items-center space-x-2 bg-amber-500/20 border border-amber-500/50 px-4 py-2 rounded-2xl text-xs font-black text-amber-400">
+                <Crown className="w-4 h-4 text-amber-400 fill-amber-400" />
+                <span>Lifetime Unlimited Access</span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2 bg-emerald-500/15 border border-emerald-500/30 px-4 py-2 rounded-2xl text-xs font-black text-emerald-400">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>{daysRemaining} Days Remaining</span>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* 2 Restaurant Plans Cards */}

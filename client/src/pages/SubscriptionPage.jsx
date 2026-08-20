@@ -56,8 +56,8 @@ export default function SubscriptionPage() {
   const openDemoPayment = (planKey, title, duration, amount) => {
     const isSelectingLifetime = String(duration || '').toLowerCase().includes('lifetime');
 
-    if (isLifetime && isSelectingLifetime && currentPlan === planKey) {
-      alert('You already have active Lifetime Access for this plan! Your lifetime subscription is active.');
+    if (currentPlan === planKey && !isExpired && ((!isLifetime && !isSelectingLifetime) || (isLifetime && isSelectingLifetime))) {
+      alert(`Your ${planKey.toUpperCase()} Restaurant ${isSelectingLifetime ? 'Lifetime' : '1-Month'} plan is already active!`);
       return;
     }
 
@@ -179,14 +179,25 @@ export default function SubscriptionPage() {
                   <p className="text-2xl font-black text-white mt-1">₹1</p>
                   <span className="text-[10px] text-gray-500">Valid for 30 Days</span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => openDemoPayment('basic', 'Basic Restaurant (1 Month)', '1 Month (30 Days)', 1)}
-                  className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
-                >
-                  <CreditCard className="w-3.5 h-3.5" />
-                  <span>Pay 1 Month (₹1)</span>
-                </button>
+                {currentPlan === 'basic' && !isLifetime && !isExpired ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full py-2.5 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-[11px] cursor-default border border-amber-500/30 flex items-center justify-center space-x-1"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Active Plan (30 Days)</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (1 Month)', '1 Month (30 Days)', 1)}
+                    className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span>{isExpired && currentPlan === 'basic' ? 'Renew 1 Month (₹1)' : 'Pay 1 Month (₹1)'}</span>
+                  </button>
+                )}
               </div>
 
               <div className="p-4 flex flex-col justify-between space-y-3 text-center bg-amber-500/5 hover:bg-amber-500/10 transition-colors">
@@ -276,14 +287,25 @@ export default function SubscriptionPage() {
                   <p className="text-2xl font-black text-white mt-1">₹1</p>
                   <span className="text-[10px] text-gray-400">Valid for 30 Days</span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (1 Month)', '1 Month (30 Days)', 1)}
-                  className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
-                >
-                  <CreditCard className="w-3.5 h-3.5" />
-                  <span>Pay 1 Month (₹1)</span>
-                </button>
+                {currentPlan === 'premium' && !isLifetime && !isExpired ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full py-2.5 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-[11px] cursor-default border border-amber-500/30 flex items-center justify-center space-x-1"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Active Plan (30 Days)</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => openDemoPayment('premium', 'Premium Restaurant (1 Month)', '1 Month (30 Days)', 1)}
+                    className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span>{isExpired && currentPlan === 'premium' ? 'Renew 1 Month (₹1)' : currentPlan === 'basic' ? 'Upgrade to Premium 1 Month (₹1)' : 'Pay 1 Month (₹1)'}</span>
+                  </button>
+                )}
               </div>
 
               <div className="p-4 flex flex-col justify-between space-y-3 text-center bg-amber-500/10 hover:bg-amber-500/20 transition-colors">

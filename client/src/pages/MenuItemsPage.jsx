@@ -128,18 +128,30 @@ export default function MenuItemsPage() {
   };
 
   const handleToggleAvailable = async (id) => {
+    // Optimistic instant local state update
+    setItems((prev) =>
+      prev.map((item) => (item._id === id ? { ...item, isAvailable: !item.isAvailable } : item))
+    );
+
     try {
       await itemAPI.toggleAvailability(id);
-      fetchData();
     } catch (error) {
+      // Revert if API fails
+      setItems((prev) =>
+        prev.map((item) => (item._id === id ? { ...item, isAvailable: !item.isAvailable } : item))
+      );
       alert('Failed to toggle availability');
     }
   };
 
   const handleDuplicate = async (id) => {
     try {
-      await itemAPI.duplicate(id);
-      fetchData();
+      const res = await itemAPI.duplicate(id);
+      if (res.data) {
+        setItems((prev) => [...prev, res.data]);
+      } else {
+        fetchData();
+      }
     } catch (error) {
       alert('Failed to duplicate item');
     }
@@ -147,11 +159,15 @@ export default function MenuItemsPage() {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this menu item?')) return;
+    
+    // Optimistic removal
+    setItems((prev) => prev.filter((i) => i._id !== id));
+
     try {
       await itemAPI.delete(id);
-      fetchData();
     } catch (error) {
       alert('Failed to delete item');
+      fetchData();
     }
   };
 

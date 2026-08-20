@@ -15,11 +15,12 @@ const getMenuItems = async (req, res) => {
 
     if (!restaurant) return res.status(404).json({ message: 'Restaurant profile not found' });
 
-    // Auto-repair seed if menu items are empty
-    await ensureDefaultMenuForRestaurant(restaurant._id);
-
     if (getIsConnected()) {
-      const items = await MenuItem.find({ restaurantId: restaurant._id }).sort({ order: 1 });
+      let items = await MenuItem.find({ restaurantId: restaurant._id }).sort({ order: 1 });
+      if (!items || items.length === 0) {
+        await ensureDefaultMenuForRestaurant(restaurant._id);
+        items = await MenuItem.find({ restaurantId: restaurant._id }).sort({ order: 1 });
+      }
       return res.json(items);
     } else {
       const items = mockStore.menuItems

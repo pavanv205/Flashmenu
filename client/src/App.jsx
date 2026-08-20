@@ -21,8 +21,6 @@ import OrdersPage from './pages/OrdersPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 
-import WhatsAppButton from './components/WhatsAppButton';
-
 export default function App() {
   return (
     <AuthProvider>
@@ -50,7 +48,6 @@ export default function App() {
           <Route path="subscription" element={<SubscriptionPage />} />
         </Route>
       </Routes>
-      <WhatsAppButton />
     </AuthProvider>
   );
 }

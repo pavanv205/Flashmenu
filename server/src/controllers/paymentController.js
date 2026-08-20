@@ -95,12 +95,14 @@ const verifyPayment = async (req, res) => {
     }
 
     // Update restaurant subscription plan in Database
-    const { duration } = req.body;
+    const { duration, title, isLifetime: reqIsLifetime } = req.body;
     const updatedPlan = planKey === 'premium' ? 'premium' : 'basic';
-    const isLifetime = String(duration || '').toLowerCase().includes('lifetime');
-    const cycle = isLifetime ? 'lifetime' : '1month';
+    const isLifetime =
+      reqIsLifetime === true ||
+      String(duration || '').toLowerCase().includes('lifetime') ||
+      String(title || '').toLowerCase().includes('lifetime');
+
     const startDate = new Date();
-    const expiresAt = isLifetime ? null : new Date(Date.now() + 5 * 60 * 1000);
 
     await connectDB();
 
@@ -117,15 +119,25 @@ const verifyPayment = async (req, res) => {
       const finalCycle = finalIsLifetime ? 'lifetime' : '1month';
       const finalExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 5 * 60 * 1000);
 
-      updatedRestaurant = await Restaurant.findOneAndUpdate(
-        { ownerId: req.user._id },
-        {
+      const updatePayload = {
+        $set: {
           subscriptionPlan: finalPlan,
           subscriptionCycle: finalCycle,
           subscriptionStartDate: startDate,
-          subscriptionExpiresAt: finalExpiresAt,
           isActive: true,
         },
+      };
+
+      if (finalIsLifetime) {
+        updatePayload.$set.subscriptionExpiresAt = null;
+        updatePayload.$unset = { subscriptionExpiresAt: 1 };
+      } else {
+        updatePayload.$set.subscriptionExpiresAt = finalExpiresAt;
+      }
+
+      updatedRestaurant = await Restaurant.findOneAndUpdate(
+        { ownerId: req.user._id },
+        updatePayload,
         { new: true }
       );
     } else if (req.user?._id) {

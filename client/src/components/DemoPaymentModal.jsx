@@ -34,6 +34,10 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
       let updatedRest = null;
 
       // 1. Call verification API
+      const isSelectingLifetime =
+        String(planDetails.duration || '').toLowerCase().includes('lifetime') ||
+        String(planDetails.title || '').toLowerCase().includes('lifetime');
+
       try {
         const verifyRes = await paymentAPI.verifyPayment({
           razorpay_order_id: `order_demo_${Date.now()}`,
@@ -41,6 +45,8 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
           razorpay_signature: `sig_demo_${Date.now()}`,
           planKey: planDetails.planKey,
           duration: planDetails.duration,
+          title: planDetails.title,
+          isLifetime: isSelectingLifetime,
         });
         if (verifyRes.data?.restaurant) {
           updatedRest = verifyRes.data.restaurant;

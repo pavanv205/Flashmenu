@@ -316,73 +316,68 @@ export default function SignupPage() {
                   <p className="text-xs text-gray-400 mt-1">Essential digital QR menu setup for cafes & small dining spots.</p>
                 </div>
 
-                {/* Price Durations Box */}
+                {/* Price Durations Display */}
                 <div className="grid grid-cols-2 rounded-2xl bg-dark-card border border-dark-border divide-x divide-dark-border overflow-hidden">
-                  <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
-                    <div>
-                      <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
-                      <p className="text-2xl font-black text-white mt-1">₹1</p>
-                      <span className="text-[10px] text-gray-500 block">Valid for 6 Mo</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleOpenDemoPayment('basic', 'Basic Restaurant (6 Months)', '6 Months', 1)}
-                      className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
-                    >
-                      <CreditCard className="w-3.5 h-3.5" />
-                      <span>Pay ₹1</span>
-                    </button>
+                  <div className="p-3 text-center space-y-1">
+                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">5 MINUTES</span>
+                    <span className="text-xl font-black text-white block">₹1</span>
+                    <span className="text-[10px] text-gray-500 font-semibold block">Valid for 5 Mins</span>
                   </div>
-
-                  <div className="p-4 flex flex-col justify-between space-y-3 text-center bg-amber-500/5 hover:bg-amber-500/10 transition-colors">
-                    <div>
-                      <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                      <p className="text-2xl font-black text-amber-400 mt-1">₹1</p>
-                      <span className="text-[10px] text-amber-400/80 block">One-Time Pay</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleOpenDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime Access', 1)}
-                      className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
-                    >
-                      <CreditCard className="w-3.5 h-3.5" />
-                      <span>Pay ₹1</span>
-                    </button>
+                  <div className="p-3 text-center space-y-1 bg-amber-500/5">
+                    <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
+                    <span className="text-xl font-black text-amber-400 block">₹1</span>
+                    <span className="text-[10px] text-amber-400/80 font-bold block">One-Time Pay</span>
                   </div>
                 </div>
 
                 <ul className="space-y-3 text-xs text-gray-300 pt-4 border-t border-dark-border">
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                     <span>1 Digital Restaurant Menu</span>
                   </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Unlimited Dishes & Categories</span>
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Unlimited Food Categories & Menu Items</span>
                   </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>High-Resolution Master Table QR Code</span>
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                    <span><strong>1 Master QR Code</strong> (Entire Restaurant)</span>
                   </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Instant SOLD OUT Toggle Switch</span>
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Instant SOLD OUT & Availability Toggle</span>
                   </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                     <span>Fast Mobile Customer View</span>
                   </li>
                 </ul>
               </div>
 
-              <button
-                type="button"
-                onClick={() => handleOpenDemoPayment('basic', 'Basic Restaurant', 'Full Access', 1)}
-                className="w-full py-3.5 rounded-2xl bg-dark-card hover:bg-dark-hover border border-dark-border text-white font-extrabold text-xs transition-all flex items-center justify-center space-x-2"
-              >
-                <span>Get Started with Basic</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {/* Two Payment Option Buttons at Bottom of Card */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleOpenDemoPayment('basic', 'Basic Restaurant (5 Mins)', '5 Minutes Test', 1)
+                  }
+                  className="py-3.5 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-xs transition-all border border-amber-500/30 flex items-center justify-center space-x-1.5 shadow-md"
+                >
+                  <CreditCard className="w-4 h-4 shrink-0" />
+                  <span>Pay 5 Mins (₹1)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleOpenDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime One-Time', 1)
+                  }
+                  className="py-3.5 px-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5"
+                >
+                  <CreditCard className="w-4 h-4 shrink-0" />
+                  <span>Pay Lifetime (₹1)</span>
+                </button>
+              </div>
             </div>
 
             {/* PLAN 2: PREMIUM RESTAURANT */}
@@ -418,75 +413,70 @@ export default function SignupPage() {
 
                 {/* Price Durations Display */}
                 <div className="grid grid-cols-2 rounded-2xl bg-dark-card border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
-                  <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
-                    <div>
-                      <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
-                      <p className="text-2xl font-black text-white mt-1">₹1</p>
-                      <span className="text-[10px] text-gray-400 block">Valid for 6 Mo</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleOpenDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months', 1)}
-                      className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
-                    >
-                      <CreditCard className="w-3.5 h-3.5" />
-                      <span>Pay ₹1</span>
-                    </button>
+                  <div className="p-3 text-center space-y-1">
+                    <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">5 MINUTES</span>
+                    <span className="text-xl font-black text-white block">₹1</span>
+                    <span className="text-[10px] text-gray-400 font-semibold block">Valid for 5 Mins</span>
                   </div>
-
-                  <div className="p-4 flex flex-col justify-between space-y-3 text-center bg-amber-500/10 hover:bg-amber-500/20 transition-colors">
-                    <div>
-                      <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                      <p className="text-2xl font-black text-amber-400 mt-1">₹1</p>
-                      <span className="text-[10px] text-amber-400/90 block">One-Time Pay</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 1)}
-                      className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
-                    >
-                      <CreditCard className="w-3.5 h-3.5" />
-                      <span>Pay ₹1</span>
-                    </button>
+                  <div className="p-3 text-center space-y-1 bg-amber-500/10">
+                    <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
+                    <span className="text-xl font-black text-amber-400 block">₹1</span>
+                    <span className="text-[10px] text-amber-400/90 font-bold block">One-Time Pay</span>
                   </div>
                 </div>
 
                 <ul className="space-y-3 text-xs text-gray-200 pt-4 border-t border-amber-500/20">
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                     <span>Everything in Basic Plan</span>
                   </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                     <span>Table-Specific QR Codes (Table 1 to 25)</span>
                   </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                     <span>Real-Time Table Ordering & Kitchen Display</span>
                   </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                     <span>Instant Call Waiter & Bill Request Alerts</span>
                   </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                     <span>Customer Feedback & Rating System</span>
                   </li>
-                  <li className="flex items-center space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                  <li className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                     <span>Priority VIP 24/7 Support & Analytics</span>
                   </li>
                 </ul>
               </div>
 
-              <button
-                type="button"
-                onClick={() => handleOpenDemoPayment('premium', 'Premium Restaurant', 'Full Pro Suite', 1)}
-                className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2"
-              >
-                <span>Select Premium Restaurant</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {/* Two Payment Option Buttons at Bottom of Card */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleOpenDemoPayment('premium', 'Premium Restaurant (5 Mins)', '5 Minutes Test', 1)
+                  }
+                  className="py-3.5 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-xs transition-all border border-amber-500/30 flex items-center justify-center space-x-1.5 shadow-md"
+                >
+                  <CreditCard className="w-4 h-4 shrink-0" />
+                  <span>Pay 5 Mins (₹1)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 1)
+                  }
+                  className="py-3.5 px-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5"
+                >
+                  <CreditCard className="w-4 h-4 shrink-0" />
+                  <span>Pay Lifetime (₹1)</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

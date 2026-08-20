@@ -340,8 +340,8 @@ export default function SignupPage() {
                     <span>Unlimited Food Categories & Menu Items</span>
                   </li>
                   <li className="flex items-start space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span>High-Resolution Master Table QR Code</span>
+                    <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                    <span><strong>1 Master QR Code</strong> (Entire Restaurant)</span>
                   </li>
                   <li className="flex items-start space-x-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />

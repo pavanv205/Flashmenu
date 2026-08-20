@@ -316,57 +316,17 @@ export default function SignupPage() {
                   <p className="text-xs text-gray-400 mt-1">Essential digital QR menu setup for cafes & small dining spots.</p>
                 </div>
 
-                {/* Price Durations (Divided in Middle with Vertical Line) */}
+                {/* Price Durations Display */}
                 <div className="grid grid-cols-2 rounded-2xl bg-dark-card border border-dark-border divide-x divide-dark-border overflow-hidden">
-                  <div
-                    onClick={() => setBasicDuration('6months')}
-                    className={`p-3 text-center space-y-1 cursor-pointer transition-all ${
-                      basicDuration === '6months' ? 'bg-amber-500/15' : 'hover:bg-white/[0.02]'
-                    }`}
-                  >
-                    <span className={`text-[10px] font-extrabold uppercase tracking-widest block ${
-                      basicDuration === '6months' ? 'text-amber-400' : 'text-gray-400'
-                    }`}>6 MONTHS</span>
+                  <div className="p-3 text-center space-y-1">
+                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
                     <span className="text-xl font-black text-white block">₹1</span>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setBasicDuration('6months');
-                        handleOpenDemoPayment('basic', 'Basic Restaurant (6 Months)', '6 Months', 1);
-                      }}
-                      className={`w-full py-1.5 rounded-lg text-[10px] font-extrabold transition-all mt-1 ${
-                        basicDuration === '6months'
-                          ? 'bg-amber-500 text-black font-black shadow-sm'
-                          : 'bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30'
-                      }`}
-                    >
-                      Pay ₹1
-                    </button>
+                    <span className="text-[10px] text-gray-500 font-semibold block">Valid for 6 Mo</span>
                   </div>
-                  <div
-                    onClick={() => setBasicDuration('lifetime')}
-                    className={`p-3 text-center space-y-1 cursor-pointer transition-all ${
-                      basicDuration === 'lifetime' ? 'bg-amber-500/20' : 'bg-amber-500/5 hover:bg-amber-500/10'
-                    }`}
-                  >
+                  <div className="p-3 text-center space-y-1 bg-amber-500/5">
                     <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
                     <span className="text-xl font-black text-amber-400 block">₹1</span>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setBasicDuration('lifetime');
-                        handleOpenDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime One-Time', 1);
-                      }}
-                      className={`w-full py-1.5 rounded-lg text-[10px] font-black transition-all mt-1 shadow-sm ${
-                        basicDuration === 'lifetime'
-                          ? 'bg-amber-500 text-black font-black'
-                          : 'bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30'
-                      }`}
-                    >
-                      Pay ₹1
-                    </button>
+                    <span className="text-[10px] text-amber-400/80 font-bold block">One-Time Pay</span>
                   </div>
                 </div>
 
@@ -394,24 +354,30 @@ export default function SignupPage() {
                 </ul>
               </div>
 
-              <button
-                type="button"
-                onClick={() =>
-                  handleOpenDemoPayment(
-                    'basic',
-                    `Basic Restaurant (${basicDuration === '6months' ? '6 Months' : 'Lifetime'})`,
-                    basicDuration === '6months' ? '6 Months' : 'Lifetime One-Time',
-                    1
-                  )
-                }
-                className="w-full py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-sm transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2"
-              >
-                <CreditCard className="w-4 h-4" />
-                <span>
-                  Pay & Activate Basic {basicDuration === '6months' ? '6 Months' : 'Lifetime'} Plan (₹1)
-                </span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {/* Two Payment Option Buttons at Bottom of Card */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleOpenDemoPayment('basic', 'Basic Restaurant (6 Months)', '6 Months', 1)
+                  }
+                  className="py-3.5 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-xs transition-all border border-amber-500/30 flex items-center justify-center space-x-1.5 shadow-md"
+                >
+                  <CreditCard className="w-4 h-4 shrink-0" />
+                  <span>Pay 6 Months (₹1)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleOpenDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime One-Time', 1)
+                  }
+                  className="py-3.5 px-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5"
+                >
+                  <CreditCard className="w-4 h-4 shrink-0" />
+                  <span>Pay Lifetime (₹1)</span>
+                </button>
+              </div>
             </div>
 
             {/* PLAN 2: PREMIUM RESTAURANT */}
@@ -445,57 +411,17 @@ export default function SignupPage() {
                   <p className="text-xs text-gray-300 mt-1">Complete QR platform for busy restaurants & fine dining.</p>
                 </div>
 
-                {/* Price Durations (Divided in Middle with Vertical Line) */}
+                {/* Price Durations Display */}
                 <div className="grid grid-cols-2 rounded-2xl bg-dark-card border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
-                  <div
-                    onClick={() => setPremiumDuration('6months')}
-                    className={`p-3 text-center space-y-1 cursor-pointer transition-all ${
-                      premiumDuration === '6months' ? 'bg-amber-500/20' : 'hover:bg-white/[0.02]'
-                    }`}
-                  >
-                    <span className={`text-[10px] font-extrabold uppercase tracking-widest block ${
-                      premiumDuration === '6months' ? 'text-amber-400' : 'text-gray-300'
-                    }`}>6 MONTHS</span>
+                  <div className="p-3 text-center space-y-1">
+                    <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
                     <span className="text-xl font-black text-white block">₹1</span>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPremiumDuration('6months');
-                        handleOpenDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months', 1);
-                      }}
-                      className={`w-full py-1.5 rounded-lg text-[10px] font-extrabold transition-all mt-1 ${
-                        premiumDuration === '6months'
-                          ? 'bg-amber-500 text-black font-black shadow-sm'
-                          : 'bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30'
-                      }`}
-                    >
-                      Pay ₹1
-                    </button>
+                    <span className="text-[10px] text-gray-400 font-semibold block">Valid for 6 Mo</span>
                   </div>
-                  <div
-                    onClick={() => setPremiumDuration('lifetime')}
-                    className={`p-3 text-center space-y-1 cursor-pointer transition-all ${
-                      premiumDuration === 'lifetime' ? 'bg-amber-500/25' : 'bg-amber-500/10 hover:bg-amber-500/20'
-                    }`}
-                  >
+                  <div className="p-3 text-center space-y-1 bg-amber-500/10">
                     <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
                     <span className="text-xl font-black text-amber-400 block">₹1</span>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPremiumDuration('lifetime');
-                        handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 1);
-                      }}
-                      className={`w-full py-1.5 rounded-lg text-[10px] font-black transition-all mt-1 shadow-sm ${
-                        premiumDuration === 'lifetime'
-                          ? 'bg-amber-500 text-black font-black'
-                          : 'bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30'
-                      }`}
-                    >
-                      Pay ₹1
-                    </button>
+                    <span className="text-[10px] text-amber-400/90 font-bold block">One-Time Pay</span>
                   </div>
                 </div>
 
@@ -527,24 +453,30 @@ export default function SignupPage() {
                 </ul>
               </div>
 
-              <button
-                type="button"
-                onClick={() =>
-                  handleOpenDemoPayment(
-                    'premium',
-                    `Premium Restaurant (${premiumDuration === '6months' ? '6 Months' : 'Lifetime'})`,
-                    premiumDuration === '6months' ? '6 Months' : 'Lifetime One-Time',
-                    1
-                  )
-                }
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-sm transition-all shadow-xl shadow-amber-500/30 flex items-center justify-center space-x-2"
-              >
-                <CreditCard className="w-4 h-4" />
-                <span>
-                  Pay & Activate Premium {premiumDuration === '6months' ? '6 Months' : 'Lifetime'} Plan (₹1)
-                </span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {/* Two Payment Option Buttons at Bottom of Card */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleOpenDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months', 1)
+                  }
+                  className="py-3.5 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-xs transition-all border border-amber-500/30 flex items-center justify-center space-x-1.5 shadow-md"
+                >
+                  <CreditCard className="w-4 h-4 shrink-0" />
+                  <span>Pay 6 Months (₹1)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 1)
+                  }
+                  className="py-3.5 px-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5"
+                >
+                  <CreditCard className="w-4 h-4 shrink-0" />
+                  <span>Pay Lifetime (₹1)</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

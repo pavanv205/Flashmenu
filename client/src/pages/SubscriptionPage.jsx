@@ -58,8 +58,8 @@ export default function SubscriptionPage() {
       return;
     }
 
-    if (isLifetime && !isSelectingLifetime) {
-      alert('You already have active Lifetime Access! Your permanent subscription will stay active as Lifetime.');
+    if (isLifetime && currentPlan === 'premium') {
+      alert('You already have active Premium Lifetime Access!');
       return;
     }
 

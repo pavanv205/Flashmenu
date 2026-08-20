@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { orderAPI } from '../services/api';
-import { ShoppingBag, Clock, CheckCircle, Crown, ArrowRight, Sparkles, CheckCircle2, Calendar, DollarSign, Filter, RefreshCw } from 'lucide-react';
+import { ShoppingBag, Clock, CheckCircle, Crown, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
@@ -8,7 +8,6 @@ export default function OrdersPage() {
   const { restaurant } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState('ALL');
 
   const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
@@ -38,16 +37,6 @@ export default function OrdersPage() {
     }
   };
 
-  const filteredOrders = orders.filter((order) => {
-    if (activeFilter === 'PENDING') return order.status === 'NEW' || order.status === 'ACCEPTED' || order.status === 'PREPARING';
-    if (activeFilter === 'COMPLETED') return order.status === 'SERVED' || order.status === 'COMPLETED';
-    return true;
-  });
-
-  const total7DayRevenue = orders.reduce((sum, order) => sum + (Number(order.totalAmount) || 0), 0);
-  const pendingCount = orders.filter((o) => o.status === 'NEW' || o.status === 'ACCEPTED' || o.status === 'PREPARING').length;
-  const completedCount = orders.filter((o) => o.status === 'SERVED' || o.status === 'COMPLETED').length;
-
   if (loading) {
     return (
       <div className="py-12 flex justify-center">
@@ -72,7 +61,7 @@ export default function OrdersPage() {
               Upgrade to Premium Plan to Access
             </h2>
             <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-              Live Table Ordering and 7-Day Order History are exclusive to the Premium Restaurant Plan.
+              Live Table Ordering and Kitchen Orders Display are exclusive to the Premium Restaurant Plan.
             </p>
           </div>
 
@@ -83,15 +72,15 @@ export default function OrdersPage() {
             </div>
             <div className="p-3.5 rounded-2xl bg-[#08080A] border border-white/[0.08] flex items-center space-x-3 text-xs text-gray-200">
               <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>7-Day Order History & Analytics</span>
-            </div>
-            <div className="p-3.5 rounded-2xl bg-[#08080A] border border-white/[0.08] flex items-center space-x-3 text-xs text-gray-200">
-              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
               <span>Instant Call Waiter & Bill Alerts</span>
             </div>
             <div className="p-3.5 rounded-2xl bg-[#08080A] border border-white/[0.08] flex items-center space-x-3 text-xs text-gray-200">
               <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
               <span>Table-Specific QR Codes (1 to 25)</span>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-[#08080A] border border-white/[0.08] flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Private Customer Ratings System</span>
             </div>
           </div>
 
@@ -112,96 +101,23 @@ export default function OrdersPage() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto font-sans">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-white">Live Orders & 7-Day History</h1>
-          <p className="text-xs text-gray-400 mt-1">
-            Real-time table orders and complete history over the last 7 days (Orders auto-delete after 7 days).
-          </p>
-        </div>
-
-        <button
-          onClick={fetchOrders}
-          className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-[#0E0E14] border border-white/[0.08] hover:border-amber-500/50 text-xs font-bold text-gray-300 hover:text-white transition-all"
-        >
-          <RefreshCw className="w-3.5 h-3.5 text-amber-400" />
-          <span>Refresh Feed</span>
-        </button>
+      <div>
+        <h1 className="text-2xl font-extrabold text-white">Live Kitchen Orders</h1>
+        <p className="text-xs text-gray-400 mt-1">
+          Incoming table orders placed directly from customer mobile menus (Auto-deleted after 24 hours)
+        </p>
       </div>
 
-      {/* 7-Day Stats Overview Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">
-          <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">7-DAY REVENUE</span>
-          <p className="text-xl sm:text-2xl font-black text-amber-400">
-            {restaurant?.currency || '₹'}{total7DayRevenue.toLocaleString('en-IN')}
-          </p>
-          <span className="text-[10px] text-gray-500 block">Total earnings this week</span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">
-          <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">TOTAL ORDERS</span>
-          <p className="text-xl sm:text-2xl font-black text-white">{orders.length}</p>
-          <span className="text-[10px] text-gray-500 block">Placed in last 7 days</span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">
-          <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider block">ACTIVE / PENDING</span>
-          <p className="text-xl sm:text-2xl font-black text-amber-400">{pendingCount}</p>
-          <span className="text-[10px] text-amber-400/70 block">Kitchen in progress</span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">
-          <span className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-wider block">COMPLETED</span>
-          <p className="text-xl sm:text-2xl font-black text-emerald-400">{completedCount}</p>
-          <span className="text-[10px] text-emerald-400/70 block">Served to table</span>
-        </div>
-      </div>
-
-      {/* Filter Tabs Bar */}
-      <div className="flex items-center space-x-2 border-b border-white/[0.08] pb-3 pt-2">
-        <button
-          onClick={() => setActiveFilter('ALL')}
-          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
-            activeFilter === 'ALL'
-              ? 'bg-amber-500 text-black shadow-md'
-              : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
-          }`}
-        >
-          All 7-Day Orders ({orders.length})
-        </button>
-        <button
-          onClick={() => setActiveFilter('PENDING')}
-          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
-            activeFilter === 'PENDING'
-              ? 'bg-amber-500 text-black shadow-md'
-              : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
-          }`}
-        >
-          Active Orders ({pendingCount})
-        </button>
-        <button
-          onClick={() => setActiveFilter('COMPLETED')}
-          className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
-            activeFilter === 'COMPLETED'
-              ? 'bg-emerald-500 text-black shadow-md'
-              : 'bg-[#0E0E14] text-gray-400 hover:text-white border border-white/[0.08]'
-          }`}
-        >
-          Completed ({completedCount})
-        </button>
-      </div>
-
-      {filteredOrders.length === 0 ? (
+      {orders.length === 0 ? (
         <div className="py-16 text-center space-y-3 bg-[#0E0E14] rounded-3xl border border-white/[0.08]">
           <ShoppingBag className="w-12 h-12 text-gray-600 mx-auto" />
-          <h3 className="text-lg font-bold text-white">No Orders Found</h3>
-          <p className="text-xs text-gray-400">Orders placed by customers over the last 7 days will show up here.</p>
+          <h3 className="text-lg font-bold text-white">No Orders Received Yet</h3>
+          <p className="text-xs text-gray-400">Orders placed by customers on their phone will show up here in real-time.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredOrders.map((order) => (
-            <div key={order._id} className="p-5 rounded-3xl bg-[#0E0E14] border border-white/[0.08] flex flex-col justify-between space-y-4 hover:border-amber-500/30 transition-all">
+          {orders.map((order) => (
+            <div key={order._id} className="p-5 rounded-3xl bg-[#0E0E14] border border-white/[0.08] flex flex-col justify-between space-y-4 shadow-lg">
               <div>
                 <div className="flex items-start justify-between pb-3 border-b border-white/[0.08]">
                   <div>
@@ -212,7 +128,7 @@ export default function OrdersPage() {
                       <span className="text-[11px] text-amber-400 font-semibold flex items-center space-x-1">
                         <Clock className="w-3 h-3 text-amber-400 inline" />
                         <span>
-                          {new Date(order.createdAt || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}, {new Date(order.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(order.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </span>
                     </div>
@@ -221,8 +137,7 @@ export default function OrdersPage() {
                     order.status === 'NEW' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' :
                     order.status === 'ACCEPTED' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40' :
                     order.status === 'PREPARING' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40' :
-                    order.status === 'SERVED' || order.status === 'COMPLETED' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' :
-                    'bg-gray-500/20 text-gray-300'
+                    'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
                   }`}>
                     {order.status}
                   </span>
@@ -272,7 +187,7 @@ export default function OrdersPage() {
                 )}
                 {(order.status === 'SERVED' || order.status === 'COMPLETED') && (
                   <div className="flex-1 py-2 text-center text-xs font-bold text-emerald-400/80 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-                    ✓ Order Completed
+                    ✓ Order Served
                   </div>
                 )}
               </div>

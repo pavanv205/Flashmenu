@@ -172,17 +172,17 @@ export default function OrderHistoryPage() {
         </div>
 
         <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">
-          <span className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-wider block">SERVED / COMPLETED</span>
-          <p className="text-xl sm:text-2xl font-black text-emerald-400">{completedCount}</p>
-          <span className="text-[10px] text-emerald-400/70 block">Completed orders</span>
+          <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">SERVED / COMPLETED</span>
+          <p className="text-xl sm:text-2xl font-black text-white">{completedCount}</p>
+          <span className="text-[10px] text-gray-400 block">Completed orders</span>
         </div>
 
         <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">
-          <span className="text-[10px] font-extrabold text-cyan-400 uppercase tracking-wider block">AVG ORDER VALUE</span>
-          <p className="text-xl sm:text-2xl font-black text-cyan-400">
+          <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">AVG ORDER VALUE</span>
+          <p className="text-xl sm:text-2xl font-black text-amber-400">
             {restaurant?.currency || '₹'}{avgOrderValue}
           </p>
-          <span className="text-[10px] text-cyan-400/70 block">Per order average</span>
+          <span className="text-[10px] text-gray-400 block">Per order average</span>
         </div>
       </div>
 
@@ -214,7 +214,7 @@ export default function OrderHistoryPage() {
           onClick={() => setStatusFilter('ALL')}
           className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
             statusFilter === 'ALL'
-              ? 'bg-white/10 text-white border border-white/20'
+              ? 'bg-amber-500 text-black font-extrabold shadow-md'
               : 'text-gray-400 hover:text-white'
           }`}
         >
@@ -224,7 +224,7 @@ export default function OrderHistoryPage() {
           onClick={() => setStatusFilter('COMPLETED')}
           className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
             statusFilter === 'COMPLETED'
-              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+              ? 'bg-amber-500 text-black font-extrabold shadow-md'
               : 'text-gray-400 hover:text-white'
           }`}
         >
@@ -234,7 +234,7 @@ export default function OrderHistoryPage() {
           onClick={() => setStatusFilter('ACTIVE')}
           className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
             statusFilter === 'ACTIVE'
-              ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40'
+              ? 'bg-amber-500 text-black font-extrabold shadow-md'
               : 'text-gray-400 hover:text-white'
           }`}
         >
@@ -268,11 +268,9 @@ export default function OrderHistoryPage() {
                     </div>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shrink-0 ${
-                    order.status === 'NEW' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' :
-                    order.status === 'ACCEPTED' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40' :
-                    order.status === 'PREPARING' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40' :
-                    order.status === 'SERVED' || order.status === 'COMPLETED' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' :
-                    'bg-gray-500/20 text-gray-300'
+                    order.status === 'NEW' || order.status === 'ACCEPTED' || order.status === 'PREPARING'
+                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                      : 'bg-white/10 text-white border border-white/20'
                   }`}>
                     {order.status}
                   </span>

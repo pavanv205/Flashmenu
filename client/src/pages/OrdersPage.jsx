@@ -134,10 +134,9 @@ export default function OrdersPage() {
                     </div>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shrink-0 ${
-                    order.status === 'NEW' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' :
-                    order.status === 'ACCEPTED' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40' :
-                    order.status === 'PREPARING' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40' :
-                    'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                    order.status === 'NEW' || order.status === 'ACCEPTED' || order.status === 'PREPARING'
+                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                      : 'bg-white/10 text-white border border-white/20'
                   }`}>
                     {order.status}
                   </span>

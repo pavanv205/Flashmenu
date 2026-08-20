@@ -8,11 +8,6 @@ export default function SubscriptionPage() {
   const { restaurant, updateRestaurantState } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState('');
   const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
-  const [alertInfo, setAlertInfo] = useState({ isOpen: false, title: 'FlashMenu', message: '' });
-
-  const showAlert = (message, title = 'FlashMenu') => {
-    setAlertInfo({ isOpen: true, title, message });
-  };
 
   const currentPlan = restaurant?.subscriptionPlan || 'basic';
   const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
@@ -49,7 +44,7 @@ export default function SubscriptionPage() {
       }
     } catch (error) {
       console.error('Failed to change subscription plan:', error);
-      showAlert('Failed to update plan. Please try again.');
+      alert('Failed to update plan. Please try again.');
     } finally {
       setLoadingPlan('');
     }
@@ -58,7 +53,7 @@ export default function SubscriptionPage() {
   const openDemoPayment = (planKey, title, duration, amount) => {
     const isSelectingLifetime = String(duration || '').toLowerCase().includes('lifetime');
     if (isLifetime && !isSelectingLifetime) {
-      showAlert('You already have active Lifetime Access! Your permanent subscription will stay active as Lifetime.');
+      alert('You already have active Lifetime Access! Your permanent subscription will stay active as Lifetime.');
     }
     setDemoPaymentModal({
       isOpen: true,
@@ -320,31 +315,6 @@ export default function SubscriptionPage() {
         planDetails={demoPaymentModal.planDetails}
         onSuccess={handleSelectPlan}
       />
-
-      {/* Custom FlashMenu Alert Modal */}
-      {alertInfo.isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-[#0E0E14] border-2 border-amber-500/50 p-6 sm:p-8 rounded-3xl max-w-md w-full text-center space-y-5 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto shadow-md">
-              <Zap className="w-7 h-7 text-amber-400 fill-amber-400" />
-            </div>
-            
-            <div className="space-y-2">
-              <h3 className="text-xl font-extrabold text-white">{alertInfo.title}</h3>
-              <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                {alertInfo.message}
-              </p>
-            </div>
-
-            <button
-              onClick={() => setAlertInfo({ isOpen: false, title: 'FlashMenu', message: '' })}
-              className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20"
-            >
-              Got It
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

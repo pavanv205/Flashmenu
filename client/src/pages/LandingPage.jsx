@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useAuth } from '../context/AuthContext';
 import {
   Zap,
   QrCode,
@@ -15,7 +16,12 @@ import {
 } from 'lucide-react';
 
 export default function LandingPage() {
+  const { user } = useAuth();
   const [openFaq, setOpenFaq] = useState(null);
+
+  if (user) {
+    return <Navigate to={user.role === 'admin' ? '/dashboard/admin' : '/dashboard'} replace />;
+  }
 
   const faqs = [
     {

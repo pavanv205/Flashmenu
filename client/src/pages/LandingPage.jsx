@@ -213,7 +213,7 @@ export default function LandingPage() {
                 {/* Durations */}
                 <div className="grid grid-cols-2 rounded-2xl bg-[#060608] border border-white/10 divide-x divide-white/10 overflow-hidden">
                   <div className="p-3 text-center space-y-1">
-                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
+                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">1 MONTH</span>
                     <span className="text-xl font-black text-white block">₹1</span>
                     <Link
                       to="/signup"
@@ -284,7 +284,7 @@ export default function LandingPage() {
                 {/* Durations */}
                 <div className="grid grid-cols-2 rounded-2xl bg-[#060608] border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
                   <div className="p-3 text-center space-y-1">
-                    <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
+                    <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">1 MONTH</span>
                     <span className="text-xl font-black text-white block">₹1</span>
                     <Link
                       to="/signup"

@@ -98,7 +98,7 @@ const verifyPayment = async (req, res) => {
     const { duration } = req.body;
     const updatedPlan = planKey === 'premium' ? 'premium' : 'basic';
     const isLifetime = String(duration || '').toLowerCase().includes('lifetime');
-    const cycle = isLifetime ? 'lifetime' : '6months';
+    const cycle = isLifetime ? 'lifetime' : '1month';
     const startDate = new Date();
     const expiresAt = isLifetime ? null : new Date(Date.now() + 5 * 60 * 1000);
 

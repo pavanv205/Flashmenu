@@ -49,7 +49,7 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
         const isLifetime = String(planDetails.duration || '').toLowerCase().includes('lifetime');
         const res = await restaurantAPI.updateMyRestaurant({
           subscriptionPlan: planDetails.planKey,
-          subscriptionCycle: isLifetime ? 'lifetime' : '6months',
+          subscriptionCycle: isLifetime ? 'lifetime' : '1month',
           subscriptionStartDate: new Date(),
           subscriptionExpiresAt: isLifetime ? null : new Date(Date.now() + 5 * 60 * 1000),
         });

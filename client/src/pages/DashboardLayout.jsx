@@ -55,7 +55,7 @@ export default function DashboardLayout() {
             <div className="flex items-center space-x-2 mx-auto">
               <AlertTriangle className="w-4 h-4 text-red-400 animate-bounce shrink-0" />
               <span>
-                <strong>Your 6-Month Subscription Plan Has Ended!</strong> Please pay & renew your subscription to continue managing your digital menu.
+                <strong>Your 1-Month Subscription Plan Has Ended!</strong> Please pay & renew your subscription to continue managing your digital menu.
               </span>
             </div>
             <Link

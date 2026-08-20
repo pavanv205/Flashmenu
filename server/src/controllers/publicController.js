@@ -35,8 +35,22 @@ const getPublicMenu = async (req, res) => {
 
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
-      // Auto-repair seed if menu items/categories are empty
-      await ensureDefaultMenuForRestaurant(restaurant._id);
+      // Check subscription & account active status
+      const isLifetime = restaurant.subscriptionCycle === 'lifetime';
+      const expiresAt = restaurant.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
+      const isExpired = !isLifetime && expiresAt && expiresAt.getTime() <= Date.now();
+      const isInactive = restaurant.isActive === false || isExpired;
+
+      if (isInactive) {
+        return res.json({
+          restaurant: { ...restaurant.toObject(), isInactive: true, isExpired },
+          isInactive: true,
+          isExpired,
+          categories: [],
+          menuItems: [],
+          tableNumber: table || null,
+        });
+      }
 
       const categories = await Category.find({ restaurantId: restaurant._id, isActive: true }).sort({ order: 1 });
       const menuItems = await MenuItem.find({ restaurantId: restaurant._id }).sort({ order: 1 });
@@ -110,6 +124,14 @@ const callWaiter = async (req, res) => {
     if (getIsConnected()) {
       const restaurant = await Restaurant.findOne({ slug: restaurantSlug });
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+      
+      const isLifetime = restaurant.subscriptionCycle === 'lifetime';
+      const expiresAt = restaurant.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
+      const isExpired = !isLifetime && expiresAt && expiresAt.getTime() <= Date.now();
+      if (restaurant.isActive === false || isExpired) {
+        return res.status(403).json({ message: 'Restaurant QR service is inactive.' });
+      }
+
       const call = await CallWaiter.create({
         restaurantId: restaurant._id,
         tableNumber,

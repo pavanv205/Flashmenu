@@ -16,6 +16,7 @@ import {
   Clock,
   MapPin,
   Plus,
+  Lock,
 } from 'lucide-react';
 
 function SubCategoryLabel({ name, count }) {
@@ -125,10 +126,50 @@ export default function PublicMenuPage() {
 
   const clearCart = () => setCart([]);
 
+  const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
+  const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
+  const isExpired = !isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now();
+  const isAccountInactive = restaurant?.isActive === false || isExpired || restaurant?.isInactive;
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center">
         <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (isAccountInactive) {
+    return (
+      <div className="min-h-screen bg-[#0B0F17] text-white flex items-center justify-center p-4 font-sans selection:bg-amber-500 selection:text-black">
+        <div className="max-w-md w-full bg-[#101828] border-2 border-red-500/40 rounded-3xl p-8 text-center space-y-6 shadow-2xl shadow-red-950/40 animate-fade-in">
+          <div className="w-20 h-20 bg-red-500/10 border border-red-500/30 text-red-400 rounded-full flex items-center justify-center mx-auto shadow-inner relative">
+            <Lock className="w-10 h-10 text-red-400" />
+            <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center font-bold text-xs border-2 border-[#101828]">
+              ✕
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <span className="px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest border border-red-500/30 inline-block mb-1">
+              QR MENU TEMPORARILY INACTIVE
+            </span>
+            <h2 className="text-2xl font-black text-white tracking-tight">
+              {restaurant?.name || 'Restaurant Menu'}
+            </h2>
+            <p className="text-xs text-slate-300 leading-relaxed pt-1">
+              This restaurant's digital QR menu service is currently suspended because the owner's subscription plan has ended.
+            </p>
+            <p className="text-[11px] text-slate-500 italic pt-2">
+              If you are the restaurant manager, please log into your owner dashboard to reactivate services.
+            </p>
+          </div>
+
+          <div className="pt-4 border-t border-slate-800/80 text-[11px] text-amber-400 font-extrabold flex items-center justify-center space-x-1.5">
+            <Zap className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+            <span>Powered by FlashMenu Digital Systems</span>
+          </div>
+        </div>
       </div>
     );
   }

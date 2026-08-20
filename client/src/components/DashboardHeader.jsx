@@ -2,6 +2,7 @@ import React from 'react';
 import { Menu, ExternalLink, QrCode, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import FlashLogoBadge from './FlashLogoBadge';
 
 export default function DashboardHeader({ toggleMobileMenu, isExpiredPaywall }) {
   const { user, restaurant, logout } = useAuth();
@@ -18,9 +19,7 @@ export default function DashboardHeader({ toggleMobileMenu, isExpiredPaywall }) 
           </button>
         )}
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-xl bg-amber-500 text-black flex items-center justify-center font-black shadow-md shadow-amber-500/20">
-            ⚡
-          </div>
+          <FlashLogoBadge size="sm" />
           <div>
             <h2 className="text-sm font-extrabold text-white">
               {restaurant ? restaurant.name : 'FlashMenu'}

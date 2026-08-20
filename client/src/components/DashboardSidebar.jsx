@@ -16,7 +16,7 @@ import {
   ShieldCheck,
   History,
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import FlashLogoBadge from './FlashLogoBadge';
 
 export default function DashboardSidebar({ closeMobileMenu }) {
   const { user, restaurant, logout } = useAuth();
@@ -50,9 +50,7 @@ export default function DashboardSidebar({ closeMobileMenu }) {
       {/* Brand Header */}
       <div className="p-6 border-b border-white/[0.08] flex items-center justify-between">
         <Link to="/dashboard" className="flex items-center space-x-3 group">
-          <div className="w-9 h-9 rounded-xl bg-white text-black flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-            <Zap className="w-5 h-5 text-black fill-black" />
-          </div>
+          <FlashLogoBadge size="md" className="group-hover:scale-105 transition-transform" />
           <div>
             <span className="font-extrabold text-xl tracking-tight text-white font-sans">
               Flash<span className="gold-gradient-text">Menu</span>

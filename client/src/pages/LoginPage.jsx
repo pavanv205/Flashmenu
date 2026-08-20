@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Zap, Mail, Lock, ArrowRight, KeyRound, Loader2, CheckCircle2 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import FlashLogoBadge from '../components/FlashLogoBadge';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -74,10 +71,8 @@ export default function LoginPage() {
 
       <div className="w-full max-w-md bg-[#0E0E14] border border-white/[0.08] rounded-3xl p-8 shadow-2xl relative z-10 space-y-6">
         <div className="text-center space-y-2">
-          <Link to="/" className="inline-flex items-center space-x-2">
-            <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center shadow-lg">
-              <Zap className="w-6 h-6 text-black fill-black" />
-            </div>
+          <Link to="/" className="inline-flex items-center space-x-3">
+            <FlashLogoBadge size="lg" />
             <span className="font-extrabold text-2xl text-white">
               Flash<span className="gold-gradient-text">Menu</span>
             </span>

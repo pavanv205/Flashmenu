@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, ArrowRight, LayoutDashboard, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import FlashLogoBadge from './FlashLogoBadge';
 
 export default function Navbar() {
   const { user } = useAuth();
@@ -11,9 +12,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between relative">
         {/* Brand Logo */}
         <Link to="/" className="flex items-center space-x-3 group">
-          <div className="w-9 h-9 rounded-xl bg-white text-black flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-            <Zap className="w-5 h-5 text-black fill-black" />
-          </div>
+          <FlashLogoBadge size="md" className="group-hover:scale-105 transition-transform" />
           <div>
             <span className="font-extrabold text-xl tracking-tight text-white font-sans">
               Flash<span className="gold-gradient-text">Menu</span>

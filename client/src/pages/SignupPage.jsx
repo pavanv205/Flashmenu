@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import DemoPaymentModal from '../components/DemoPaymentModal';
 import { useAuth } from '../context/AuthContext';
+import FlashLogoBadge from '../components/FlashLogoBadge';
 
 export default function SignupPage() {
   const [step, setStep] = useState(1); // 1 = Registration Form, 2 = Select Subscription Plan
@@ -30,23 +31,20 @@ export default function SignupPage() {
     password: '',
     confirmPassword: '',
     city: '',
-    address: '',
+    cuisineType: 'Multi-Cuisine',
   });
 
-  const [selectedPlan, setSelectedPlan] = useState('premium'); // default recommendation
-  const [basicDuration, setBasicDuration] = useState('lifetime');
-  const [premiumDuration, setPremiumDuration] = useState('lifetime');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
 
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleOpenDemoPayment = (planKey, title, duration, amount) => {
+  const openDemoPayment = (planKey, planName, cycleName, price) => {
     setDemoPaymentModal({
       isOpen: true,
-      planDetails: { planKey, title, duration, amount },
+      planDetails: { planKey, planName, cycleName, price },
     });
   };
 
@@ -78,15 +76,13 @@ export default function SignupPage() {
       // Move to Step 2: Select Subscription Plan
       setStep(2);
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed. Please check your information.');
+      setError(err.response?.data?.message || 'Failed to create restaurant account');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFinishOnboarding = (planType) => {
-    setSelectedPlan(planType);
-    // Successfully selected plan, navigate to dashboard
+  const handleFinishOnboarding = (planKey) => {
     navigate('/dashboard');
   };
 
@@ -98,10 +94,8 @@ export default function SignupPage() {
       {step === 1 && (
         <div className="w-full max-w-xl bg-dark-card border border-dark-border rounded-3xl p-8 shadow-2xl relative z-10 space-y-6">
           <div className="text-center space-y-2">
-            <Link to="/" className="inline-flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center shadow-lg">
-                <Zap className="w-6 h-6 text-black fill-black" />
-              </div>
+            <Link to="/" className="inline-flex items-center space-x-3">
+              <FlashLogoBadge size="lg" />
               <span className="font-extrabold text-2xl text-white">
                 Flash<span className="gold-gradient-text">Menu</span>
               </span>

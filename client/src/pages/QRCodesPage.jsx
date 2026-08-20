@@ -136,11 +136,9 @@ export default function QRCodesPage() {
         {/* Right Column: Printable Card Preview */}
         <div className="lg:col-span-2 flex justify-center">
           <PrintableQRCard
-            restaurantName={restaurant.name}
-            logoUrl={restaurant.logo}
-            qrCodeUrl={targetUrl}
+            restaurant={restaurant}
             tableNumber={activeTable}
-            tagline={restaurant.tagline}
+            targetUrl={targetUrl}
           />
         </div>
       </div>

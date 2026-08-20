@@ -46,7 +46,7 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
 
       // 2. Direct restaurant plan update fallback
       try {
-        const isLifetime = String(planDetails.duration || '').toLowerCase().includes('lifetime');
+        const isLifetime = String(planDetails.duration || '').toLowerCase().includes('lifetime') || restaurant?.subscriptionCycle === 'lifetime';
         const res = await restaurantAPI.updateMyRestaurant({
           subscriptionPlan: planDetails.planKey,
           subscriptionCycle: isLifetime ? 'lifetime' : '1month',

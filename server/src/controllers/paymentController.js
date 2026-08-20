@@ -107,13 +107,19 @@ const verifyPayment = async (req, res) => {
     let updatedRestaurant = null;
 
     if (getIsConnected() && req.user?._id) {
+      const existingRest = await Restaurant.findOne({ ownerId: req.user._id });
+      const isAlreadyLifetime = existingRest?.subscriptionCycle === 'lifetime';
+      const finalIsLifetime = isLifetime || isAlreadyLifetime;
+      const finalCycle = finalIsLifetime ? 'lifetime' : '1month';
+      const finalExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 5 * 60 * 1000);
+
       updatedRestaurant = await Restaurant.findOneAndUpdate(
         { ownerId: req.user._id },
         {
           subscriptionPlan: updatedPlan,
-          subscriptionCycle: cycle,
+          subscriptionCycle: finalCycle,
           subscriptionStartDate: startDate,
-          subscriptionExpiresAt: expiresAt,
+          subscriptionExpiresAt: finalExpiresAt,
           isActive: true,
         },
         { new: true }
@@ -121,10 +127,12 @@ const verifyPayment = async (req, res) => {
     } else if (req.user?._id) {
       const r = mockStore.restaurants.find((res) => String(res.ownerId) === String(req.user._id));
       if (r) {
+        const isAlreadyLifetime = r.subscriptionCycle === 'lifetime';
+        const finalIsLifetime = isLifetime || isAlreadyLifetime;
         r.subscriptionPlan = updatedPlan;
-        r.subscriptionCycle = cycle;
+        r.subscriptionCycle = finalIsLifetime ? 'lifetime' : '1month';
         r.subscriptionStartDate = startDate;
-        r.subscriptionExpiresAt = expiresAt;
+        r.subscriptionExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 5 * 60 * 1000);
         r.isActive = true;
         updatedRestaurant = r;
       }

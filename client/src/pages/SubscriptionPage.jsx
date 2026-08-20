@@ -51,6 +51,10 @@ export default function SubscriptionPage() {
   };
 
   const openDemoPayment = (planKey, title, duration, amount) => {
+    const isSelectingLifetime = String(duration || '').toLowerCase().includes('lifetime');
+    if (isLifetime && !isSelectingLifetime) {
+      alert('You already have active Lifetime Access! Your permanent subscription will stay active as Lifetime.');
+    }
     setDemoPaymentModal({
       isOpen: true,
       planDetails: { planKey, title, duration, amount },

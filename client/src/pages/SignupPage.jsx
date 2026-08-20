@@ -34,6 +34,7 @@ export default function SignupPage() {
     cuisineType: 'Multi-Cuisine',
   });
 
+  const [selectedPlan, setSelectedPlan] = useState('premium');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
@@ -41,12 +42,14 @@ export default function SignupPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const openDemoPayment = (planKey, planName, cycleName, price) => {
+  const handleOpenDemoPayment = (planKey, planName, cycleName, price) => {
     setDemoPaymentModal({
       isOpen: true,
       planDetails: { planKey, planName, cycleName, price },
     });
   };
+
+  const openDemoPayment = handleOpenDemoPayment;
 
   const handleDemoPaymentSuccess = (planKey) => {
     handleFinishOnboarding(planKey);

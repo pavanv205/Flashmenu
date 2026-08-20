@@ -15,6 +15,7 @@ import {
   Star,
   Layers,
   Crown,
+  CreditCard,
 } from 'lucide-react';
 import DemoPaymentModal from '../components/DemoPaymentModal';
 import { useAuth } from '../context/AuthContext';
@@ -364,10 +365,12 @@ export default function SignupPage() {
               </div>
 
               <button
-                onClick={() => handleFinishOnboarding('basic')}
-                className="w-full py-3.5 rounded-2xl bg-dark-card hover:bg-dark-hover border border-dark-border text-white font-extrabold text-xs transition-all flex items-center justify-center space-x-2"
+                type="button"
+                onClick={() => handleOpenDemoPayment('basic', 'Basic Restaurant Plan', 'Full Access', 1)}
+                className="w-full py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-sm transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2"
               >
-                <span>Select Basic Restaurant</span>
+                <CreditCard className="w-4 h-4" />
+                <span>Pay & Activate Basic Plan (₹1)</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -458,10 +461,12 @@ export default function SignupPage() {
               </div>
 
               <button
-                onClick={() => handleFinishOnboarding('premium')}
-                className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2"
+                type="button"
+                onClick={() => handleOpenDemoPayment('premium', 'Premium Restaurant Plan', 'Full Pro Suite', 1)}
+                className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-sm transition-all shadow-xl shadow-amber-500/30 flex items-center justify-center space-x-2"
               >
-                <span>Select Premium Restaurant</span>
+                <CreditCard className="w-4 h-4" />
+                <span>Pay & Activate Premium Plan (₹1)</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

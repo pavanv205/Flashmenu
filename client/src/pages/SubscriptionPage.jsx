@@ -12,6 +12,9 @@ export default function SubscriptionPage() {
 
   const showAlert = (message, title = 'FlashMenu') => {
     setAlertInfo({ isOpen: true, title, message });
+    setTimeout(() => {
+      setAlertInfo({ isOpen: false, title: 'FlashMenu', message: '' });
+    }, 3000);
   };
 
   const currentPlan = restaurant?.subscriptionPlan || 'basic';
@@ -321,10 +324,10 @@ export default function SubscriptionPage() {
         onSuccess={handleSelectPlan}
       />
 
-      {/* Custom FlashMenu Alert Modal */}
+      {/* Custom FlashMenu Alert Modal (Auto-closes in 3s) */}
       {alertInfo.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-[#0E0E14] border-2 border-amber-500/50 p-6 sm:p-8 rounded-3xl max-w-md w-full text-center space-y-5 shadow-2xl animate-in fade-in zoom-in duration-200">
+          <div className="bg-[#0E0E14] border-2 border-amber-500/50 p-6 sm:p-8 rounded-3xl max-w-md w-full text-center space-y-4 shadow-2xl animate-in fade-in zoom-in duration-200">
             <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto shadow-md">
               <Zap className="w-7 h-7 text-amber-400 fill-amber-400" />
             </div>
@@ -335,13 +338,6 @@ export default function SubscriptionPage() {
                 {alertInfo.message}
               </p>
             </div>
-
-            <button
-              onClick={() => setAlertInfo({ isOpen: false, title: 'FlashMenu', message: '' })}
-              className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20"
-            >
-              Got It
-            </button>
           </div>
         </div>
       )}

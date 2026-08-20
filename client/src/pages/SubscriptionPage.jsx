@@ -52,10 +52,17 @@ export default function SubscriptionPage() {
 
   const openDemoPayment = (planKey, title, duration, amount) => {
     const isSelectingLifetime = String(duration || '').toLowerCase().includes('lifetime');
+
+    if (isLifetime && isSelectingLifetime && currentPlan === planKey) {
+      alert('You already have active Lifetime Access for this plan! Your lifetime subscription is active.');
+      return;
+    }
+
     if (isLifetime && !isSelectingLifetime) {
       alert('You already have active Lifetime Access! Your permanent subscription will stay active as Lifetime.');
       return;
     }
+
     setDemoPaymentModal({
       isOpen: true,
       planDetails: { planKey, title, duration, amount },
@@ -185,14 +192,25 @@ export default function SubscriptionPage() {
                   <p className="text-2xl font-black text-amber-400 mt-1">₹1</p>
                   <span className="text-[10px] text-amber-400/80">One-Time Pay</span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => openDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime Access', 1)}
-                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
-                >
-                  <CreditCard className="w-3.5 h-3.5" />
-                  <span>Pay Lifetime (₹1)</span>
-                </button>
+                {isLifetime && currentPlan === 'basic' ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full py-2.5 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-[11px] cursor-default border border-amber-500/30 flex items-center justify-center space-x-1"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Active Plan (Lifetime)</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime Access', 1)}
+                    className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span>Pay Lifetime (₹1)</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -271,14 +289,25 @@ export default function SubscriptionPage() {
                   <p className="text-2xl font-black text-amber-400 mt-1">₹1</p>
                   <span className="text-[10px] text-amber-400/90">One-Time Pay</span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 1)}
-                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
-                >
-                  <CreditCard className="w-3.5 h-3.5" />
-                  <span>Pay ₹1</span>
-                </button>
+                {isLifetime && currentPlan === 'premium' ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full py-2.5 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-[11px] cursor-default border border-amber-500/30 flex items-center justify-center space-x-1"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Active Plan (Lifetime)</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 1)}
+                    className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span>{isLifetime ? 'Upgrade to Premium Lifetime (₹1)' : 'Pay ₹1'}</span>
+                  </button>
+                )}
               </div>
             </div>
 

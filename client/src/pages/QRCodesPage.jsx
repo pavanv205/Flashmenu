@@ -14,7 +14,8 @@ export default function QRCodesPage() {
 
   const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
-  const baseUrl = window.location.origin;
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const baseUrl = isLocalhost ? window.location.origin : 'https://www.flashmenu.in';
   const activeTable = isBasicPlan ? '' : selectedTable;
 
   const targetUrl = activeTable

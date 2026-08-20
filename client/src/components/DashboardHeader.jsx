@@ -20,7 +20,7 @@ export default function DashboardHeader({ toggleMobileMenu }) {
             {restaurant ? restaurant.name : 'Dashboard'}
           </h2>
           <p className="text-[11px] text-gray-400">
-            {restaurant ? `flashmenu.com/menu/${restaurant.slug}` : 'Manage your digital menu'}
+            {restaurant ? `flashmenu.in/menu/${restaurant.slug}` : 'Manage your digital menu'}
           </p>
         </div>
       </div>

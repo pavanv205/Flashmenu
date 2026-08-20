@@ -18,7 +18,7 @@ export default function FlashLogoBadge({ size = 'md', className = '' }) {
 
   return (
     <div
-      className={`bg-amber-500 text-black flex items-center justify-center shadow-lg shadow-amber-500/20 overflow-hidden shrink-0 ${
+      className={`bg-white text-black flex items-center justify-center shadow-lg overflow-hidden shrink-0 ${
         sizeClasses[size] || sizeClasses.md
       } ${className}`}
     >

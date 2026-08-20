@@ -374,13 +374,16 @@ export default function PublicMenuPage() {
                             item.computedSubCategory || item.subCategory,
                             item.name
                           );
-                          const displayImage = item.image ? getOptimizedImageUrl(item.image, 400) : fallback;
+                          const displayImage = item.image ? getOptimizedImageUrl(item.image, 300) : fallback;
+                          const isTopItem = index < 6;
                           return (
                             <img
                               src={displayImage}
                               alt={item.name}
-                              loading="lazy"
-                              className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
+                              loading={isTopItem ? 'eager' : 'lazy'}
+                              decoding="async"
+                              {...(isTopItem ? { fetchPriority: 'high' } : {})}
+                              className={`w-full h-full object-cover transition-opacity duration-300 ${!item.isAvailable && 'grayscale opacity-50'}`}
                               onError={(e) => {
                                 e.target.src = fallback;
                               }}

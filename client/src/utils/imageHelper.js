@@ -43,10 +43,17 @@ export const getCategoryFallbackImage = (categoryName = '', subCategory = '', it
   return categoryDefaultImages.default;
 };
 
-export const getOptimizedImageUrl = (url, width = 600) => {
+export const getOptimizedImageUrl = (url, width = 300) => {
   if (!url || typeof url !== 'string') return url;
   if (url.includes('res.cloudinary.com')) {
-    return url.replace('/upload/', `/upload/w_${width},f_auto,q_auto/`);
+    if (url.includes('/upload/w_') || url.includes('/upload/f_auto')) return url;
+    return url.replace('/upload/', `/upload/w_${width},h_${width},c_fill,f_auto,q_auto/`);
+  }
+  if (url.includes('images.unsplash.com')) {
+    if (url.includes('w=')) {
+      return url.replace(/w=\d+/, `w=${width}`);
+    }
+    return `${url}&w=${width}&q=80&auto=format`;
   }
   return url;
 };

@@ -160,17 +160,17 @@ export default function SubscriptionPage() {
             <div className="grid grid-cols-2 rounded-2xl bg-[#08080A] border border-white/[0.08] divide-x divide-white/[0.08] overflow-hidden">
               <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
                 <div>
-                  <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">5 MINUTES</span>
+                  <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
                   <p className="text-2xl font-black text-white mt-1">₹1</p>
-                  <span className="text-[10px] text-gray-500">Valid for 5 Mins</span>
+                  <span className="text-[10px] text-gray-500 block">Valid for 6 Mo</span>
                 </div>
                 <button
                   type="button"
-                  onClick={() => openDemoPayment('basic', 'Basic Restaurant (5 Mins)', '5 Minutes Test', 1)}
+                  onClick={() => openDemoPayment('basic', 'Basic Restaurant (6 Months)', '6 Months', 1)}
                   className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>Pay 5 Mins (₹1)</span>
+                  <span>Pay ₹1</span>
                 </button>
               </div>
 
@@ -178,7 +178,7 @@ export default function SubscriptionPage() {
                 <div>
                   <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
                   <p className="text-2xl font-black text-amber-400 mt-1">₹1</p>
-                  <span className="text-[10px] text-amber-400/80">One-Time Pay</span>
+                  <span className="text-[10px] text-amber-400/80 block">One-Time Pay</span>
                 </div>
                 <button
                   type="button"
@@ -186,7 +186,7 @@ export default function SubscriptionPage() {
                   className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>Pay Lifetime (₹1)</span>
+                  <span>Pay ₹1</span>
                 </button>
               </div>
             </div>
@@ -264,17 +264,17 @@ export default function SubscriptionPage() {
             <div className="grid grid-cols-2 rounded-2xl bg-[#08080A] border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
               <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
                 <div>
-                  <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">5 MINUTES</span>
+                  <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
                   <p className="text-2xl font-black text-white mt-1">₹1</p>
-                  <span className="text-[10px] text-gray-400">Valid for 5 Mins</span>
+                  <span className="text-[10px] text-gray-400">Valid for 6 Mo</span>
                 </div>
                 <button
                   type="button"
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (5 Mins)', '5 Minutes Test', 1)}
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months', 1)}
                   className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>Pay 5 Mins (₹1)</span>
+                  <span>Pay ₹1</span>
                 </button>
               </div>
 

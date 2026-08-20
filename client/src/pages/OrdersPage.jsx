@@ -159,34 +159,26 @@ export default function OrdersPage() {
                 </div>
               </div>
 
-              {/* Action buttons */}
+              {/* Action buttons (2-Step Workflow) */}
               <div className="flex gap-2 pt-1">
-                {order.status === 'NEW' && (
-                  <button
-                    onClick={() => handleStatusChange(order._id, 'ACCEPTED')}
-                    className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-md"
-                  >
-                    Accept Order
-                  </button>
-                )}
-                {order.status === 'ACCEPTED' && (
+                {(order.status === 'NEW' || order.status === 'ACCEPTED') && (
                   <button
                     onClick={() => handleStatusChange(order._id, 'PREPARING')}
-                    className="flex-1 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold text-xs transition-all shadow-md"
+                    className="flex-1 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-md"
                   >
-                    Mark Preparing
+                    Accept Order
                   </button>
                 )}
                 {order.status === 'PREPARING' && (
                   <button
                     onClick={() => handleStatusChange(order._id, 'SERVED')}
-                    className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all shadow-md"
+                    className="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all shadow-md"
                   >
                     Mark Served
                   </button>
                 )}
                 {(order.status === 'SERVED' || order.status === 'COMPLETED') && (
-                  <div className="flex-1 py-2 text-center text-xs font-bold text-emerald-400/80 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                  <div className="flex-1 py-2.5 text-center text-xs font-bold text-emerald-400/80 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
                     ✓ Order Served
                   </div>
                 )}

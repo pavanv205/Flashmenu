@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   UtensilsCrossed,
@@ -47,15 +47,19 @@ export default function DashboardSidebar({ closeMobileMenu }) {
     <aside className="w-64 bg-[#08080A] border-r border-white/[0.08] flex flex-col h-full">
       {/* Brand Header */}
       <div className="p-6 border-b border-white/[0.08] flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
+        <Link to="/dashboard" className="flex items-center space-x-3 group">
+          <div className="w-9 h-9 rounded-xl bg-white text-black flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
             <Zap className="w-5 h-5 text-black fill-black" />
           </div>
           <div>
-            <h1 className="font-extrabold text-xl text-white tracking-tight">FlashMenu</h1>
-            <p className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Owner Portal</p>
+            <span className="font-extrabold text-xl tracking-tight text-white font-sans">
+              Flash<span className="gold-gradient-text">Menu</span>
+            </span>
+            <span className="block text-[10px] text-gray-400 tracking-widest font-bold uppercase -mt-1">
+              Owner Portal
+            </span>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Restaurant quick card */}

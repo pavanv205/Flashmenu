@@ -1,24 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, ExternalLink, QrCode, User, Sun, Moon } from 'lucide-react';
+import React from 'react';
+import { Menu, ExternalLink, QrCode, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
 export default function DashboardHeader({ toggleMobileMenu, isExpiredPaywall }) {
   const { user, restaurant, logout } = useAuth();
-  const [theme, setTheme] = useState(() => localStorage.getItem('flashmenu_theme') || 'dark');
-
-  useEffect(() => {
-    if (theme === 'light') {
-      document.documentElement.classList.add('light-mode');
-    } else {
-      document.documentElement.classList.remove('light-mode');
-    }
-    localStorage.setItem('flashmenu_theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
 
   return (
     <header className="h-16 bg-[#08080A] border-b border-white/[0.08] px-4 sm:px-8 flex items-center justify-between">
@@ -47,20 +33,6 @@ export default function DashboardHeader({ toggleMobileMenu, isExpiredPaywall }) 
       </div>
 
       <div className="flex items-center space-x-3">
-        {/* Light / Dark Mode Toggle Button */}
-        <button
-          type="button"
-          onClick={toggleTheme}
-          className="p-2 rounded-xl bg-[#0E0E14] border border-white/[0.08] text-amber-400 hover:text-amber-300 transition-all flex items-center justify-center shadow-sm"
-          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        >
-          {theme === 'dark' ? (
-            <Sun className="w-4 h-4 text-amber-400" />
-          ) : (
-            <Moon className="w-4 h-4 text-indigo-500" />
-          )}
-        </button>
-
         {restaurant && !isExpiredPaywall && (
           <a
             href={`/menu/${restaurant.slug}?preview=true`}

@@ -371,23 +371,18 @@ export default function PublicMenuPage() {
                       {/* Food Image */}
                       <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-[#0A0F1D] flex-shrink-0 border border-slate-800/80 shadow-inner">
                         {(() => {
-                          const fallback = getCategoryFallbackImage(
+                          const itemImage = item.image || getCategoryFallbackImage(
                             item.categoryId?.name,
                             item.computedSubCategory || item.subCategory,
                             item.name
                           );
-                          const displayImage = item.image ? getOptimizedImageUrl(item.image, 300) : fallback;
-                          const isTopItem = index < 6;
                           return (
                             <img
-                              src={displayImage}
+                              src={itemImage}
                               alt={item.name}
-                              loading={isTopItem ? 'eager' : 'lazy'}
+                              loading="lazy"
                               decoding="async"
-                              className={`w-full h-full object-cover transition-opacity duration-300 ${!item.isAvailable && 'grayscale opacity-50'}`}
-                              onError={(e) => {
-                                e.target.src = fallback;
-                              }}
+                              className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
                             />
                           );
                         })()}

@@ -35,18 +35,18 @@ export default function SubscriptionPage() {
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   };
 
-  const handleSelectPlan = async (planKey) => {
-    setLoadingPlan(planKey);
+  const handleSelectPlan = async (updatedRestPayload) => {
     try {
-      const res = await restaurantAPI.updateMyRestaurant({ subscriptionPlan: planKey });
-      if (res.data) {
-        updateRestaurantState(res.data);
+      if (updatedRestPayload && typeof updatedRestPayload === 'object' && updatedRestPayload._id) {
+        updateRestaurantState(updatedRestPayload);
+      } else {
+        const res = await restaurantAPI.getMyRestaurant();
+        if (res.data) {
+          updateRestaurantState(res.data);
+        }
       }
     } catch (error) {
-      console.error('Failed to change subscription plan:', error);
-      alert('Failed to update plan. Please try again.');
-    } finally {
-      setLoadingPlan('');
+      console.error('Failed to sync restaurant state after payment:', error);
     }
   };
 

@@ -31,33 +31,46 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
     setError('');
 
     try {
-      // 1. Call verification API (or fallback)
+      let updatedRest = null;
+
+      // 1. Call verification API
       try {
-        await paymentAPI.verifyPayment({
+        const verifyRes = await paymentAPI.verifyPayment({
           razorpay_order_id: `order_demo_${Date.now()}`,
           razorpay_payment_id: `pay_demo_${Date.now()}`,
           razorpay_signature: `sig_demo_${Date.now()}`,
           planKey: planDetails.planKey,
           duration: planDetails.duration,
         });
+        if (verifyRes.data?.restaurant) {
+          updatedRest = verifyRes.data.restaurant;
+        } else if (verifyRes.data?._id) {
+          updatedRest = verifyRes.data;
+        }
       } catch (e) {
         console.warn('Backend payment verify fallback:', e);
       }
 
-      // 2. Direct restaurant plan update fallback
-      try {
-        const isLifetime = String(planDetails.duration || '').toLowerCase().includes('lifetime') || restaurant?.subscriptionCycle === 'lifetime';
-        const res = await restaurantAPI.updateMyRestaurant({
-          subscriptionPlan: planDetails.planKey,
-          subscriptionCycle: isLifetime ? 'lifetime' : '1month',
-          subscriptionStartDate: new Date(),
-          subscriptionExpiresAt: isLifetime ? null : new Date(Date.now() + 5 * 60 * 1000),
-        });
-        if (res.data && updateRestaurantState) {
-          updateRestaurantState(res.data);
+      // 2. Direct restaurant plan update fallback if verify failed
+      if (!updatedRest) {
+        try {
+          const isLifetime = String(planDetails.duration || '').toLowerCase().includes('lifetime') || restaurant?.subscriptionCycle === 'lifetime';
+          const res = await restaurantAPI.updateMyRestaurant({
+            subscriptionPlan: planDetails.planKey,
+            subscriptionCycle: isLifetime ? 'lifetime' : '1month',
+            subscriptionStartDate: new Date(),
+            subscriptionExpiresAt: isLifetime ? null : new Date(Date.now() + 5 * 60 * 1000),
+          });
+          if (res.data) {
+            updatedRest = res.data;
+          }
+        } catch (err) {
+          console.warn('Direct plan update fallback:', err);
         }
-      } catch (err) {
-        console.warn('Direct plan update fallback:', err);
+      }
+
+      if (updatedRest && updateRestaurantState) {
+        updateRestaurantState(updatedRest);
       }
 
       setProcessing(false);
@@ -66,10 +79,10 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
       setTimeout(async () => {
         setCompleted(false);
         if (onSuccess) {
-          await onSuccess(planDetails.planKey);
+          await onSuccess(updatedRest || planDetails.planKey);
         }
         onClose();
-      }, 1500);
+      }, 1200);
     } catch (err) {
       setProcessing(false);
       setError('Payment simulation failed. Please try again.');

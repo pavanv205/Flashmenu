@@ -110,7 +110,7 @@ export default function QRCodesPage() {
                   <span>Master QR Active</span>
                 </div>
                 <p className="text-gray-300 text-[11px] leading-relaxed">
-                  Basic tier includes 1 Master QR code for all tables. Upgrade to Premium to generate unique QR codes for Table 1 to 50 with live table ordering!
+                  Basic tier includes 1 Master QR code for all tables. Upgrade to Premium to generate unique QR codes for Table 1 to 25 with live table ordering!
                 </p>
                 <Link
                   to="/dashboard/subscription"
@@ -123,7 +123,7 @@ export default function QRCodesPage() {
             ) : (
               <div className="space-y-3">
                 <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider">
-                  Select Table Number (1 - 50)
+                  Select Table Number (1 - {restaurant?.tableCount || 25})
                 </label>
                 <select
                   value={selectedTable}
@@ -131,7 +131,7 @@ export default function QRCodesPage() {
                   className="w-full px-4 py-3 rounded-xl bg-[#08080A] border border-white/[0.08] text-white text-xs font-bold focus:outline-none focus:border-amber-500"
                 >
                   <option value="">Master QR Code (All Tables)</option>
-                  {Array.from({ length: 50 }, (_, i) => i + 1).map((num) => (
+                  {Array.from({ length: restaurant?.tableCount || 25 }, (_, i) => i + 1).map((num) => (
                     <option key={num} value={num}>
                       Table #{num}
                     </option>

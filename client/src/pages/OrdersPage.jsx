@@ -45,6 +45,60 @@ export default function OrdersPage() {
     );
   }
 
+  if (isBasicPlan) {
+    return (
+      <div className="max-w-4xl mx-auto py-12 px-4 font-sans">
+        <div className="rounded-3xl p-8 sm:p-12 text-center bg-[#0E0E14] border-2 border-amber-500/40 relative overflow-hidden shadow-2xl space-y-6">
+          <div className="w-16 h-16 rounded-3xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center mx-auto text-amber-400">
+            <Crown className="w-8 h-8 text-amber-400 fill-amber-400/20" />
+          </div>
+
+          <div className="space-y-2 max-w-md mx-auto">
+            <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-black uppercase tracking-widest border border-amber-500/30 inline-block mb-1">
+              PREMIUM PRO FEATURE
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+              Upgrade to Premium Plan to Access
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+              Live Table Ordering and Kitchen Orders Display are exclusive to the Premium Restaurant Plan.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg mx-auto text-left py-2">
+            <div className="p-3.5 rounded-2xl bg-[#08080A] border border-white/[0.08] flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Real-Time Table Ordering & KDS</span>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-[#08080A] border border-white/[0.08] flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Instant Call Waiter & Bill Alerts</span>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-[#08080A] border border-white/[0.08] flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Table-Specific QR Codes (1 to 25)</span>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-[#08080A] border border-white/[0.08] flex items-center space-x-3 text-xs text-gray-200">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Private Customer Ratings System</span>
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <Link
+              to="/dashboard/subscription"
+              className="inline-flex items-center space-x-2 px-8 py-4 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-black text-xs sm:text-sm transition-all shadow-lg shadow-amber-500/20"
+            >
+              <Sparkles className="w-4 h-4 text-black fill-black" />
+              <span>Upgrade to Premium Plan (₹1)</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       <div>

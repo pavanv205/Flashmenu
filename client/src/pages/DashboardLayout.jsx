@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { Outlet, Navigate, Link } from 'react-router-dom';
-import { AlertTriangle, ArrowRight } from 'lucide-react';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import DashboardSidebar from '../components/DashboardSidebar';
 import DashboardHeader from '../components/DashboardHeader';
-import SubscriptionPage from './SubscriptionPage';
 
 export default function DashboardLayout() {
   const { user, restaurant, loading } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -26,27 +25,22 @@ export default function DashboardLayout() {
   const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
   const isExpired = !isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now();
 
-  // If subscription is EXPIRED: HIDE sidebar completely and lock screen to full-page Paywall!
-  if (isExpired) {
-    return (
-      <div className="min-h-screen bg-[#08080A] flex flex-col font-sans">
-        <DashboardHeader isExpiredPaywall={true} />
-        <main className="flex-1 overflow-y-auto p-4 sm:p-8">
-          <SubscriptionPage isExpiredPaywall={true} />
-        </main>
-      </div>
-    );
+  // If subscription is EXPIRED, redirect any non-subscription dashboard route to /dashboard/subscription!
+  if (isExpired && location.pathname !== '/dashboard/subscription') {
+    return <Navigate to="/dashboard/subscription" replace />;
   }
 
   return (
     <div className="min-h-screen bg-[#08080A] flex overflow-hidden font-sans">
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block">
-        <DashboardSidebar />
-      </div>
+      {/* Desktop Sidebar (Only shown if NOT expired) */}
+      {!isExpired && (
+        <div className="hidden lg:block">
+          <DashboardSidebar />
+        </div>
+      )}
 
       {/* Mobile Drawer Overlay */}
-      {mobileMenuOpen && (
+      {!isExpired && mobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex">
           <div
             className="fixed inset-0 bg-black/80 backdrop-blur-sm"
@@ -60,7 +54,10 @@ export default function DashboardLayout() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        <DashboardHeader toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} />
+        <DashboardHeader
+          toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
+          isExpiredPaywall={isExpired}
+        />
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-8">
           <Outlet />

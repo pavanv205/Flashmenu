@@ -14,12 +14,16 @@ export default function SubscriptionPage() {
   const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
   const startDateDate = restaurant?.subscriptionStartDate ? new Date(restaurant.subscriptionStartDate) : null;
   
-  const [timeLeftSec, setTimeLeftSec] = useState(0);
+  const [timeLeftSec, setTimeLeftSec] = useState(() => {
+    if (isLifetime || !expiresAtDate) return 99999;
+    const diffMs = expiresAtDate.getTime() - Date.now();
+    return Math.max(0, Math.floor(diffMs / 1000));
+  });
 
   useEffect(() => {
     if (isLifetime || !expiresAtDate) return;
     const updateTimer = () => {
-      const diffMs = new Date(restaurant.subscriptionExpiresAt).getTime() - Date.now();
+      const diffMs = expiresAtDate.getTime() - Date.now();
       setTimeLeftSec(Math.max(0, Math.floor(diffMs / 1000)));
     };
     updateTimer();
@@ -27,7 +31,7 @@ export default function SubscriptionPage() {
     return () => clearInterval(interval);
   }, [restaurant, isLifetime, expiresAtDate]);
 
-  const isExpired = !isLifetime && expiresAtDate && (expiresAtDate.getTime() <= Date.now() || timeLeftSec <= 0);
+  const isExpired = !isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now();
 
   const formatTimer = (totalSec) => {
     const m = Math.floor(totalSec / 60);

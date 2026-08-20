@@ -139,10 +139,10 @@ export default function OrderHistoryPage() {
         <div>
           <div className="flex items-center space-x-2">
             <History className="w-6 h-6 text-amber-400" />
-            <h1 className="text-2xl font-extrabold text-white">Order History (7 Days)</h1>
+            <h1 className="text-2xl font-extrabold text-white">Order History (24 Hours)</h1>
           </div>
           <p className="text-xs text-gray-400 mt-1">
-            Complete records of customer orders placed over the past 7 days (Orders auto-delete after 7 days).
+            Complete records of customer orders placed over the past 24 hours (Orders permanently auto-delete after 24 hours).
           </p>
         </div>
 
@@ -155,20 +155,20 @@ export default function OrderHistoryPage() {
         </button>
       </div>
 
-      {/* 7-Day Stats Summary Cards */}
+      {/* 24-Hour Stats Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">
-          <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">REVENUE ({selectedDay === 'ALL' ? '7 DAYS' : 'SELECTED DAY'})</span>
+          <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">24-HOUR TOTAL REVENUE</span>
           <p className="text-xl sm:text-2xl font-black text-amber-400">
             {restaurant?.currency || '₹'}{totalRevenue.toLocaleString('en-IN')}
           </p>
-          <span className="text-[10px] text-gray-500 block">Total sales in section</span>
+          <span className="text-[10px] text-gray-500 block">Total sales in 24 hours</span>
         </div>
 
         <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">
           <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block">TOTAL ORDERS</span>
           <p className="text-xl sm:text-2xl font-black text-white">{displayOrdersForStats.length}</p>
-          <span className="text-[10px] text-gray-500 block">Filtered day count</span>
+          <span className="text-[10px] text-gray-500 block">Past 24 hours history</span>
         </div>
 
         <div className="p-4 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-1">

@@ -9,6 +9,7 @@ export default function OrderDrawer({ isOpen, onClose, cart, updateQuantity, cle
   const [successOrder, setSuccessOrder] = useState(null);
 
   const activeTable = tableNumber || '1';
+  const isPremiumPlan = restaurant?.subscriptionPlan === 'premium';
 
   if (!isOpen) return null;
 
@@ -147,13 +148,20 @@ export default function OrderDrawer({ isOpen, onClose, cart, updateQuantity, cle
                   <span className="text-amber-400">{restaurant.currency || '₹'}{totalAmount}</span>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50"
-                >
-                  {loading ? 'Sending Order...' : 'Send Order to Kitchen'}
-                </button>
+                {isPremiumPlan ? (
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                  >
+                    {loading ? 'Sending Order...' : 'Send Order to Kitchen'}
+                  </button>
+                ) : (
+                  <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-center space-y-1">
+                    <p className="text-xs font-extrabold text-amber-400">Digital Menu View Only</p>
+                    <p className="text-[11px] text-gray-400">Direct kitchen ordering is available on the Premium Plan.</p>
+                  </div>
+                )}
               </form>
             )}
           </>

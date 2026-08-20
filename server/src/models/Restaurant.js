@@ -27,7 +27,7 @@ const restaurantSchema = new mongoose.Schema(
     subscriptionStartDate: { type: Date, default: Date.now },
     subscriptionExpiresAt: {
       type: Date,
-      default: () => new Date(Date.now() + 5 * 60 * 1000), // 5 minutes for testing expiry
+      default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days subscription
     },
     socialLinks: {
       instagram: { type: String, default: '' },

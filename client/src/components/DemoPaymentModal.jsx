@@ -51,7 +51,7 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
           subscriptionPlan: planDetails.planKey,
           subscriptionCycle: isLifetime ? 'lifetime' : '1month',
           subscriptionStartDate: new Date(),
-          subscriptionExpiresAt: isLifetime ? null : new Date(Date.now() + 5 * 60 * 1000),
+          subscriptionExpiresAt: isLifetime ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         });
         if (res.data && updateRestaurantState) {
           updateRestaurantState(res.data);

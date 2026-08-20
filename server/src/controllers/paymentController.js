@@ -100,7 +100,7 @@ const verifyPayment = async (req, res) => {
     const isLifetime = String(duration || '').toLowerCase().includes('lifetime');
     const cycle = isLifetime ? 'lifetime' : '1month';
     const startDate = new Date();
-    const expiresAt = isLifetime ? null : new Date(Date.now() + 5 * 60 * 1000);
+    const expiresAt = isLifetime ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
     await connectDB();
 
@@ -111,7 +111,7 @@ const verifyPayment = async (req, res) => {
       const isAlreadyLifetime = existingRest?.subscriptionCycle === 'lifetime';
       const finalIsLifetime = isLifetime || isAlreadyLifetime;
       const finalCycle = finalIsLifetime ? 'lifetime' : '1month';
-      const finalExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 5 * 60 * 1000);
+      const finalExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
       updatedRestaurant = await Restaurant.findOneAndUpdate(
         { ownerId: req.user._id },
@@ -132,7 +132,7 @@ const verifyPayment = async (req, res) => {
         r.subscriptionPlan = updatedPlan;
         r.subscriptionCycle = finalIsLifetime ? 'lifetime' : '1month';
         r.subscriptionStartDate = startDate;
-        r.subscriptionExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 5 * 60 * 1000);
+        r.subscriptionExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         r.isActive = true;
         updatedRestaurant = r;
       }

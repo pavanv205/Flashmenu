@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { ShoppingBag, X, Plus, Minus, Trash2, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, X, Plus, Minus, Trash2, CheckCircle2, Lock } from 'lucide-react';
 import { publicAPI } from '../services/api';
 
 export default function OrderDrawer({ isOpen, onClose, cart, updateQuantity, clearCart, restaurant, tableNumber }) {
-  const [inputTable, setInputTable] = useState(tableNumber || '');
+  const [inputTable, setInputTable] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [successOrder, setSuccessOrder] = useState(null);
+
+  const isTableLocked = Boolean(tableNumber);
+  const activeTable = tableNumber || inputTable;
 
   if (!isOpen) return null;
 
@@ -19,8 +22,7 @@ export default function OrderDrawer({ isOpen, onClose, cart, updateQuantity, cle
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
     if (cart.length === 0) return;
-    const finalTable = inputTable || tableNumber;
-    if (!finalTable) {
+    if (!activeTable) {
       alert('Please specify your table number.');
       return;
     }
@@ -34,7 +36,7 @@ export default function OrderDrawer({ isOpen, onClose, cart, updateQuantity, cle
 
       const res = await publicAPI.createOrder({
         restaurantSlug: restaurant.slug,
-        tableNumber: finalTable,
+        tableNumber: activeTable,
         items: itemsPayload,
         customerName,
         customerPhone,
@@ -147,16 +149,30 @@ export default function OrderDrawer({ isOpen, onClose, cart, updateQuantity, cle
             {cart.length > 0 && (
               <form onSubmit={handlePlaceOrder} className="p-4 sm:p-6 border-t border-dark-border space-y-4 bg-dark-card">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                    Table Number *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                      Table Number *
+                    </label>
+                    {isTableLocked && (
+                      <span className="text-[10px] text-amber-400 font-extrabold flex items-center space-x-1">
+                        <Lock className="w-3 h-3 inline mr-0.5" />
+                        <span>Auto-Detected (Locked)</span>
+                      </span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     required
+                    readOnly={isTableLocked}
+                    disabled={isTableLocked}
                     placeholder="e.g. 12"
-                    value={inputTable || tableNumber || ''}
-                    onChange={(e) => setInputTable(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500 font-semibold"
+                    value={activeTable || ''}
+                    onChange={(e) => !isTableLocked && setInputTable(e.target.value)}
+                    className={`w-full px-4 py-2.5 rounded-xl border text-sm font-semibold transition-all ${
+                      isTableLocked
+                        ? 'bg-[#14141E] border-amber-500/30 text-amber-400 cursor-not-allowed select-none'
+                        : 'bg-dark-base border-dark-border text-white focus:outline-none focus:border-amber-500'
+                    }`}
                   />
                 </div>
 

@@ -14,6 +14,7 @@ import {
   Zap,
   ExternalLink,
   ShieldCheck,
+  History,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -39,6 +40,7 @@ export default function DashboardSidebar({ closeMobileMenu }) {
           { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3 },
           { name: 'Feedback & Calls', path: '/dashboard/feedback', icon: MessageSquare, badge: isBasicPlan ? 'PRO' : null },
           { name: 'Orders', path: '/dashboard/orders', icon: ShoppingBag, badge: isBasicPlan ? 'PRO' : null },
+          { name: 'Order History', path: '/dashboard/order-history', icon: History, badge: isBasicPlan ? 'PRO' : null },
           { name: 'Profile & Branding', path: '/dashboard/profile', icon: Store },
           { name: 'Subscription', path: '/dashboard/subscription', icon: CreditCard },
         ];

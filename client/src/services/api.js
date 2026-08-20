@@ -57,6 +57,7 @@ export const analyticsAPI = {
 
 export const orderAPI = {
   getOrders: () => API.get('/orders'),
+  getOrderHistory: () => API.get('/orders/history'),
   updateStatus: (id, status) => API.patch(`/orders/${id}/status`, { status }),
 };
 

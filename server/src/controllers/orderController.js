@@ -5,6 +5,37 @@ const { getIsConnected } = require('../config/db');
 
 const getRestaurantOrders = async (req, res) => {
   try {
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    if (getIsConnected()) {
+      const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
+      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+
+      // Clean up order history older than 7 days
+      await Order.deleteMany({ restaurantId: restaurant._id, createdAt: { $lt: sevenDaysAgo } });
+
+      const orders = await Order.find({ restaurantId: restaurant._id, createdAt: { $gte: twentyFourHoursAgo } }).sort({ createdAt: -1 });
+      return res.json(orders);
+    } else {
+      const restaurant = mockStore.restaurants.find((r) => r.ownerId === req.user._id);
+      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+
+      // Clean up mockStore order history older than 7 days
+      mockStore.orders = mockStore.orders.filter((o) => new Date(o.createdAt) >= sevenDaysAgo);
+
+      const orders = mockStore.orders.filter(
+        (o) => o.restaurantId === restaurant._id && new Date(o.createdAt) >= twentyFourHoursAgo
+      );
+      return res.json(orders);
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getOrderHistory = async (req, res) => {
+  try {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
     if (getIsConnected()) {
@@ -20,7 +51,6 @@ const getRestaurantOrders = async (req, res) => {
       const restaurant = mockStore.restaurants.find((r) => r.ownerId === req.user._id);
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
-      // Clean up mockStore order history older than 7 days
       mockStore.orders = mockStore.orders.filter((o) => new Date(o.createdAt) >= sevenDaysAgo);
 
       const orders = mockStore.orders.filter(
@@ -54,4 +84,4 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-module.exports = { getRestaurantOrders, updateOrderStatus };
+module.exports = { getRestaurantOrders, getOrderHistory, updateOrderStatus };

@@ -18,6 +18,7 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import ProfilePage from './pages/ProfilePage';
 import FeedbackPage from './pages/FeedbackPage';
 import OrdersPage from './pages/OrdersPage';
+import OrderHistoryPage from './pages/OrderHistoryPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="profile" element={<ProfilePage />} />
           <Route path="feedback" element={<FeedbackPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="order-history" element={<OrderHistoryPage />} />
           <Route path="subscription" element={<SubscriptionPage />} />
         </Route>
       </Routes>

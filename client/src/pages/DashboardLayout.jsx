@@ -4,6 +4,7 @@ import { AlertTriangle, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import DashboardSidebar from '../components/DashboardSidebar';
 import DashboardHeader from '../components/DashboardHeader';
+import SubscriptionPage from './SubscriptionPage';
 
 export default function DashboardLayout() {
   const { user, restaurant, loading } = useAuth();
@@ -24,6 +25,18 @@ export default function DashboardLayout() {
   const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
   const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
   const isExpired = !isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now();
+
+  // If subscription is EXPIRED: HIDE sidebar completely and lock screen to full-page Paywall!
+  if (isExpired) {
+    return (
+      <div className="min-h-screen bg-[#08080A] flex flex-col font-sans">
+        <DashboardHeader isExpiredPaywall={true} />
+        <main className="flex-1 overflow-y-auto p-4 sm:p-8">
+          <SubscriptionPage isExpiredPaywall={true} />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#08080A] flex overflow-hidden font-sans">
@@ -48,24 +61,6 @@ export default function DashboardLayout() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         <DashboardHeader toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} />
-
-        {/* Subscription Expired Alert Banner (Top of Dashboard Pages) */}
-        {isExpired && (
-          <div className="bg-red-950/90 border-b border-red-500/50 px-4 py-3 text-center flex items-center justify-between text-xs text-red-200 shadow-xl z-20 shrink-0">
-            <div className="flex items-center space-x-2.5 mx-auto">
-              <AlertTriangle className="w-4 h-4 text-red-400 animate-bounce shrink-0" />
-              <span>
-                <strong>Your Subscription Plan Has Expired!</strong> Customer QR menu ordering is currently locked. Please renew or upgrade your plan to restore full services.
-              </span>
-            </div>
-            <Link
-              to="/dashboard/subscription"
-              className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-extrabold text-xs transition-all shrink-0 ml-3 flex items-center space-x-1 shadow-md shadow-red-500/20"
-            >
-              <span>Renew / Upgrade Plan →</span>
-            </Link>
-          </div>
-        )}
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-8">
           <Outlet />

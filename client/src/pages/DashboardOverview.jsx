@@ -70,7 +70,7 @@ export default function DashboardOverview() {
   }
 
   const { stats, viewsGraph, topItems, recentFeedback, waiterCalls } = data || {
-    stats: { totalViews: 0, todayViews: 0, uniqueVisitors: 0, totalCategories: 0, totalItems: 0, availableItems: 0, soldOutItems: 0 },
+    stats: {},
     viewsGraph: [],
     topItems: [],
     recentFeedback: [],

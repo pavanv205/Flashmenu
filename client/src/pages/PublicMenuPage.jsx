@@ -355,7 +355,7 @@ export default function PublicMenuPage() {
                   </div>
                 )}
 
-                {items.map((item) => {
+                {items.map((item, index) => {
                   const inCart = cart.find((i) => i._id === item._id);
                   return (
                     <div
@@ -382,7 +382,6 @@ export default function PublicMenuPage() {
                               alt={item.name}
                               loading={isTopItem ? 'eager' : 'lazy'}
                               decoding="async"
-                              {...(isTopItem ? { fetchPriority: 'high' } : {})}
                               className={`w-full h-full object-cover transition-opacity duration-300 ${!item.isAvailable && 'grayscale opacity-50'}`}
                               onError={(e) => {
                                 e.target.src = fallback;

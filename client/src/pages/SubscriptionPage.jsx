@@ -50,16 +50,26 @@ export default function SubscriptionPage() {
     }
   };
 
+  const getPlanScore = (planKey, isLife, isExp) => {
+    if (isExp) return 0;
+    const pScore = planKey === 'premium' ? 20 : 10;
+    const cScore = isLife ? 2 : 1;
+    return pScore + cScore;
+  };
+
+  const currentScore = getPlanScore(currentPlan, isLifetime, isExpired);
+
   const openDemoPayment = (planKey, title, duration, amount) => {
     const isSelectingLifetime = String(duration || '').toLowerCase().includes('lifetime');
+    const targetScore = getPlanScore(planKey, isSelectingLifetime, false);
 
-    if (currentPlan === planKey && !isExpired && ((!isLifetime && !isSelectingLifetime) || (isLifetime && isSelectingLifetime))) {
-      alert(`Your ${planKey.toUpperCase()} Restaurant ${isSelectingLifetime ? 'Lifetime' : '5-Minute Test'} plan is already active!`);
+    if (targetScore < currentScore) {
+      alert('Downgrading subscription is not allowed. You can only upgrade your subscription plan.');
       return;
     }
 
-    if (isLifetime && currentPlan === 'premium') {
-      alert('You already have active Premium Lifetime Access!');
+    if (targetScore === currentScore) {
+      alert(`Your ${planKey.toUpperCase()} Restaurant ${isSelectingLifetime ? 'Lifetime' : '5-Minute Test'} plan is already active!`);
       return;
     }
 
@@ -176,7 +186,15 @@ export default function SubscriptionPage() {
                   <p className="text-2xl font-black text-white mt-1">₹1</p>
                   <span className="text-[10px] text-gray-500">Valid for 5 Mins</span>
                 </div>
-                {currentPlan === 'basic' && !isLifetime && !isExpired ? (
+                {11 < currentScore ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full py-2.5 rounded-xl bg-gray-800/50 text-gray-500 font-extrabold text-[11px] cursor-not-allowed border border-gray-700/50"
+                  >
+                    <span>Downgrade Not Allowed</span>
+                  </button>
+                ) : 11 === currentScore ? (
                   <button
                     type="button"
                     disabled
@@ -203,7 +221,15 @@ export default function SubscriptionPage() {
                   <p className="text-2xl font-black text-amber-400 mt-1">₹1</p>
                   <span className="text-[10px] text-amber-400/80">One-Time Pay</span>
                 </div>
-                {isLifetime && currentPlan === 'basic' ? (
+                {12 < currentScore ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full py-2.5 rounded-xl bg-gray-800/50 text-gray-500 font-extrabold text-[11px] cursor-not-allowed border border-gray-700/50"
+                  >
+                    <span>Downgrade Not Allowed</span>
+                  </button>
+                ) : 12 === currentScore ? (
                   <button
                     type="button"
                     disabled
@@ -284,7 +310,15 @@ export default function SubscriptionPage() {
                   <p className="text-2xl font-black text-white mt-1">₹1</p>
                   <span className="text-[10px] text-gray-400">Valid for 5 Mins</span>
                 </div>
-                {currentPlan === 'premium' && !isLifetime && !isExpired ? (
+                {21 < currentScore ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full py-2.5 rounded-xl bg-gray-800/50 text-gray-500 font-extrabold text-[11px] cursor-not-allowed border border-gray-700/50"
+                  >
+                    <span>Downgrade Not Allowed</span>
+                  </button>
+                ) : 21 === currentScore ? (
                   <button
                     type="button"
                     disabled
@@ -311,7 +345,7 @@ export default function SubscriptionPage() {
                   <p className="text-2xl font-black text-amber-400 mt-1">₹1</p>
                   <span className="text-[10px] text-amber-400/90">One-Time Pay</span>
                 </div>
-                {isLifetime && currentPlan === 'premium' ? (
+                {22 === currentScore ? (
                   <button
                     type="button"
                     disabled
@@ -327,7 +361,7 @@ export default function SubscriptionPage() {
                     className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
                   >
                     <CreditCard className="w-3.5 h-3.5" />
-                    <span>{isLifetime ? 'Upgrade to Premium Lifetime (₹1)' : 'Pay ₹1'}</span>
+                    <span>Upgrade to Premium Lifetime (₹1)</span>
                   </button>
                 )}
               </div>

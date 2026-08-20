@@ -456,7 +456,7 @@ export default function PublicMenuPage() {
                             )}
                           </div>
 
-                          {item.isAvailable && (
+                          {isPremiumPlan && item.isAvailable && (
                             inCart ? (
                               <div className="flex items-center space-x-2 bg-amber-500 text-slate-950 px-2.5 py-1 rounded-xl text-xs font-black shadow-md">
                                 <button onClick={() => updateCartQuantity(item._id, -1)} className="px-1 font-black">-</button>
@@ -483,10 +483,10 @@ export default function PublicMenuPage() {
           )}
         </div>
 
-        {/* Floating Bottom Bar (Call Waiter & Order Cart) */}
+        {/* Floating Bottom Bar (Call Waiter & Order Cart - Premium Only) */}
         {(!isPreviewMode || cartTotalCount > 0) && (
           <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40 flex items-center space-x-3">
-            {!isPreviewMode && (
+            {!isPreviewMode && isPremiumPlan && (
               <>
                 <button
                   onClick={() => setIsWaiterModalOpen(true)}
@@ -506,7 +506,7 @@ export default function PublicMenuPage() {
               </>
             )}
 
-            {cartTotalCount > 0 && (
+            {isPremiumPlan && cartTotalCount > 0 && (
               <button
                 onClick={() => setIsCartOpen(true)}
                 className="flex-1 py-3.5 px-4 rounded-2xl bg-amber-500 text-slate-950 font-black text-xs shadow-2xl shadow-amber-500/30 flex items-center justify-between hover:bg-amber-400 transition-all"

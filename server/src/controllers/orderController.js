@@ -5,22 +5,26 @@ const { getIsConnected } = require('../config/db');
 
 const getRestaurantOrders = async (req, res) => {
   try {
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
     if (getIsConnected()) {
       const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
-      // Clean up order history older than 24 hours
-      await Order.deleteMany({ restaurantId: restaurant._id, createdAt: { $lt: twentyFourHoursAgo } });
+      // Clean up order history older than 7 days
+      await Order.deleteMany({ restaurantId: restaurant._id, createdAt: { $lt: sevenDaysAgo } });
 
-      const orders = await Order.find({ restaurantId: restaurant._id, createdAt: { $gte: twentyFourHoursAgo } }).sort({ createdAt: -1 });
+      const orders = await Order.find({ restaurantId: restaurant._id, createdAt: { $gte: sevenDaysAgo } }).sort({ createdAt: -1 });
       return res.json(orders);
     } else {
       const restaurant = mockStore.restaurants.find((r) => r.ownerId === req.user._id);
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+
+      // Clean up mockStore order history older than 7 days
+      mockStore.orders = mockStore.orders.filter((o) => new Date(o.createdAt) >= sevenDaysAgo);
+
       const orders = mockStore.orders.filter(
-        (o) => o.restaurantId === restaurant._id && new Date(o.createdAt) >= twentyFourHoursAgo
+        (o) => o.restaurantId === restaurant._id && new Date(o.createdAt) >= sevenDaysAgo
       );
       return res.json(orders);
     }

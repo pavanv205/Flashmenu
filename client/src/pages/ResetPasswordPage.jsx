@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Zap, Lock, KeyRound, ArrowRight, CheckCircle2, Loader2, Mail, RefreshCw } from 'lucide-react';
+import { Zap, Lock, KeyRound, ArrowRight, CheckCircle2, Loader2, Mail, RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { authAPI } from '../services/api';
 import FlashLogoBadge from '../components/FlashLogoBadge';
 
@@ -10,6 +10,8 @@ export default function ResetPasswordPage() {
   const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
@@ -210,13 +212,21 @@ export default function ResetPasswordPage() {
               <div className="relative">
                 <Lock className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   placeholder="••••••••"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3.5 text-gray-400 hover:text-white transition-colors"
+                  title={showPassword ? 'Hide password' : 'View password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4 text-amber-400" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
@@ -227,13 +237,21 @@ export default function ResetPasswordPage() {
               <div className="relative">
                 <Lock className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
                 <input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   required
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3.5 top-3.5 text-gray-400 hover:text-white transition-colors"
+                  title={showConfirmPassword ? 'Hide password' : 'View password'}
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4 text-amber-400" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 

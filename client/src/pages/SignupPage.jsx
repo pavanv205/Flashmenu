@@ -16,6 +16,8 @@ import {
   Layers,
   Crown,
   CreditCard,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import DemoPaymentModal from '../components/DemoPaymentModal';
 import { useAuth } from '../context/AuthContext';
@@ -23,6 +25,8 @@ import FlashLogoBadge from '../components/FlashLogoBadge';
 
 export default function SignupPage() {
   const [step, setStep] = useState(1); // 1 = Registration Form, 2 = Select Subscription Plan
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     restaurantName: '',
     name: '',
@@ -221,14 +225,22 @@ export default function SignupPage() {
                 <div className="relative">
                   <Lock className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     name="password"
                     required
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-3 text-gray-400 hover:text-white transition-colors"
+                    title={showPassword ? 'Hide password' : 'View password'}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4 text-amber-400" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
 
@@ -239,14 +251,22 @@ export default function SignupPage() {
                 <div className="relative">
                   <Lock className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
                   <input
-                    type="password"
+                    type={showConfirmPassword ? 'text' : 'password'}
                     name="confirmPassword"
                     required
                     placeholder="••••••••"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3.5 top-3 text-gray-400 hover:text-white transition-colors"
+                    title={showConfirmPassword ? 'Hide password' : 'View password'}
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4 text-amber-400" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
             </div>

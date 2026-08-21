@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Zap, Lock, KeyRound, ArrowRight, CheckCircle2, Loader2, Mail, RefreshCw } from 'lucide-react';
 import { authAPI } from '../services/api';
+import FlashLogoBadge from '../components/FlashLogoBadge';
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
@@ -95,10 +96,8 @@ export default function ResetPasswordPage() {
 
       <div className="w-full max-w-md bg-dark-card border border-dark-border rounded-3xl p-8 shadow-2xl relative z-10 space-y-6">
         <div className="text-center space-y-2">
-          <Link to="/" className="inline-flex items-center space-x-2">
-            <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
-              <Zap className="w-6 h-6 text-black fill-black" />
-            </div>
+          <Link to="/" className="inline-flex items-center space-x-3">
+            <FlashLogoBadge size="lg" />
             <span className="font-extrabold text-2xl text-white">
               Flash<span className="gold-gradient-text">Menu</span>
             </span>

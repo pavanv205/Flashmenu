@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Zap, Mail, ArrowRight, CheckCircle2, KeyRound, Loader2 } from 'lucide-react';
+import { Mail, ArrowRight, CheckCircle2, KeyRound, Loader2 } from 'lucide-react';
 import { authAPI } from '../services/api';
+import FlashLogoBadge from '../components/FlashLogoBadge';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -17,7 +18,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      const res = await authAPI.forgotPassword({ email });
+      const res = await authAPI.forgotPassword({ email: email.trim().toLowerCase() });
       setSuccessMsg(res.data?.message || 'Password reset code has been sent to your email address!');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to send password reset email. Please try again.');
@@ -32,10 +33,8 @@ export default function ForgotPasswordPage() {
 
       <div className="w-full max-w-md bg-dark-card border border-dark-border rounded-3xl p-8 shadow-2xl relative z-10 space-y-6">
         <div className="text-center space-y-2">
-          <Link to="/" className="inline-flex items-center space-x-2">
-            <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
-              <Zap className="w-6 h-6 text-black fill-black" />
-            </div>
+          <Link to="/" className="inline-flex items-center space-x-3">
+            <FlashLogoBadge size="lg" />
             <span className="font-extrabold text-2xl text-white">
               Flash<span className="gold-gradient-text">Menu</span>
             </span>

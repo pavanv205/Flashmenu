@@ -6,7 +6,7 @@ const sendEmail = async ({ to, subject, html, text }) => {
     const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
     const smtpUser = process.env.SMTP_USER;
     const smtpPass = process.env.SMTP_PASS;
-    const smtpFrom = process.env.SMTP_FROM || `"FlashMenu Support" <${smtpUser || 'noreply@flashmenu.com'}>`;
+    const smtpFrom = process.env.FROM_EMAIL || process.env.SMTP_FROM || `"FlashMenu Support" <${smtpUser || 'noreply@flashmenu.com'}>`;
 
     if (smtpUser && smtpPass) {
       const transporter = nodemailer.createTransport({

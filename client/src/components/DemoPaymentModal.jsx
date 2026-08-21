@@ -263,14 +263,16 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
               <div className="p-4 rounded-2xl bg-dark-base border border-dark-border text-center space-y-2">
                 <div className="w-28 h-28 mx-auto bg-white p-2 rounded-xl flex items-center justify-center shadow-inner">
                   <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=flashmenu.pay@upi%26pn=FlashMenu%26am=${planDetails.amount}`}
-                    alt="Razorpay UPI QR"
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+                      `upi://pay?pa=${import.meta.env.VITE_UPI_ID || 'flashmenu@paytm'}&pn=FlashMenu&am=${planDetails.amount}&cu=INR`
+                    )}`}
+                    alt="UPI QR Code"
                     className="w-full h-full object-contain"
                   />
                 </div>
                 <p className="text-[11px] text-gray-400">Scan with GPay, PhonePe, Paytm or BHIM</p>
                 <div className="inline-block px-3 py-1 rounded-full bg-gray-800 text-[11px] font-mono text-amber-400 border border-dark-border">
-                  flashmenu.pay@upi
+                  {import.meta.env.VITE_UPI_ID || 'flashmenu@paytm'}
                 </div>
               </div>
             )}

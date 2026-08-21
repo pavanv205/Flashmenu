@@ -17,6 +17,7 @@ import {
   History,
 } from 'lucide-react';
 import FlashLogoBadge from './FlashLogoBadge';
+import { useAuth } from '../context/AuthContext';
 
 export default function DashboardSidebar({ closeMobileMenu }) {
   const { user, restaurant, logout } = useAuth();

@@ -1,3 +1,7 @@
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Zap, Mail, Lock, ArrowRight, KeyRound, Loader2, CheckCircle2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import FlashLogoBadge from '../components/FlashLogoBadge';
 
 export default function LoginPage() {

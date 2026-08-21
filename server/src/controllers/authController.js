@@ -470,7 +470,7 @@ const forgotPassword = async (req, res) => {
       user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
       await user.save();
 
-      const frontendUrl = process.env.FRONTEND_URL || 'https://flashmenu-five.vercel.app';
+      const frontendUrl = process.env.FRONTEND_URL || process.env.VITE_SITE_URL || 'https://www.flashmenu.in';
       const resetUrl = `${frontendUrl}/reset-password?token=${resetCode}&email=${encodeURIComponent(normalizedEmail)}`;
 
       const html = `

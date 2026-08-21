@@ -19,7 +19,7 @@ const getPublicMenu = async (req, res) => {
     if (getIsConnected()) {
       let restaurant = await Restaurant.findOne({
         slug: { $regex: new RegExp(`^${normalizedSlug}$`, 'i') },
-      });
+      }).populate('ownerId', 'isActive role');
 
       if (!restaurant && (normalizedSlug === 'spice-garden' || normalizedSlug.includes('demo') || normalizedSlug.includes('spice'))) {
         restaurant = await ensureSpiceGardenRestaurant();
@@ -27,7 +27,7 @@ const getPublicMenu = async (req, res) => {
 
       if (!restaurant) {
         // Fallback: If any active restaurant exists in MongoDB Atlas, use it for demo
-        restaurant = await Restaurant.findOne({ isActive: true });
+        restaurant = await Restaurant.findOne({ isActive: true }).populate('ownerId', 'isActive role');
         if (!restaurant) {
           restaurant = await ensureSpiceGardenRestaurant();
         }
@@ -35,11 +35,12 @@ const getPublicMenu = async (req, res) => {
 
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
-      // Check subscription & account active status
+      // Check subscription & account active status (blocks QR scan when owner account or subscription is inactive)
       const isLifetime = restaurant.subscriptionCycle === 'lifetime';
       const expiresAt = restaurant.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
       const isExpired = !isLifetime && expiresAt && expiresAt.getTime() <= Date.now();
-      const isInactive = restaurant.isActive === false || isExpired;
+      const isOwnerInactive = restaurant.isActive === false || (restaurant.ownerId && restaurant.ownerId.isActive === false);
+      const isInactive = isOwnerInactive || isExpired;
 
       if (isInactive) {
         return res.json({
@@ -195,9 +196,15 @@ const submitFeedback = async (req, res) => {
 const createPublicOrder = async (req, res) => {
   try {
     const { restaurantSlug, tableNumber, items, customerName, customerPhone } = req.body;
-    if (getIsConnected()) {
       const restaurant = await Restaurant.findOne({ slug: restaurantSlug });
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+
+      const isLifetime = restaurant.subscriptionCycle === 'lifetime';
+      const expiresAt = restaurant.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
+      const isExpired = !isLifetime && expiresAt && expiresAt.getTime() <= Date.now();
+      if (restaurant.isActive === false || isExpired) {
+        return res.status(403).json({ message: 'Restaurant QR service is inactive.' });
+      }
 
       let totalAmount = 0;
       const formattedItems = [];

@@ -34,17 +34,15 @@ export default function QRCodesPage() {
     try {
       const dataUrl = await toPng(cardNode, {
         cacheBust: true,
-        pixelRatio: 2,
-        width: 380,
-        height: cardNode.offsetHeight,
+        pixelRatio: 3,
         style: {
-          transform: 'none',
-          margin: '0 auto',
+          transform: 'scale(1)',
+          transformOrigin: 'top left',
         },
       });
       const downloadLink = document.createElement('a');
       downloadLink.href = dataUrl;
-      downloadLink.download = `${restaurant.slug}-qr-card-${activeTable || 'master'}.png`;
+      downloadLink.download = `${restaurant.slug || 'flashmenu'}-qr-card-${activeTable ? `table-${activeTable}` : 'master'}.png`;
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);

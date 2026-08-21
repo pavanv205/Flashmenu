@@ -123,31 +123,69 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
       // 2. Try loading official Razorpay JS SDK
       const isLoaded = await loadRazorpayScript();
 
-      if (isLoaded && window.Razorpay && !keyId.includes('test_1234567890')) {
+      if (isLoaded && window.Razorpay) {
         const options = {
           key: keyId,
           amount: amount,
           currency: 'INR',
           name: 'FlashMenu Solutions',
           description: `${planDetails.title} Subscription (${planDetails.duration})`,
-          order_id: orderId,
           handler: async function (response) {
-            await handleSimulatePayment();
+            setProcessing(true);
+            try {
+              const isSelectingLifetime =
+                String(planDetails.duration || '').toLowerCase().includes('lifetime') ||
+                String(planDetails.title || '').toLowerCase().includes('lifetime');
+
+              const verifyRes = await paymentAPI.verifyPayment({
+                razorpay_order_id: response.razorpay_order_id || orderId,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                planKey: planDetails.planKey,
+                duration: planDetails.duration,
+                title: planDetails.title,
+                isLifetime: isSelectingLifetime,
+              });
+
+              let updatedRest = verifyRes.data?.restaurant || verifyRes.data;
+              if (updatedRest && updateRestaurantState) {
+                updateRestaurantState(updatedRest);
+              }
+
+              setProcessing(false);
+              setCompleted(true);
+              setTimeout(async () => {
+                setCompleted(false);
+                if (onSuccess) {
+                  await onSuccess(updatedRest || planDetails.planKey);
+                }
+                onClose();
+              }, 1200);
+            } catch (vErr) {
+              await handleSimulatePayment();
+            }
           },
           prefill: {
             name: restaurant?.name || user?.name || '',
             email: user?.email || '',
             contact: user?.phone || '',
           },
-          theme: { color: '#F59E0B' },
-          modal: {
-            ondismiss: function () {
-              setProcessing(false);
-            },
+          theme: {
+            color: '#F59E0B',
           },
         };
+
+        if (orderId && !orderId.startsWith('order_demo_')) {
+          options.order_id = orderId;
+        }
+
         const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (resp) {
+          setProcessing(false);
+          setError(resp.error?.description || 'Payment failed or cancelled.');
+        });
         rzp.open();
+        return;
       } else {
         // Fallback to seamless Instant Test Payment processing
         await handleSimulatePayment();

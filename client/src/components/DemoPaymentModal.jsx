@@ -102,7 +102,7 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
     try {
       // 1. Create order on backend
       let orderId = `order_demo_${Date.now()}`;
-      let keyId = 'rzp_test_1234567890';
+      let keyId = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TAwDF3o7rjkreE';
       let amount = Math.round(Number(planDetails.amount) * 100);
 
       try {

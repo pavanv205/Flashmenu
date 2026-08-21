@@ -310,7 +310,27 @@ const loginUser = async (req, res) => {
         });
       }
 
-      const restaurant = await Restaurant.findOne({ ownerId: user._id });
+      let restaurant = await Restaurant.findOne({ ownerId: user._id });
+      if (!restaurant && user.role !== 'admin') {
+        const baseSlug = createSlug(user.name || 'my-restaurant');
+        let slug = baseSlug;
+        let attempts = 0;
+        while (await Restaurant.findOne({ slug })) {
+          attempts++;
+          slug = `${baseSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
+          if (attempts > 10) break;
+        }
+
+        restaurant = await Restaurant.create({
+          ownerId: user._id,
+          name: user.name ? `${user.name}'s Kitchen` : 'My Restaurant',
+          slug,
+          email: user.email,
+          phone: user.phone || '',
+          subscriptionPlan: 'basic',
+        });
+      }
+
       const token = generateToken(user._id, restaurant?._id || '', restaurant?.slug || '');
 
       return res.json({

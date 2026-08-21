@@ -9,6 +9,8 @@ dotenv.config();
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 // Middleware to ensure DB connection on serverless cold starts
 app.use(async (req, res, next) => {
   try {

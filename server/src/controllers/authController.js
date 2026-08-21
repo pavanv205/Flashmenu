@@ -460,8 +460,7 @@ const forgotPassword = async (req, res) => {
     if (getIsConnected()) {
       const user = await User.findOne({ email: normalizedEmail });
       if (!user) {
-        // Return generic success for security (prevents user enumeration)
-        return res.json({ message: 'If an account exists with this email, a reset code has been sent.' });
+        return res.status(404).json({ message: 'No registered user account found with this email address.' });
       }
 
       // Generate a 6-digit OTP code & token
@@ -474,7 +473,7 @@ const forgotPassword = async (req, res) => {
       const resetUrl = `${frontendUrl}/reset-password?token=${resetCode}&email=${encodeURIComponent(normalizedEmail)}`;
 
       const html = `
-        <div style="font-family: Arial, sans-serif; max-w: 600px; margin: 0 auto; background-color: #0B0F17; color: #FFFFFF; padding: 30px; border-radius: 16px; border: 1px solid #1F2937;">
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0B0F17; color: #FFFFFF; padding: 30px; border-radius: 16px; border: 1px solid #1F2937;">
           <div style="text-align: center; margin-bottom: 24px;">
             <h1 style="color: #F59E0B; margin: 0; font-size: 28px;">FlashMenu</h1>
             <p style="color: #9CA3AF; font-size: 14px; margin-top: 4px;">Smart Digital Menu Platform</p>
@@ -497,20 +496,26 @@ const forgotPassword = async (req, res) => {
             </a>
           </div>
 
-          <p style="color: #6B7280; font-size: 12px; text-align: center; margin-top: 24px; border-t: 1px solid #1F2937; pt-16;">
+          <p style="color: #6B7280; font-size: 12px; text-align: center; margin-top: 24px; border-top: 1px solid #1F2937; padding-top: 16px;">
             This security code and reset link will expire in 1 hour.<br/>If you did not request a password reset, please ignore this email.
           </p>
         </div>
       `;
 
-      await sendEmail({
+      const mailRes = await sendEmail({
         to: user.email,
         subject: 'FlashMenu - Password Reset Security Code',
         html,
       });
 
+      if (mailRes && mailRes.success === false) {
+        return res.status(500).json({
+          message: mailRes.error || 'Failed to send password reset email via SMTP. Please try again.',
+        });
+      }
+
       return res.json({
-        message: 'Password reset code sent to your email address!',
+        message: 'Password reset code has been sent to your email address!',
       });
     } else {
       // Mock store fallback
@@ -521,7 +526,7 @@ const forgotPassword = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000;
         return res.json({ message: 'Reset code sent to your email address!' });
       }
-      return res.json({ message: 'If an account exists with this email, a reset code has been sent.' });
+      return res.status(404).json({ message: 'No registered user account found with this email address.' });
     }
   } catch (error) {
     console.error('Forgot Password Error:', error);

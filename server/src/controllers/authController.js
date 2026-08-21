@@ -29,15 +29,22 @@ const registerUser = async (req, res) => {
     await connectDB();
 
     if (getIsConnected()) {
-      const userExists = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
+      const userExists = await User.findOne({ email: normalizedEmail });
       if (userExists) {
-        return res.status(400).json({ message: 'Email already registered' });
+        return res.status(400).json({ message: 'This email address is already registered. Please sign in.' });
       }
 
-      let slug = createSlug(restaurantName);
-      const existingRestaurant = await Restaurant.findOne({ slug });
-      if (existingRestaurant) {
-        slug = `${slug}-${Math.floor(1000 + Math.random() * 9000)}`;
+      let baseSlug = createSlug(restaurantName);
+      if (!baseSlug || baseSlug.length < 2) {
+        baseSlug = `restaurant-${Math.floor(1000 + Math.random() * 9000)}`;
+      }
+
+      let slug = baseSlug;
+      let attempts = 0;
+      while (await Restaurant.findOne({ slug })) {
+        attempts++;
+        slug = `${baseSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
+        if (attempts > 10) break;
       }
 
       const salt = await bcrypt.genSalt(10);
@@ -197,9 +204,18 @@ const registerUser = async (req, res) => {
           subscriptionPlan: restaurant.subscriptionPlan || 'basic',
         },
       });
-    }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Registration error:', error);
+    if (error.code === 11000) {
+      if (error.keyPattern?.email || error.message?.includes('email')) {
+        return res.status(400).json({ message: 'This email address is already registered. Please sign in.' });
+      }
+      if (error.keyPattern?.slug || error.message?.includes('slug')) {
+        return res.status(400).json({ message: 'Restaurant name slug is already taken. Please try a slightly different name.' });
+      }
+      return res.status(400).json({ message: 'An account with these details already exists.' });
+    }
+    res.status(500).json({ message: error.message || 'Failed to create restaurant account. Please try again.' });
   }
 };
 

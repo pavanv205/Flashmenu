@@ -8,6 +8,18 @@ const uploadImageBuffer = async (buffer, mimetype, folderPath = 'flashmenu/gener
     throw new Error('Image buffer and mimetype are required');
   }
 
+  const clean = (val, fallback = '') => {
+    if (!val) return fallback;
+    return String(val).replace(/["'\r\n\s]/g, '').trim() || fallback;
+  };
+
+  cloudinary.config({
+    cloud_name: clean(process.env.CLOUDINARY_CLOUD_NAME, 'xt6ci0uh'),
+    api_key: clean(process.env.CLOUDINARY_API_KEY, '348191171679119'),
+    api_secret: clean(process.env.CLOUDINARY_API_SECRET, 'fcfoD3x20SYtb87jOjLHTxxB3TM'),
+    secure: true,
+  });
+
   const b64 = Buffer.from(buffer).toString('base64');
   const dataURI = `data:${mimetype};base64,${b64}`;
 

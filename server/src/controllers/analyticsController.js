@@ -10,8 +10,20 @@ const { getIsConnected } = require('../config/db');
 const getDashboardOverview = async (req, res) => {
   try {
     if (getIsConnected()) {
-      const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+      let restaurant = await Restaurant.findOne({ ownerId: req.user._id });
+      if (!restaurant && req.user.email) {
+        restaurant = await Restaurant.findOne({ email: req.user.email });
+      }
+      if (!restaurant) {
+        restaurant = await Restaurant.create({
+          ownerId: req.user._id,
+          name: req.user.name ? `${req.user.name}'s Restaurant` : 'My Restaurant',
+          slug: `restaurant-${Date.now().toString().slice(-4)}`,
+          email: req.user.email || '',
+          phone: req.user.phone || '',
+          subscriptionPlan: 'basic',
+        });
+      }
       const restaurantId = restaurant._id;
 
       const totalCategories = await Category.countDocuments({ restaurantId });
@@ -57,8 +69,18 @@ const getDashboardOverview = async (req, res) => {
         waiterCalls,
       });
     } else {
-      const restaurant = mockStore.restaurants.find((r) => r.ownerId === req.user._id);
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+      let restaurant = mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id));
+      if (!restaurant) {
+        restaurant = {
+          _id: `rest_${Date.now()}`,
+          ownerId: req.user._id,
+          name: req.user.name ? `${req.user.name}'s Restaurant` : 'My Restaurant',
+          slug: `restaurant-${Date.now().toString().slice(-4)}`,
+          email: req.user.email || '',
+          subscriptionPlan: 'basic',
+        };
+        mockStore.restaurants.push(restaurant);
+      }
       const restaurantId = restaurant._id;
 
       const totalCategories = mockStore.categories.filter((c) => c.restaurantId === restaurantId).length;

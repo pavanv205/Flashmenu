@@ -11,13 +11,9 @@ const app = express();
 
 app.set('trust proxy', 1);
 
-// Middleware to ensure DB connection on serverless cold starts
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-  } catch (err) {
-    console.warn('[Serverless DB Middleware Warning]', err.message);
-  }
+// Non-blocking DB connection trigger for serverless cold starts
+app.use((req, res, next) => {
+  connectDB().catch(() => {});
   next();
 });
 

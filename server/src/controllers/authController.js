@@ -282,8 +282,6 @@ const loginUser = async (req, res) => {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
-      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-
       if (getIsConnected()) {
         try {
           const salt = await bcrypt.genSalt(10);
@@ -295,13 +293,9 @@ const loginUser = async (req, res) => {
               password: hashedPassword,
               phone: '+919999999999',
               role: 'admin',
-              adminOtpCode: otpCode,
-              adminOtpExpires: Date.now() + 600000,
             });
           } else {
             adminUser.role = 'admin';
-            adminUser.adminOtpCode = otpCode;
-            adminUser.adminOtpExpires = Date.now() + 600000;
             await adminUser.save();
           }
         } catch (mErr) {
@@ -309,40 +303,48 @@ const loginUser = async (req, res) => {
         }
       }
 
-      const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0B0F17; color: #FFFFFF; padding: 30px; border-radius: 16px; border: 1px solid #1F2937;">
-          <div style="text-align: center; margin-bottom: 24px;">
-            <h1 style="color: #F59E0B; margin: 0; font-size: 28px;">FlashMenu</h1>
-            <p style="color: #9CA3AF; font-size: 14px; margin-top: 4px;">Master Admin Security System</p>
-          </div>
-          
-          <h2 style="color: #FFFFFF; font-size: 20px; font-weight: bold;">Master Admin 2FA Code</h2>
-          <p style="color: #D1D5DB; font-size: 14px; line-height: 1.6;">Hello <strong>Pavan Vadapalli</strong>,</p>
-          <p style="color: #D1D5DB; font-size: 14px; line-height: 1.6;">You are attempting to log in to the Master Admin Portal. Please enter the security verification code below to gain access:</p>
-          
-          <div style="text-align: center; margin: 28px 0;">
-            <p style="color: #9CA3AF; font-size: 12px; margin-bottom: 8px; font-weight: bold; text-transform: uppercase;">Your 6-Digit Admin 2FA Code</p>
-            <div style="background-color: #111827; border: 2px solid #F59E0B; display: inline-block; padding: 14px 28px; font-size: 32px; font-weight: 900; color: #F59E0B; letter-spacing: 6px; border-radius: 12px;">
-              ${otpCode}
-            </div>
-          </div>
+      let adminRest = null;
+      if (getIsConnected() && adminUser) {
+        adminRest = await Restaurant.findOne({ ownerId: adminUser._id });
+        if (!adminRest) {
+          adminRest = await Restaurant.create({
+            ownerId: adminUser._id,
+            name: 'FlashMenu Master Headquarters',
+            slug: 'master-admin-vip',
+            email: normalizedEmail,
+            subscriptionPlan: 'premium',
+            subscriptionCycle: 'lifetime',
+            subscriptionStartDate: new Date(),
+            subscriptionExpiresAt: null,
+            isActive: true,
+            isPaid: true,
+          }).catch(() => null);
+        }
+      }
 
-          <p style="color: #6B7280; font-size: 12px; text-align: center; margin-top: 24px; border-t: 1px solid #1F2937; pt-16;">
-            This code will expire in 10 minutes.<br/>If you did not request this login, please change your password immediately.
-          </p>
-        </div>
-      `;
+      if (!adminRest) {
+        adminRest = {
+          _id: 'master_vip_rest',
+          name: 'FlashMenu Master Headquarters',
+          slug: 'master-admin-vip',
+          subscriptionPlan: 'premium',
+          subscriptionCycle: 'lifetime',
+          subscriptionStartDate: new Date(),
+          subscriptionExpiresAt: null,
+          isActive: true,
+          isPaid: true,
+        };
+      }
 
-      sendEmail({
-        to: normalizedEmail,
-        subject: `FlashMenu Admin 2FA Code: ${otpCode}`,
-        html,
-      }).catch((e) => console.warn('2FA Email Send Warning:', e.message));
+      const token = generateToken(adminUser?._id || 'admin_master_id', adminRest._id, adminRest.slug);
 
       return res.json({
-        requires2FA: true,
+        _id: String(adminUser?._id || 'admin_master_id'),
+        name: String(adminUser?.name || 'Pavan Vadapalli (Master Admin)'),
         email: normalizedEmail,
-        message: `Security 2FA verification code sent to ${normalizedEmail}`,
+        role: 'admin',
+        token,
+        restaurant: adminRest,
       });
     }
 

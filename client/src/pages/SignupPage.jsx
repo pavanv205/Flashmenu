@@ -50,7 +50,15 @@ export default function SignupPage() {
     setSelectedPlan(planKey);
     setDemoPaymentModal({
       isOpen: true,
-      planDetails: { planKey, planName, cycleName, price },
+      planDetails: {
+        planKey,
+        title: planName,
+        planName,
+        duration: cycleName,
+        cycleName,
+        amount: price,
+        price,
+      },
     });
   };
 

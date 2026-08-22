@@ -26,6 +26,10 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
 
   if (!isOpen || !planDetails) return null;
 
+  const title = planDetails.title || planDetails.planName || 'Restaurant Plan';
+  const amount = Number(planDetails.amount ?? planDetails.price ?? 1);
+  const duration = planDetails.duration || planDetails.cycleName || 'Monthly';
+
   const handleSimulatePayment = async () => {
     setProcessing(true);
     setError('');
@@ -35,8 +39,8 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
 
       // 1. Call verification API
       const isSelectingLifetime =
-        String(planDetails.duration || '').toLowerCase().includes('lifetime') ||
-        String(planDetails.title || '').toLowerCase().includes('lifetime');
+        String(duration || '').toLowerCase().includes('lifetime') ||
+        String(title || '').toLowerCase().includes('lifetime');
 
       try {
         const verifyRes = await paymentAPI.verifyPayment({
@@ -231,7 +235,7 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
             </div>
             <h4 className="text-2xl font-black text-white">Payment Verified!</h4>
             <p className="text-xs text-gray-300">
-              Your <span className="text-amber-400 font-bold">{planDetails.title}</span> subscription has been activated for{' '}
+              Your <span className="text-amber-400 font-bold">{title}</span> subscription has been activated for{' '}
               <span className="text-white font-bold">{restaurant?.name || 'Your Restaurant'}</span>.
             </p>
           </div>
@@ -252,15 +256,15 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
               </div>
               <div className="flex items-center justify-between text-xs text-gray-400">
                 <span>Plan Selected:</span>
-                <span className="font-bold text-amber-400">{planDetails.title}</span>
+                <span className="font-bold text-amber-400">{title}</span>
               </div>
               <div className="flex items-center justify-between text-xs text-gray-400">
                 <span>Validity:</span>
-                <span className="font-semibold text-gray-200">{planDetails.duration}</span>
+                <span className="font-semibold text-gray-200">{duration}</span>
               </div>
               <div className="pt-2 border-t border-dark-border/60 flex items-center justify-between">
                 <span className="text-xs font-bold text-gray-300">Total Payable:</span>
-                <span className="text-2xl font-black text-amber-400">₹{planDetails.amount.toLocaleString()}</span>
+                <span className="text-2xl font-black text-amber-400">₹{amount.toLocaleString()}</span>
               </div>
             </div>
 
@@ -314,7 +318,7 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
                 <div className="w-28 h-28 mx-auto bg-white p-2 rounded-xl flex items-center justify-center shadow-inner">
                   <img
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
-                      `upi://pay?pa=${import.meta.env.VITE_UPI_ID || 'flashmenu@paytm'}&pn=FlashMenu&am=${planDetails.amount}&cu=INR`
+                      `upi://pay?pa=${import.meta.env.VITE_UPI_ID || 'flashmenu@paytm'}&pn=FlashMenu&am=${amount}&cu=INR`
                     )}`}
                     alt="UPI QR Code"
                     className="w-full h-full object-contain"
@@ -345,8 +349,8 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
                     <CreditCard className="w-4 h-4" />
                     <span>
                       {paymentMethod === 'razorpay'
-                        ? `Pay ₹${planDetails.amount.toLocaleString()} via Razorpay Live`
-                        : `Complete Payment (₹${planDetails.amount.toLocaleString()})`}
+                        ? `Pay ₹${amount.toLocaleString()} via Razorpay Live`
+                        : `Complete Payment (₹${amount.toLocaleString()})`}
                     </span>
                     <ArrowRight className="w-4 h-4" />
                   </>

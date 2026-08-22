@@ -24,18 +24,16 @@ const restaurantSchema = new mongoose.Schema(
     tableCount: { type: Number, default: 25 },
     subscriptionPlan: { type: String, enum: ['basic', 'premium'], default: 'basic' },
     subscriptionCycle: { type: String, enum: ['1month', '6months', 'lifetime'], default: '1month' },
-    subscriptionStartDate: { type: Date, default: Date.now },
-    subscriptionExpiresAt: {
-      type: Date,
-      default: () => new Date(Date.now() + 5 * 60 * 1000), // 5 minutes test duration
-    },
+    subscriptionStartDate: { type: Date, default: null },
+    subscriptionExpiresAt: { type: Date, default: null },
+    isPaid: { type: Boolean, default: false },
     socialLinks: {
       instagram: { type: String, default: '' },
       facebook: { type: String, default: '' },
       website: { type: String, default: '' },
     },
     isOpen: { type: Boolean, default: true },
-    isActive: { type: Boolean, default: true },
+    isActive: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -84,7 +84,7 @@ export default function PublicMenuPage() {
     const catObj = categories.find((c) => c._id === catId);
     const catName = catObj ? catObj.name : '';
     const itemsInCat = menuItems
-      .filter((item) => (item.categoryId?._id || item.categoryId) === catId)
+      .filter((item) => String(item.categoryId?._id || item.categoryId || '') === String(catId))
       .map((item) => getSubCategory(item, catName));
 
     const subs = Array.from(new Set(itemsInCat.filter(Boolean)));
@@ -195,11 +195,13 @@ export default function PublicMenuPage() {
   // Filter items by main category and search
   const categoryItems = menuItems
     .filter((item) => {
-      const matchesCategory =
-        activeCategory === 'all' || (item.categoryId._id || item.categoryId) === activeCategory;
-      const matchesSearch =
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      if (!item) return false;
+      const itemCatId = String(item.categoryId?._id || item.categoryId || '');
+      const matchesCategory = activeCategory === 'all' || itemCatId === String(activeCategory);
+      const itemName = String(item.name || '').toLowerCase();
+      const itemDesc = String(item.description || '').toLowerCase();
+      const q = String(searchQuery || '').toLowerCase();
+      const matchesSearch = itemName.includes(q) || itemDesc.includes(q);
       return matchesCategory && matchesSearch;
     })
     .map((item) => {

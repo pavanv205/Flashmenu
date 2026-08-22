@@ -192,13 +192,7 @@ export default function LandingPage() {
       {/* 4. PRICING SECTION */}
       <section id="pricing" className="py-24 border-b border-white/[0.08] bg-[#0A0A0E]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <h2 className="text-[11px] font-extrabold text-amber-400 uppercase tracking-widest">Simple Transparent Pricing</h2>
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Choose Your Restaurant Plan</h3>
-            <p className="text-xs sm:text-sm text-gray-400">
-              No hidden fees. Full digital menu setup with instant QR code ordering.
-            </p>
-          </div>
+
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* CARD 1: BASIC RESTAURANT */}

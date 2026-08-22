@@ -5,7 +5,8 @@ const sendEmail = async ({ to, subject, html, text }) => {
   const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
   const smtpUser = process.env.SMTP_USER || 'pavanvadapalli205@gmail.com';
   const smtpPass = process.env.SMTP_PASS || 'lgsqiyndqtmusjsq';
-  const smtpFrom = process.env.FROM_EMAIL || process.env.SMTP_FROM || `"FlashMenu Support" <${smtpUser}>`;
+  const rawFrom = process.env.FROM_EMAIL || process.env.SMTP_FROM || 'FlashMenu';
+  const smtpFrom = rawFrom.includes('<') ? rawFrom : `"${rawFrom}" <${smtpUser}>`;
 
   if (!smtpUser || !smtpPass) {
     console.log(`[SMTP DEMO MODE] Email to ${to}:`);

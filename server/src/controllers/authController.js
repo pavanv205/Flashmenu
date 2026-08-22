@@ -38,7 +38,18 @@ const registerUser = async (req, res) => {
     if (getIsConnected()) {
       const userExists = await User.findOne({ email: normalizedEmail });
       if (userExists) {
-        return res.status(400).json({ message: 'This email is already registered. Click "Sign In" below to log in to your account.' });
+        return res.status(400).json({ message: 'An account with this email address already exists. Please sign in or use a different email.' });
+      }
+
+      const cleanPhone = phone ? String(phone).replace(/[^0-9]/g, '') : '';
+      if (cleanPhone && cleanPhone.length >= 10) {
+        const last10Digits = cleanPhone.slice(-10);
+        const phoneRegex = new RegExp(`${last10Digits}$`);
+        const phoneUserExists = await User.findOne({ phone: { $regex: phoneRegex } });
+        const phoneRestExists = await Restaurant.findOne({ phone: { $regex: phoneRegex } });
+        if (phoneUserExists || phoneRestExists) {
+          return res.status(400).json({ message: 'A restaurant account with this phone number is already registered. Please use a different phone number.' });
+        }
       }
 
       let baseSlug = createSlug(restaurantName);
@@ -96,11 +107,24 @@ const registerUser = async (req, res) => {
       });
     } else {
       // In-Memory Fallback
-      const existing = mockStore.users.find(
+      const existingEmail = mockStore.users.find(
         (u) => u && u.email && String(u.email).toLowerCase().trim() === normalizedEmail
       );
-      if (existing) {
-        return res.status(400).json({ message: 'Email already registered' });
+      if (existingEmail) {
+        return res.status(400).json({ message: 'An account with this email address already exists. Please sign in or use a different email.' });
+      }
+
+      const cleanPhone = phone ? String(phone).replace(/[^0-9]/g, '') : '';
+      if (cleanPhone && cleanPhone.length >= 10) {
+        const last10Digits = cleanPhone.slice(-10);
+        const existingPhone = mockStore.users.find(
+          (u) => u && u.phone && String(u.phone).replace(/[^0-9]/g, '').slice(-10) === last10Digits
+        ) || mockStore.restaurants.find(
+          (r) => r && r.phone && String(r.phone).replace(/[^0-9]/g, '').slice(-10) === last10Digits
+        );
+        if (existingPhone) {
+          return res.status(400).json({ message: 'A restaurant account with this phone number is already registered. Please use a different phone number.' });
+        }
       }
 
       let slug = createSlug(restaurantName);

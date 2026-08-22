@@ -510,7 +510,6 @@ const getMe = async (req, res) => {
 };
 
 const crypto = require('crypto');
-const sendEmail = require('../utils/sendEmail');
 
 const forgotPassword = async (req, res) => {
   try {

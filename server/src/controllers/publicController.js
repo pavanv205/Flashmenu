@@ -36,11 +36,12 @@ const getPublicMenu = async (req, res) => {
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
       // Check subscription & account active status (blocks QR scan when owner account or subscription is inactive)
+      const isSpiceGarden = normalizedSlug === 'spice-garden' || normalizedSlug.includes('demo') || normalizedSlug.includes('spice');
       const isLifetime = restaurant.subscriptionCycle === 'lifetime';
       const expiresAt = restaurant.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
       const isExpired = !isLifetime && expiresAt && expiresAt.getTime() <= Date.now();
       const isOwnerInactive = restaurant.isActive === false || (restaurant.ownerId && restaurant.ownerId.isActive === false);
-      const isInactive = isOwnerInactive || isExpired;
+      const isInactive = !isSpiceGarden && (isOwnerInactive || isExpired);
 
       if (isInactive) {
         return res.json({

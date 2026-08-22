@@ -166,9 +166,14 @@ const ensureSpiceGardenRestaurant = async () => {
           isActive: true,
           isOpen: true,
           subscriptionPlan: 'premium',
+          subscriptionCycle: 'lifetime',
+          subscriptionExpiresAt: null,
         });
-      } else if (!restaurant.isActive) {
+      } else {
         restaurant.isActive = true;
+        restaurant.subscriptionPlan = 'premium';
+        restaurant.subscriptionCycle = 'lifetime';
+        restaurant.subscriptionExpiresAt = null;
         await restaurant.save();
       }
 

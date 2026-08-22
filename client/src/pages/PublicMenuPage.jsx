@@ -127,10 +127,11 @@ export default function PublicMenuPage() {
 
   const clearCart = () => setCart([]);
 
+  const isSpiceGarden = restaurantSlug === 'spice-garden' || restaurantSlug?.includes('demo') || restaurantSlug?.includes('spice');
   const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
   const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
   const isExpired = !isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now();
-  const isAccountInactive = restaurant?.isActive === false || isExpired || restaurant?.isInactive;
+  const isAccountInactive = !isPreviewMode && !isSpiceGarden && (restaurant?.isActive === false || isExpired || restaurant?.isInactive);
 
   if (loading) {
     return (

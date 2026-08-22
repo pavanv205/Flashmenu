@@ -19,7 +19,7 @@ const loadRazorpayScript = () => {
 
 export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSuccess }) {
   const { user, restaurant, updateRestaurantState } = useAuth();
-  const [paymentMethod, setPaymentMethod] = useState('demo'); // demo, razorpay, upi
+  const [paymentMethod, setPaymentMethod] = useState('razorpay'); // razorpay, upi, demo
   const [processing, setProcessing] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [error, setError] = useState('');
@@ -269,30 +269,42 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
               <label className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400">
                 Select Payment Mode
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod('demo')}
+                  onClick={() => setPaymentMethod('razorpay')}
                   className={`p-3 rounded-xl border text-xs font-bold transition-all flex flex-col items-center justify-center space-y-1 ${
-                    paymentMethod === 'demo'
-                      ? 'bg-amber-500/15 border-amber-500 text-amber-400 shadow-md'
+                    paymentMethod === 'razorpay'
+                      ? 'bg-amber-500/15 border-amber-500 text-amber-400 shadow-md ring-1 ring-amber-500/40'
                       : 'bg-dark-base border-dark-border text-gray-400 hover:text-white'
                   }`}
                 >
-                  <ShieldCheck className="w-4 h-4 text-amber-400" />
-                  <span>Instant Demo Payment</span>
+                  <CreditCard className="w-4 h-4 text-amber-400" />
+                  <span>Razorpay Live</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('upi')}
                   className={`p-3 rounded-xl border text-xs font-bold transition-all flex flex-col items-center justify-center space-y-1 ${
                     paymentMethod === 'upi'
-                      ? 'bg-amber-500/15 border-amber-500 text-amber-400 shadow-md'
+                      ? 'bg-amber-500/15 border-amber-500 text-amber-400 shadow-md ring-1 ring-amber-500/40'
                       : 'bg-dark-base border-dark-border text-gray-400 hover:text-white'
                   }`}
                 >
                   <QrCode className="w-4 h-4 text-amber-400" />
                   <span>UPI QR Code</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('demo')}
+                  className={`p-3 rounded-xl border text-xs font-bold transition-all flex flex-col items-center justify-center space-y-1 ${
+                    paymentMethod === 'demo'
+                      ? 'bg-amber-500/15 border-amber-500 text-amber-400 shadow-md ring-1 ring-amber-500/40'
+                      : 'bg-dark-base border-dark-border text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <ShieldCheck className="w-4 h-4 text-amber-400" />
+                  <span>Instant Test</span>
                 </button>
               </div>
             </div>
@@ -319,7 +331,7 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
             <div className="pt-2">
               <button
                 type="button"
-                onClick={handleSimulatePayment}
+                onClick={paymentMethod === 'razorpay' ? handleRazorpayCheckout : handleSimulatePayment}
                 disabled={processing}
                 className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-sm shadow-xl shadow-amber-500/20 transition-all flex items-center justify-center space-x-2"
               >
@@ -331,7 +343,11 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
                 ) : (
                   <>
                     <CreditCard className="w-4 h-4" />
-                    <span>Complete Payment (₹{planDetails.amount.toLocaleString()})</span>
+                    <span>
+                      {paymentMethod === 'razorpay'
+                        ? `Pay ₹${planDetails.amount.toLocaleString()} via Razorpay Live`
+                        : `Complete Payment (₹${planDetails.amount.toLocaleString()})`}
+                    </span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}

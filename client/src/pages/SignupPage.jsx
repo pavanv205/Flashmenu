@@ -513,12 +513,14 @@ export default function SignupPage() {
       )}
 
       {/* Demo Payment Modal */}
-      <DemoPaymentModal
-        isOpen={demoPaymentModal.isOpen}
-        onClose={() => setDemoPaymentModal({ isOpen: false, planDetails: null })}
-        planDetails={demoPaymentModal.planDetails}
-        onSuccess={handleDemoPaymentSuccess}
-      />
+      {demoPaymentModal.isOpen && (
+        <DemoPaymentModal
+          isOpen={demoPaymentModal.isOpen}
+          onClose={() => setDemoPaymentModal({ isOpen: false, planDetails: null })}
+          planDetails={demoPaymentModal.planDetails}
+          onSuccess={handleDemoPaymentSuccess}
+        />
+      )}
     </div>
   );
 }

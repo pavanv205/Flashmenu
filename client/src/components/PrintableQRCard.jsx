@@ -1,6 +1,7 @@
 import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Zap, Smartphone } from 'lucide-react';
+import FlashLogoBadge from './FlashLogoBadge';
 
 export default function PrintableQRCard({
   restaurant,
@@ -50,10 +51,8 @@ export default function PrintableQRCard({
             style={{ width: '64px', height: '64px', borderRadius: '16px', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.2)', marginBottom: '10px' }}
           />
         ) : (
-          <div
-            style={{ width: '56px', height: '56px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px', backgroundColor: primaryColor }}
-          >
-            <Zap style={{ width: '32px', height: '32px', color: '#000', fill: '#000' }} />
+          <div style={{ marginBottom: '10px' }}>
+            <FlashLogoBadge size="lg" />
           </div>
         )}
 

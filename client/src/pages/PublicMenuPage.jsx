@@ -4,6 +4,7 @@ import { publicAPI } from '../services/api';
 import CallWaiterModal from '../components/CallWaiterModal';
 import FeedbackModal from '../components/FeedbackModal';
 import OrderDrawer from '../components/OrderDrawer';
+import FlashLogoBadge from '../components/FlashLogoBadge';
 import { getSubCategory } from '../utils/categoryHelper';
 import { getOptimizedImageUrl, getCategoryFallbackImage } from '../utils/imageHelper';
 import {
@@ -264,12 +265,7 @@ export default function PublicMenuPage() {
                   className="w-20 h-20 rounded-2xl object-cover border-4 border-[#0B0F17] shadow-xl"
                 />
               ) : (
-                <div
-                  className="w-20 h-20 rounded-2xl border-4 border-[#0B0F17] shadow-xl flex items-center justify-center"
-                  style={{ backgroundColor: primaryColor }}
-                >
-                  <Zap className="w-10 h-10 text-black fill-black" />
-                </div>
+                <FlashLogoBadge size="xl" className="border-4 border-[#0B0F17] shadow-xl" />
               )}
             </div>
 

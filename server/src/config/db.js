@@ -7,7 +7,11 @@ if (!cached) {
 }
 
 const connectDB = async () => {
-  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/flashmenu';
+  const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
+  if (!uri) {
+    console.warn('[FlashMenu DB Warning] MONGODB_URI missing from environment variables.');
+    return null;
+  }
 
   if (cached.conn && mongoose.connection.readyState === 1) {
     return cached.conn;
@@ -15,8 +19,8 @@ const connectDB = async () => {
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: true,
-      serverSelectionTimeoutMS: 5000,
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 3000,
     };
 
     cached.promise = mongoose

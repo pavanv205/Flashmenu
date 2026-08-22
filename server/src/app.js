@@ -16,7 +16,7 @@ app.use(async (req, res, next) => {
   try {
     await connectDB();
   } catch (err) {
-    // Continue even if DB connection fails (fallback handlers handle getIsConnected)
+    console.warn('[Serverless DB Middleware Warning]', err.message);
   }
   next();
 });
@@ -34,15 +34,6 @@ app.use(
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Rate limiting for auth and public APIs
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 300,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use('/api', apiLimiter);
 
 // API Routes
 app.use('/api/auth', require('./routes/authRoutes'));

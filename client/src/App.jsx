@@ -24,38 +24,41 @@ import OrderHistoryPage from './pages/OrderHistoryPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import WhatsAppButton from './components/WhatsAppButton';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/admin/login" element={<LoginPage initialRole="admin" />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/privacy" element={<PrivacyPolicyPage />} />
-        <Route path="/terms" element={<TermsOfServicePage />} />
-        <Route path="/menu/:restaurantSlug" element={<PublicMenuPage />} />
+    <ErrorBoundary>
+      <AuthProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/admin/login" element={<LoginPage initialRole="admin" />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
+          <Route path="/menu/:restaurantSlug" element={<PublicMenuPage />} />
 
-        {/* Dashboard Protected Routes */}
-        <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<DashboardOverview />} />
-          <Route path="admin" element={<AdminDashboardPage />} />
-          <Route path="items" element={<MenuItemsPage />} />
-          <Route path="categories" element={<CategoriesPage />} />
-          <Route path="qrcodes" element={<QRCodesPage />} />
-          <Route path="analytics" element={<AnalyticsPage />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="feedback" element={<FeedbackPage />} />
-          <Route path="orders" element={<OrdersPage />} />
-          <Route path="order-history" element={<OrderHistoryPage />} />
-          <Route path="subscription" element={<SubscriptionPage />} />
-        </Route>
-      </Routes>
-      <WhatsAppButton />
-    </AuthProvider>
+          {/* Dashboard Protected Routes */}
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route index element={<DashboardOverview />} />
+            <Route path="admin" element={<AdminDashboardPage />} />
+            <Route path="items" element={<MenuItemsPage />} />
+            <Route path="categories" element={<CategoriesPage />} />
+            <Route path="qrcodes" element={<QRCodesPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="feedback" element={<FeedbackPage />} />
+            <Route path="orders" element={<OrdersPage />} />
+            <Route path="order-history" element={<OrderHistoryPage />} />
+            <Route path="subscription" element={<SubscriptionPage />} />
+          </Route>
+        </Routes>
+        <WhatsAppButton />
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }

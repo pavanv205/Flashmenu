@@ -69,13 +69,30 @@ export default function DashboardOverview() {
     );
   }
 
-  const { stats, viewsGraph, topItems, recentFeedback, waiterCalls } = data || {
-    stats: {},
-    viewsGraph: [],
-    topItems: [],
-    recentFeedback: [],
-    waiterCalls: [],
+  const stats = {
+    totalViews: data?.stats?.totalViews ?? 0,
+    todayViews: data?.stats?.todayViews ?? 0,
+    uniqueVisitors: data?.stats?.uniqueVisitors ?? 0,
+    totalItems: data?.stats?.totalItems ?? 0,
+    totalCategories: data?.stats?.totalCategories ?? 0,
+    availableItems: data?.stats?.availableItems ?? 0,
+    soldOutItems: data?.stats?.soldOutItems ?? 0,
   };
+
+  const viewsGraph = (data?.viewsGraph && data.viewsGraph.length > 0)
+    ? data.viewsGraph
+    : [
+        { date: 'Mon', views: 0 },
+        { date: 'Tue', views: 0 },
+        { date: 'Wed', views: 0 },
+        { date: 'Thu', views: 0 },
+        { date: 'Fri', views: 0 },
+        { date: 'Sat', views: 0 },
+        { date: 'Sun', views: 0 },
+      ];
+
+  const topItems = data?.topItems || [];
+  const waiterCalls = data?.waiterCalls || [];
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto font-sans">
@@ -223,8 +240,8 @@ export default function DashboardOverview() {
             </span>
           </div>
 
-          <div className="h-64 w-full pt-4">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-64 w-full pt-4 min-h-[250px]">
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={200}>
               <AreaChart data={viewsGraph}>
                 <defs>
                   <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">

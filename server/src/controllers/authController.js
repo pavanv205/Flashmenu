@@ -219,60 +219,64 @@ const loginUser = async (req, res) => {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
-      await connectDB().catch(() => {});
+      try { await connectDB(); } catch (e) {}
 
       if (getIsConnected()) {
-        let adminUser = await User.findOne({ email: 'pavanvadapalli205@gmail.com' });
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash('Pavan@2193', salt);
-        if (!adminUser) {
-          adminUser = await User.create({
-            name: 'Pavan Vadapalli (Master Admin)',
-            email: 'pavanvadapalli205@gmail.com',
-            password: hashedPassword,
-            phone: '+919999999999',
-            role: 'admin',
-          });
-        } else if (adminUser.role !== 'admin') {
-          adminUser.role = 'admin';
-          adminUser.password = hashedPassword;
+        try {
+          let adminUser = await User.findOne({ email: 'pavanvadapalli205@gmail.com' });
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash('Pavan@2193', salt);
+          if (!adminUser) {
+            adminUser = await User.create({
+              name: 'Pavan Vadapalli (Master Admin)',
+              email: 'pavanvadapalli205@gmail.com',
+              password: hashedPassword,
+              phone: '+919999999999',
+              role: 'admin',
+            });
+          } else if (adminUser.role !== 'admin') {
+            adminUser.role = 'admin';
+            adminUser.password = hashedPassword;
+            await adminUser.save();
+          }
+
+          const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+          adminUser.adminOtpCode = otpCode;
+          adminUser.adminOtpExpires = Date.now() + 600000;
           await adminUser.save();
-        }
 
-        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-        adminUser.adminOtpCode = otpCode;
-        adminUser.adminOtpExpires = Date.now() + 600000;
-        await adminUser.save();
-
-        const html = `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0B0F17; color: #FFFFFF; padding: 30px; border-radius: 16px; border: 1px solid #1F2937;">
-            <div style="text-align: center; margin-bottom: 24px;">
-              <h1 style="color: #F59E0B; margin: 0; font-size: 28px;">FlashMenu</h1>
-              <p style="color: #9CA3AF; font-size: 14px; margin-top: 4px;">Master Admin Security System</p>
-            </div>
-            
-            <h2 style="color: #FFFFFF; font-size: 20px; font-weight: bold;">Master Admin 2FA Code</h2>
-            <p style="color: #D1D5DB; font-size: 14px; line-height: 1.6;">Hello <strong>Pavan Vadapalli</strong>,</p>
-            <p style="color: #D1D5DB; font-size: 14px; line-height: 1.6;">You are attempting to log in to the Master Admin Portal. Please enter the security verification code below to gain access:</p>
-            
-            <div style="text-align: center; margin: 28px 0;">
-              <p style="color: #9CA3AF; font-size: 12px; margin-bottom: 8px; font-weight: bold; text-transform: uppercase;">Your 6-Digit Admin 2FA Code</p>
-              <div style="background-color: #111827; border: 2px solid #F59E0B; display: inline-block; padding: 14px 28px; font-size: 32px; font-weight: 900; color: #F59E0B; letter-spacing: 6px; border-radius: 12px;">
-                ${otpCode}
+          const html = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0B0F17; color: #FFFFFF; padding: 30px; border-radius: 16px; border: 1px solid #1F2937;">
+              <div style="text-align: center; margin-bottom: 24px;">
+                <h1 style="color: #F59E0B; margin: 0; font-size: 28px;">FlashMenu</h1>
+                <p style="color: #9CA3AF; font-size: 14px; margin-top: 4px;">Master Admin Security System</p>
               </div>
+              
+              <h2 style="color: #FFFFFF; font-size: 20px; font-weight: bold;">Master Admin 2FA Code</h2>
+              <p style="color: #D1D5DB; font-size: 14px; line-height: 1.6;">Hello <strong>Pavan Vadapalli</strong>,</p>
+              <p style="color: #D1D5DB; font-size: 14px; line-height: 1.6;">You are attempting to log in to the Master Admin Portal. Please enter the security verification code below to gain access:</p>
+              
+              <div style="text-align: center; margin: 28px 0;">
+                <p style="color: #9CA3AF; font-size: 12px; margin-bottom: 8px; font-weight: bold; text-transform: uppercase;">Your 6-Digit Admin 2FA Code</p>
+                <div style="background-color: #111827; border: 2px solid #F59E0B; display: inline-block; padding: 14px 28px; font-size: 32px; font-weight: 900; color: #F59E0B; letter-spacing: 6px; border-radius: 12px;">
+                  ${otpCode}
+                </div>
+              </div>
+
+              <p style="color: #6B7280; font-size: 12px; text-align: center; margin-top: 24px; border-t: 1px solid #1F2937; pt-16;">
+                This code will expire in 10 minutes.<br/>If you did not request this login, please change your password immediately.
+              </p>
             </div>
+          `;
 
-            <p style="color: #6B7280; font-size: 12px; text-align: center; margin-top: 24px; border-t: 1px solid #1F2937; pt-16;">
-              This code will expire in 10 minutes.<br/>If you did not request this login, please change your password immediately.
-            </p>
-          </div>
-        `;
-
-        await sendEmail({
-          to: adminUser.email,
-          subject: 'FlashMenu - Master Admin 2FA Verification Code',
-          html,
-        }).catch((e) => console.warn('2FA Email Send Warning:', e.message));
+          await sendEmail({
+            to: adminUser.email,
+            subject: 'FlashMenu - Master Admin 2FA Verification Code',
+            html,
+          }).catch((e) => console.warn('2FA Email Send Warning:', e.message));
+        } catch (mErr) {
+          console.warn('Master admin DB error:', mErr.message);
+        }
       }
 
       return res.json({
@@ -366,7 +370,7 @@ const loginUser = async (req, res) => {
     });
   } catch (error) {
     console.error('Login User Fatal Exception:', error);
-    return res.status(500).json({ message: error.message || 'Server login failure' });
+    return res.status(500).json({ message: 'EXPLICIT_LOGIN_ERROR: ' + (error.stack || error.message) });
   }
 };
 

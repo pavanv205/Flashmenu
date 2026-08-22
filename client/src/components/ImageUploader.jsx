@@ -2,6 +2,71 @@ import React, { useState } from 'react';
 import { uploadAPI } from '../services/api';
 import { Upload, X, Image as ImageIcon, CheckCircle2, RefreshCw } from 'lucide-react';
 
+const compressImageToUnder1MB = (file) => {
+  return new Promise((resolve) => {
+    // If file size is already < 500KB, return as-is
+    if (file.size <= 500 * 1024) {
+      resolve(file);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        // Downscale large dimensions to max 1200px
+        const maxDimension = 1200;
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Quality iteration to guarantee size < 1MB (target ~800KB)
+        let quality = 0.85;
+        const getBlob = (q) => {
+          canvas.toBlob(
+            (blob) => {
+              if (blob && blob.size > 950 * 1024 && q > 0.3) {
+                getBlob(q - 0.15);
+              } else if (blob) {
+                const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.webp'), {
+                  type: 'image/webp',
+                  lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+              } else {
+                resolve(file);
+              }
+            },
+            'image/webp',
+            q
+          );
+        };
+
+        getBlob(quality);
+      };
+      img.onerror = () => resolve(file);
+    };
+    reader.onerror = () => resolve(file);
+  });
+};
+
 export default function ImageUploader({
   label = 'Image',
   imageUrl = '',
@@ -14,23 +79,26 @@ export default function ImageUploader({
   const [dragActive, setDragActive] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const handleUpload = async (file) => {
-    if (!file) return;
-
-    // Validate size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      setErrorMsg('File size exceeds 10MB limit!');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('type', assetType);
+  const handleUpload = async (inputFile) => {
+    if (!inputFile) return;
 
     setUploading(true);
     setErrorMsg('');
 
     try {
+      // Compress image client-side before sending
+      const fileToUpload = await compressImageToUnder1MB(inputFile);
+
+      if (fileToUpload.size > 2 * 1024 * 1024) {
+        setErrorMsg('File size is too large! Please choose an image under 5MB.');
+        setUploading(false);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', fileToUpload);
+      formData.append('type', assetType);
+
       const res = await uploadAPI.uploadImage(formData);
       if (res.data?.success && res.data?.image) {
         onUploadSuccess(res.data.image.url, res.data.image.publicId);
@@ -38,7 +106,7 @@ export default function ImageUploader({
         throw new Error('Upload failed');
       }
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Failed to upload image');
+      setErrorMsg(err.response?.data?.message || err.message || 'Failed to upload image');
     } finally {
       setUploading(false);
     }
@@ -139,7 +207,7 @@ export default function ImageUploader({
             <div className="text-xs text-gray-300">
               <span className="font-bold text-amber-400">Click to upload</span> or drag and drop
             </div>
-            <p className="text-[10px] text-gray-500">JPG, PNG, WebP or AVIF (Max 10MB)</p>
+            <p className="text-[10px] text-gray-500">JPG, PNG, WebP or AVIF (Auto Compressed &lt; 1MB)</p>
             <input
               type="file"
               accept="image/*"

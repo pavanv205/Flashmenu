@@ -13,9 +13,7 @@ const uploadImageBuffer = async (buffer, mimetype, folderPath = 'flashmenu/gener
 
   const result = await cloudinary.uploader.upload(dataURI, {
     folder: folderPath,
-    transformation: [
-      { width: 1200, height: 1200, crop: 'limit', quality: 'auto', fetch_format: 'auto' },
-    ],
+    resource_type: 'auto',
   });
 
   return {

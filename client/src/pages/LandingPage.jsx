@@ -58,7 +58,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto font-normal leading-relaxed">
-            A beautiful digital menu experience, just one scan away.
+            Turn your restaurant menu into a fast, beautiful digital experience
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 pt-2">

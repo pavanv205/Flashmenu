@@ -206,54 +206,49 @@ const loginUser = async (req, res) => {
 
     const normalizedEmail = String(email || '').toLowerCase().trim();
 
-    await connectDB();
+    // Master Admin is EXCLUSIVELY pavanvadapalli205@gmail.com / Pavan@2193
+    if (normalizedEmail === 'pavanvadapalli205@gmail.com') {
+      if (password !== 'Pavan@2193') {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
 
-    if (getIsConnected()) {
-      let user = null;
+      await connectDB().catch(() => {});
 
-      // Master Admin is EXCLUSIVELY pavanvadapalli205@gmail.com / Pavan@2193
-      if (normalizedEmail === 'pavanvadapalli205@gmail.com') {
-        if (password !== 'Pavan@2193') {
-          return res.status(401).json({ message: 'Invalid email or password' });
-        }
-
-        user = await User.findOne({ email: 'pavanvadapalli205@gmail.com' });
+      if (getIsConnected()) {
+        let adminUser = await User.findOne({ email: 'pavanvadapalli205@gmail.com' });
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash('Pavan@2193', salt);
-
-        if (!user) {
-          user = await User.create({
+        if (!adminUser) {
+          adminUser = await User.create({
             name: 'Pavan Vadapalli (Master Admin)',
             email: 'pavanvadapalli205@gmail.com',
             password: hashedPassword,
             phone: '+919999999999',
             role: 'admin',
           });
-        } else if (user.role !== 'admin') {
-          user.role = 'admin';
-          user.password = hashedPassword;
-          await user.save();
+        } else if (adminUser.role !== 'admin') {
+          adminUser.role = 'admin';
+          adminUser.password = hashedPassword;
+          await adminUser.save();
         }
 
         const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-        user.adminOtpCode = otpCode;
-        user.adminOtpExpires = Date.now() + 600000; // 10 minutes TTL
-        await user.save();
-
-        sendEmail({
-          to: user.email,
-          subject: 'FlashMenu - Master Admin 2FA Verification Code',
-          html: `<p>Your Master Admin 2FA Code is: <strong>${otpCode}</strong> or emergency code <strong>219300</strong></p>`,
-        }).catch(() => {});
-
-        return res.json({
-          requires2FA: true,
-          email: user.email,
-          message: 'Security 2FA verification code sent to pavanvadapalli205@gmail.com (Master Code: 219300)',
-        });
+        adminUser.adminOtpCode = otpCode;
+        adminUser.adminOtpExpires = Date.now() + 600000;
+        await adminUser.save();
       }
 
-      user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
+      return res.json({
+        requires2FA: true,
+        email: 'pavanvadapalli205@gmail.com',
+        message: 'Security 2FA verification code sent to pavanvadapalli205@gmail.com (Master Code: 219300)',
+      });
+    }
+
+    await connectDB();
+
+    if (getIsConnected()) {
+      const user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
 
       if (!user) {
         return res.status(401).json({ message: 'Invalid email or password' });

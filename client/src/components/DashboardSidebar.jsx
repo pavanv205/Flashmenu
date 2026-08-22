@@ -64,7 +64,7 @@ export default function DashboardSidebar({ closeMobileMenu }) {
       </div>
 
       {/* Restaurant quick card */}
-      {restaurant && (
+      {restaurant && restaurant.name && restaurant.slug && (
         <div className="p-4 mx-4 my-4 rounded-2xl bg-[#0E0E14] border border-white/[0.07] space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Active Restaurant</span>

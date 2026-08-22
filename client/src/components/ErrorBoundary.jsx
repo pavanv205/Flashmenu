@@ -29,6 +29,12 @@ export default class ErrorBoundary extends React.Component {
               <p className="text-xs text-gray-400">
                 A temporary error occurred while rendering this page. Don't worry, your data is completely safe.
               </p>
+              {this.state.error && (
+                <div className="mt-3 p-3 rounded-xl bg-red-950/40 border border-red-500/30 text-left text-[11px] font-mono text-red-300 overflow-x-auto max-h-32">
+                  <p className="font-bold text-red-400">Error Details:</p>
+                  <p>{String(this.state.error.message || this.state.error)}</p>
+                </div>
+              )}
             </div>
 
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">

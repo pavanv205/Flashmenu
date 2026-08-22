@@ -22,17 +22,17 @@ export default function DashboardHeader({ toggleMobileMenu, isExpiredPaywall }) 
           <FlashLogoBadge size="sm" />
           <div>
             <h2 className="text-sm font-extrabold text-white">
-              {restaurant ? restaurant.name : 'FlashMenu'}
+              {restaurant?.name ? restaurant.name : 'FlashMenu'}
             </h2>
             <p className="text-[11px] text-gray-400">
-              {restaurant ? `flashmenu.in/menu/${restaurant.slug}` : 'FlashMenu Owner Portal'}
+              {restaurant?.slug ? `flashmenu.in/menu/${restaurant.slug}` : 'FlashMenu Owner Portal'}
             </p>
           </div>
         </div>
       </div>
 
       <div className="flex items-center space-x-3">
-        {restaurant && !isExpiredPaywall && (
+        {restaurant?.slug && !isExpiredPaywall && (
           <a
             href={`/menu/${restaurant.slug}?preview=true`}
             target="_blank"

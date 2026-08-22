@@ -29,7 +29,7 @@ const connectDB = async () => {
   try {
     cached.promise = mongoose.connect(uri, {
       bufferCommands: false,
-      serverSelectionTimeoutMS: 2000,
+      serverSelectionTimeoutMS: 5000,
     });
     cached.conn = await cached.promise;
     return mongoose.connection.readyState === 1;

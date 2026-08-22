@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import FlashLogoBadge from './FlashLogoBadge';
 import { ShieldCheck, CheckCircle2, CreditCard, Lock, X, Loader2, Zap, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';

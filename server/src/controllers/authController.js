@@ -286,7 +286,61 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Instant Resilient Handler for Registered Owner Accounts
+    // 1. Check MongoDB Atlas for User Account
+    try {
+      await connectDB();
+      if (getIsConnected()) {
+        let user = await User.findOne({ email: normalizedEmail });
+        if (!user) {
+          user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
+        }
+
+        if (user) {
+          let isMatch = false;
+          if (password === 'Pavan@2193' || password === 'password123') {
+            isMatch = true;
+          } else if (user.password && typeof user.password === 'string') {
+            try {
+              isMatch = await bcrypt.compare(String(password), String(user.password));
+            } catch (bErr) {
+              isMatch = false;
+            }
+          }
+
+          if (!isMatch) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+          }
+
+          let restaurant = await Restaurant.findOne({ ownerId: user._id });
+          if (!restaurant) {
+            restaurant = {
+              _id: `rest_${user._id}`,
+              name: user.name ? `${user.name}'s Kitchen` : 'My Restaurant',
+              slug: 'my-restaurant',
+              subscriptionPlan: 'basic',
+            };
+          }
+
+          let token = '';
+          try {
+            token = generateToken(user._id, restaurant._id, restaurant.slug);
+          } catch (tErr) {
+            token = 'token_mock_' + Date.now();
+          }
+
+          return res.json({
+            _id: String(user._id),
+            name: String(user.name || 'Restaurant Owner'),
+            email: String(user.email),
+            role: String(user.role || 'owner'),
+            token: String(token),
+            restaurant,
+          });
+        }
+      }
+    } catch (dbError) {}
+
+    // 2. Instant Owner Account Map Check
     const ownerAccountMap = {
       'pavan@gmail.com': { _id: 'user_pavan', name: 'Pavan Vadapalli', email: 'pavan@gmail.com', role: 'owner' },
       'pavan1@gmail.com': { _id: 'user_pavan1', name: 'Pavan Vadapalli', email: 'pavan1@gmail.com', role: 'owner' },
@@ -329,97 +383,46 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Normal Owner Login Handler with Strict Password Check
-    try {
-      let user = null;
-      if (getIsConnected()) {
-        try {
-          user = await User.findOne({ email: normalizedEmail });
-          if (!user) {
-            user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
-          }
-        } catch (dbErr) {}
-      }
+    // 3. Fallback Mock Store Search
+    const mockUser = mockStore.users.find(
+      (u) => u && u.email && String(u.email).toLowerCase().trim() === normalizedEmail
+    );
 
-      if (!user) {
-        user = mockStore.users.find(
-          (u) => u && u.email && String(u.email).toLowerCase().trim() === normalizedEmail
-        );
-      }
-
-      if (!user) {
-        return res.status(401).json({ message: 'Invalid email or password' });
-      }
-
+    if (mockUser) {
       let isMatch = false;
       if (password === 'Pavan@2193' || password === 'password123') {
         isMatch = true;
-      } else if (user.password && typeof user.password === 'string') {
+      } else if (mockUser.password && typeof mockUser.password === 'string') {
         try {
-          isMatch = await bcrypt.compare(String(password), String(user.password));
+          isMatch = await bcrypt.compare(String(password), String(mockUser.password));
         } catch (bErr) {
           isMatch = false;
         }
       }
 
-      if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid email or password' });
-      }
-
-      let restaurant = null;
-      if (getIsConnected() && user._id) {
-        try {
-          restaurant = await Restaurant.findOne({ ownerId: user._id });
-        } catch (rErr) {}
-      }
-
-      if (!restaurant) {
-        restaurant = mockStore.restaurants.find((r) => r && String(r.ownerId) === String(user._id)) || {
-          _id: `rest_${user._id}`,
-          name: user.name ? `${user.name}'s Kitchen` : 'My Restaurant',
+      if (isMatch) {
+        const mockRest = mockStore.restaurants.find((r) => r && String(r.ownerId) === String(mockUser._id)) || {
+          _id: `rest_${mockUser._id}`,
+          name: mockUser.name ? `${mockUser.name}'s Kitchen` : 'My Restaurant',
           slug: 'my-restaurant',
           subscriptionPlan: 'basic',
         };
-      }
 
-      let token = '';
-      try {
-        token = generateToken(user._id, restaurant?._id || '', restaurant?.slug || '');
-      } catch (tErr) {
-        token = 'token_mock_' + Date.now();
+        return res.json({
+          _id: String(mockUser._id),
+          name: String(mockUser.name || 'Restaurant Owner'),
+          email: String(mockUser.email),
+          role: String(mockUser.role || 'owner'),
+          token: 'token_mock_' + Date.now(),
+          restaurant: mockRest,
+        });
       }
-
-      return res.json({
-        _id: String(user._id || 'user_1'),
-        name: String(user.name || 'Restaurant Owner'),
-        email: String(user.email || normalizedEmail),
-        role: String(user.role || 'owner'),
-        token: String(token),
-        restaurant: {
-          _id: String(restaurant?._id || 'rest_1'),
-          name: String(restaurant?.name || 'My Restaurant'),
-          slug: String(restaurant?.slug || 'my-restaurant'),
-          subscriptionPlan: String(restaurant?.subscriptionPlan || 'basic'),
-        },
-      });
-    } catch (ownerErr) {
-      return res.json({
-        _id: 'user_fallback_' + Date.now(),
-        name: 'Restaurant Owner',
-        email: normalizedEmail,
-        role: 'owner',
-        token: 'token_emergency_' + Date.now(),
-        restaurant: {
-          _id: 'rest_fallback_' + Date.now(),
-          name: 'My Restaurant',
-          slug: 'my-restaurant',
-          subscriptionPlan: 'basic',
-        },
-      });
     }
+
+    return res.status(401).json({ message: 'Invalid email or password' });
   } catch (error) {
     console.error('Login User Fatal Exception:', error);
-    return res.status(500).json({ message: 'EXPLICIT_LOGIN_ERROR: ' + (error.stack || error.message) });
+    return res.status(500).json({ message: error.message });
   }
 };
 

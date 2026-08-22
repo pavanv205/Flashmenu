@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import FlashLogoBadge from './FlashLogoBadge';
 import { ShieldCheck, CheckCircle2, CreditCard, Lock, X, Loader2, Zap, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { paymentAPI } from '../services/api';
@@ -130,9 +130,7 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
         {/* Top Header Bar */}
         <div className="bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-transparent p-5 border-b border-dark-border flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
-            <div className="w-9 h-9 rounded-xl bg-amber-500 text-black flex items-center justify-center font-black shadow-lg shadow-amber-500/20">
-              <Zap className="w-5 h-5 fill-black" />
-            </div>
+            <FlashLogoBadge size="md" />
             <div>
               <h3 className="font-extrabold text-sm text-white flex items-center space-x-1.5">
                 <span>FlashMenu Razorpay Gateway</span>

@@ -10,9 +10,15 @@ const { connectDB, getIsConnected } = require('../config/db');
 const { defaultCategories } = require('../utils/defaultMenu');
 
 const generateToken = (id, restaurantId = '', slug = '') => {
-  return jwt.sign({ id, restaurantId, slug }, process.env.JWT_SECRET || 'flashmenu_secret_key', {
-    expiresIn: '30d',
-  });
+  return jwt.sign(
+    {
+      id: String(id || ''),
+      restaurantId: String(restaurantId || ''),
+      slug: String(slug || ''),
+    },
+    process.env.JWT_SECRET || 'flashmenu_secret_key',
+    { expiresIn: '30d' }
+  );
 };
 
 const registerUser = async (req, res) => {

@@ -14,6 +14,9 @@ export default function Footer() {
           <Link to="/privacy" className="hover:text-amber-400 transition-colors">
             Privacy Policy
           </Link>
+          <Link to="/terms" className="hover:text-amber-400 transition-colors">
+            Terms of Service
+          </Link>
           <a
             href="https://mail.google.com/mail/?view=cm&fs=1&to=flashmenu18@gmail.com&su=Inquiry%20regarding%20FlashMenu%20Platform&body=Hello%20FlashMenu%20Team,%0A%0AI%20would%20like%20to%20get%20in%20touch%20regarding..."
             target="_blank"

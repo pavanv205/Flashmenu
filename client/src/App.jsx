@@ -8,6 +8,7 @@ import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import PublicMenuPage from './pages/PublicMenuPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 import DashboardLayout from './pages/DashboardLayout';
 import DashboardOverview from './pages/DashboardOverview';
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/menu/:restaurantSlug" element={<PublicMenuPage />} />
 
         {/* Dashboard Protected Routes */}

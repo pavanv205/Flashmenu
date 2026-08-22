@@ -36,8 +36,10 @@ const registerUser = async (req, res) => {
     await connectDB();
 
     if (getIsConnected()) {
-      const userExists = await User.findOne({ email: normalizedEmail });
-      if (userExists) {
+      let user = await User.findOne({ email: normalizedEmail });
+      let existingRest = user ? await Restaurant.findOne({ ownerId: user._id }) : null;
+
+      if (user && existingRest) {
         return res.status(400).json({ message: 'An account with this email address already exists. Please sign in or use a different email.' });
       }
 
@@ -50,8 +52,8 @@ const registerUser = async (req, res) => {
           return res.status(400).json({ message: 'Invalid phone number. Repetitive dummy numbers (e.g. 0000000000) are not allowed.' });
         }
 
-        const phoneUserExists = await User.findOne({ phone: cleanPhone });
-        const phoneRestExists = await Restaurant.findOne({ phone: cleanPhone });
+        const phoneUserExists = await User.findOne({ phone: cleanPhone, email: { $ne: normalizedEmail } });
+        const phoneRestExists = await Restaurant.findOne({ phone: cleanPhone, email: { $ne: normalizedEmail } });
         if (phoneUserExists || phoneRestExists) {
           return res.status(400).json({ message: 'A restaurant account with this phone number is already registered. Please use a different phone number.' });
         }

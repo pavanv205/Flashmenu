@@ -137,7 +137,10 @@ export default function SignupPage() {
       // Move to Step 2: Select Subscription Plan
       setStep(2);
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Failed to create restaurant account. Please try again.';
+      const serverMsg =
+        (typeof err.response?.data?.message === 'string' && err.response.data.message) ||
+        (typeof err.response?.data?.error === 'string' && err.response.data.error);
+      const msg = serverMsg || err.message || 'Failed to create restaurant account. Please try again.';
       setError(msg);
     } finally {
       setLoading(false);

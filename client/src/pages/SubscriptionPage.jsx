@@ -218,33 +218,14 @@ export default function SubscriptionPage() {
                     <p className="text-2xl font-black text-white mt-1">₹1</p>
                     <span className="text-[10px] text-gray-500">Valid for 5 Mins</span>
                   </div>
-                  {11 < currentScore ? (
-                    <button
-                      type="button"
-                      disabled
-                      className="w-full py-2.5 rounded-xl bg-gray-800/50 text-gray-500 font-extrabold text-[11px] cursor-not-allowed border border-gray-700/50"
-                    >
-                      <span>Downgrade Not Allowed</span>
-                    </button>
-                  ) : 11 === currentScore ? (
-                    <button
-                      type="button"
-                      disabled
-                      className="w-full py-2.5 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-[11px] cursor-default border border-amber-500/30 flex items-center justify-center space-x-1"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Active Plan (5 Mins)</span>
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => openDemoPayment('basic', 'Basic Restaurant (5 Mins)', '5 Minutes Test', 1)}
-                      className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
-                    >
-                      <CreditCard className="w-3.5 h-3.5" />
-                      <span>{isExpired && currentPlan === 'basic' ? 'Renew 5 Mins (₹1)' : 'Pay 5 Mins (₹1)'}</span>
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (5 Mins)', '5 Minutes Test', 1)}
+                    className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span>{isExpired && currentPlan === 'basic' ? 'Renew 5 Mins (₹1)' : currentPlan === 'basic' ? 'Extend 5 Mins (₹1)' : 'Pay 5 Mins (₹1)'}</span>
+                  </button>
                 </div>
 
                 <div className="p-4 flex flex-col justify-between space-y-3 text-center bg-amber-500/5 hover:bg-amber-500/10 transition-colors">
@@ -253,33 +234,14 @@ export default function SubscriptionPage() {
                     <p className="text-2xl font-black text-amber-400 mt-1">₹1</p>
                     <span className="text-[10px] text-amber-400/80">One-Time Pay</span>
                   </div>
-                  {12 < currentScore ? (
-                    <button
-                      type="button"
-                      disabled
-                      className="w-full py-2.5 rounded-xl bg-gray-800/50 text-gray-500 font-extrabold text-[11px] cursor-not-allowed border border-gray-700/50"
-                    >
-                      <span>Downgrade Not Allowed</span>
-                    </button>
-                  ) : 12 === currentScore ? (
-                    <button
-                      type="button"
-                      disabled
-                      className="w-full py-2.5 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-[11px] cursor-default border border-amber-500/30 flex items-center justify-center space-x-1"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Active Plan (Lifetime)</span>
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => openDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime Access', 1)}
-                      className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
-                    >
-                      <CreditCard className="w-3.5 h-3.5" />
-                      <span>Pay Lifetime (₹1)</span>
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime Access', 1)}
+                    className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span>{isLifetime && currentPlan === 'basic' ? 'Lifetime Active (Re-Sync)' : 'Pay Lifetime (₹1)'}</span>
+                  </button>
                 </div>
               </div>
 
@@ -343,33 +305,14 @@ export default function SubscriptionPage() {
                   <p className="text-2xl font-black text-white mt-1">₹1</p>
                   <span className="text-[10px] text-gray-400">Valid for 5 Mins</span>
                 </div>
-                {21 < currentScore ? (
-                  <button
-                    type="button"
-                    disabled
-                    className="w-full py-2.5 rounded-xl bg-gray-800/50 text-gray-500 font-extrabold text-[11px] cursor-not-allowed border border-gray-700/50"
-                  >
-                    <span>Downgrade Not Allowed</span>
-                  </button>
-                ) : 21 === currentScore ? (
-                  <button
-                    type="button"
-                    disabled
-                    className="w-full py-2.5 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-[11px] cursor-default border border-amber-500/30 flex items-center justify-center space-x-1"
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Active Plan (5 Mins)</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => openDemoPayment('premium', 'Premium Restaurant (5 Mins)', '5 Minutes Test', 1)}
-                    className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
-                  >
-                    <CreditCard className="w-3.5 h-3.5" />
-                    <span>{isExpired && currentPlan === 'premium' ? 'Renew 5 Mins (₹1)' : currentPlan === 'basic' ? 'Upgrade to Premium 5 Mins (₹1)' : 'Pay 5 Mins (₹1)'}</span>
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (5 Mins)', '5 Minutes Test', 1)}
+                  className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
+                >
+                  <CreditCard className="w-3.5 h-3.5" />
+                  <span>{isExpired && currentPlan === 'premium' ? 'Renew 5 Mins (₹1)' : currentPlan === 'basic' ? 'Upgrade to Premium 5 Mins (₹1)' : 'Extend 5 Mins (₹1)'}</span>
+                </button>
               </div>
 
               <div className="p-4 flex flex-col justify-between space-y-3 text-center bg-amber-500/10 hover:bg-amber-500/20 transition-colors">
@@ -378,25 +321,14 @@ export default function SubscriptionPage() {
                   <p className="text-2xl font-black text-amber-400 mt-1">₹1</p>
                   <span className="text-[10px] text-amber-400/90">One-Time Pay</span>
                 </div>
-                {22 === currentScore ? (
-                  <button
-                    type="button"
-                    disabled
-                    className="w-full py-2.5 rounded-xl bg-amber-500/20 text-amber-400 font-extrabold text-[11px] cursor-default border border-amber-500/30 flex items-center justify-center space-x-1"
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Active Plan (Lifetime)</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 1)}
-                    className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
-                  >
-                    <CreditCard className="w-3.5 h-3.5" />
-                    <span>Upgrade to Premium Lifetime (₹1)</span>
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 1)}
+                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
+                >
+                  <CreditCard className="w-3.5 h-3.5" />
+                  <span>{isLifetime && currentPlan === 'premium' ? 'Premium Lifetime Active (Re-Sync)' : 'Upgrade to Premium Lifetime (₹1)'}</span>
+                </button>
               </div>
             </div>
 

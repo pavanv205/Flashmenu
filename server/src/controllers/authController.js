@@ -298,7 +298,7 @@ const loginUser = async (req, res) => {
     };
 
     if (ownerAccountMap[normalizedEmail]) {
-      if (password !== 'Pavan@2193' && password !== 'password123' && String(password).length < 4) {
+      if (password !== 'Pavan@2193' && password !== 'password123') {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 

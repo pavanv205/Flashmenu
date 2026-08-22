@@ -1,16 +1,11 @@
 import React from 'react';
-import { Menu, ExternalLink, QrCode, User, ShieldCheck } from 'lucide-react';
+import { Menu, ExternalLink, QrCode, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import FlashLogoBadge from './FlashLogoBadge';
 
 export default function DashboardHeader({ toggleMobileMenu, isExpiredPaywall }) {
   const { user, restaurant, logout } = useAuth();
-  const isAdmin =
-    user?.role === 'admin' ||
-    ['flashmenu18@gmail.com', 'pavanvadapalli205@gmail.com', 'admin@flashmenu.in', 'pava26@gmail.com'].includes(
-      String(user?.email || '').toLowerCase()
-    );
 
   return (
     <header className="h-16 bg-[#08080A] border-b border-white/[0.08] px-4 sm:px-8 flex items-center justify-between">
@@ -26,27 +21,17 @@ export default function DashboardHeader({ toggleMobileMenu, isExpiredPaywall }) 
         <div className="flex items-center space-x-3">
           <FlashLogoBadge size="sm" />
           <div>
-            <h2 className="text-sm font-extrabold text-white flex items-center space-x-1.5">
-              <span>{isAdmin ? 'FlashMenu System Headquarters' : restaurant?.name ? restaurant.name : 'FlashMenu'}</span>
+            <h2 className="text-sm font-extrabold text-white">
+              {restaurant?.name ? restaurant.name : 'FlashMenu'}
             </h2>
-            <p className="text-[11px] text-gray-400 font-semibold">
-              {isAdmin ? 'FlashMenu Master Admin Control Center' : restaurant?.slug ? `flashmenu.in/menu/${restaurant.slug}` : 'FlashMenu Owner Portal'}
+            <p className="text-[11px] text-gray-400">
+              {restaurant?.slug ? `flashmenu.in/menu/${restaurant.slug}` : 'FlashMenu Owner Portal'}
             </p>
           </div>
         </div>
       </div>
 
       <div className="flex items-center space-x-3">
-        {isAdmin && (
-          <Link
-            to="/dashboard/admin"
-            className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-xs font-black text-amber-400 hover:bg-amber-500 hover:text-black transition-all shadow-md"
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Master Admin Portal</span>
-          </Link>
-        )}
-
         {restaurant?.slug && !isExpiredPaywall && (
           <a
             href={`/menu/${restaurant.slug}?preview=true`}

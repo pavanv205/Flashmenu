@@ -410,11 +410,13 @@ export default function PublicMenuPage() {
                       {/* Food Image */}
                       <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-[#0A0F1D] flex-shrink-0 border border-slate-800/80 shadow-inner">
                         {(() => {
-                          const itemImage = item.image || getCategoryFallbackImage(
-                            item.categoryId?.name,
-                            item.computedSubCategory || item.subCategory,
-                            item.name
-                          );
+                          const itemImage = (item.image && item.image.trim() !== '')
+                            ? getOptimizedImageUrl(item.image)
+                            : getCategoryFallbackImage(
+                                item.categoryId?.name,
+                                item.computedSubCategory || item.subCategory,
+                                item.name
+                              );
                           return (
                             <img
                               src={itemImage}
@@ -422,6 +424,14 @@ export default function PublicMenuPage() {
                               loading="lazy"
                               decoding="async"
                               className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = getCategoryFallbackImage(
+                                  item.categoryId?.name,
+                                  item.computedSubCategory || item.subCategory,
+                                  item.name
+                                );
+                              }}
                             />
                           );
                         })()}

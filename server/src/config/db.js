@@ -7,9 +7,8 @@ if (!cached) {
 }
 
 const connectDB = async () => {
-  const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
+  const uri = process.env.MONGODB_URI;
   if (!uri) {
-    console.warn('[FlashMenu DB Warning] MONGODB_URI missing from environment variables.');
     return false;
   }
 
@@ -17,32 +16,28 @@ const connectDB = async () => {
     return true;
   }
 
-  if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-      serverSelectionTimeoutMS: 2500,
-    };
-
-    cached.promise = mongoose
-      .connect(uri, opts)
-      .then((m) => {
-        console.log(`[FlashMenu DB] MongoDB Connected: ${m.connection.host}`);
-        return m;
-      })
-      .catch((err) => {
-        console.warn(`[FlashMenu DB Warning] MongoDB Connection Error: ${err.message}`);
-        cached.promise = null;
-        return null;
-      });
+  if (mongoose.connection.readyState === 2 && cached.promise) {
+    try {
+      await Promise.race([
+        cached.promise,
+        new Promise((res) => setTimeout(() => res(null), 2000)),
+      ]);
+    } catch (e) {}
+    return mongoose.connection.readyState === 1;
   }
 
   try {
+    cached.promise = mongoose.connect(uri, {
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 2000,
+    });
     cached.conn = await cached.promise;
-  } catch (e) {
+    return mongoose.connection.readyState === 1;
+  } catch (err) {
+    cached.promise = null;
     cached.conn = null;
+    return false;
   }
-
-  return mongoose.connection.readyState === 1;
 };
 
 const getIsConnected = () => {

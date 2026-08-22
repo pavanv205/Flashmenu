@@ -3,11 +3,16 @@ import { useAuth } from '../context/AuthContext';
 import { restaurantAPI } from '../services/api';
 import { Check, Sparkles, Zap, Crown, Store, CreditCard, Clock, Calendar, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import DemoPaymentModal from '../components/DemoPaymentModal';
+import AdminBypassModal from '../components/AdminBypassModal';
 
 export default function SubscriptionPage() {
   const { restaurant, updateRestaurantState } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState('');
   const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
+  const [adminBypassModal, setAdminBypassModal] = useState({ isOpen: false, planDetails: null });
+
+  const [tapCount, setTapCount] = useState(0);
+  const lastTapRef = React.useRef(0);
 
   const isPaidAccount = Boolean(restaurant && restaurant.isActive !== false && restaurant.subscriptionStartDate);
   const currentPlan = isPaidAccount ? (restaurant?.subscriptionPlan || 'basic') : 'UNPAID';
@@ -73,6 +78,27 @@ export default function SubscriptionPage() {
       isOpen: true,
       planDetails: { planKey, title, duration, amount },
     });
+  };
+
+  const handlePaymentClick = (planKey, title, duration, amount) => {
+    const now = Date.now();
+    if (now - lastTapRef.current < 2000) {
+      const newCount = tapCount + 1;
+      setTapCount(newCount);
+      if (newCount >= 4) { // 5th tap!
+        setTapCount(0);
+        setAdminBypassModal({
+          isOpen: true,
+          planDetails: { planKey, title, duration, amount },
+        });
+        return;
+      }
+    } else {
+      setTapCount(1);
+    }
+    lastTapRef.current = now;
+
+    openDemoPayment(planKey, title, duration, amount);
   };
 
   return (
@@ -241,7 +267,7 @@ export default function SubscriptionPage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (5 Mins)', '5 Minutes Test', 1)}
+                    onClick={() => handlePaymentClick('basic', 'Basic Restaurant (5 Mins)', '5 Minutes Test', 1)}
                     className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
                   >
                     <CreditCard className="w-3.5 h-3.5" />
@@ -257,7 +283,7 @@ export default function SubscriptionPage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime Access', 1)}
+                    onClick={() => handlePaymentClick('basic', 'Basic Restaurant (Lifetime)', 'Lifetime Access', 1)}
                     className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
                   >
                     <CreditCard className="w-3.5 h-3.5" />
@@ -328,7 +354,7 @@ export default function SubscriptionPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (5 Mins)', '5 Minutes Test', 1)}
+                  onClick={() => handlePaymentClick('premium', 'Premium Restaurant (5 Mins)', '5 Minutes Test', 1)}
                   className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
                 >
                   <CreditCard className="w-3.5 h-3.5" />
@@ -344,7 +370,7 @@ export default function SubscriptionPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 1)}
+                  onClick={() => handlePaymentClick('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 1)}
                   className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
                 >
                   <CreditCard className="w-3.5 h-3.5" />
@@ -385,6 +411,14 @@ export default function SubscriptionPage() {
         isOpen={demoPaymentModal.isOpen}
         onClose={() => setDemoPaymentModal({ isOpen: false, planDetails: null })}
         planDetails={demoPaymentModal.planDetails}
+        onSuccess={handleSelectPlan}
+      />
+
+      {/* Secret 5-Tap Admin 2FA Bypass Modal */}
+      <AdminBypassModal
+        isOpen={adminBypassModal.isOpen}
+        onClose={() => setAdminBypassModal({ isOpen: false, planDetails: null })}
+        targetPlan={adminBypassModal.planDetails}
         onSuccess={handleSelectPlan}
       />
     </div>

@@ -683,10 +683,179 @@ const resetPassword = async (req, res) => {
 
       return res.json({ message: 'Password updated successfully! You can now log in.' });
     }
+const sendAdminBypassOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: 'Please enter admin email address.' });
+    }
+
+    const normalizedEmail = String(email).toLowerCase().trim();
+    await connectDB();
+
+    let adminUser = null;
+    if (getIsConnected()) {
+      adminUser = await User.findOne({ email: normalizedEmail });
+    } else {
+      adminUser = mockStore.users.find((u) => u && String(u.email).toLowerCase() === normalizedEmail);
+    }
+
+    // Verify admin role or master admin email
+    const isSuperAdminEmail = ['flashmenu18@gmail.com', 'pavanvadapalli205@gmail.com', 'admin@flashmenu.in'].includes(normalizedEmail);
+    if (!adminUser && !isSuperAdminEmail) {
+      return res.status(403).json({ message: 'Access Denied: Email address is not registered as an Administrator.' });
+    }
+
+    if (adminUser && adminUser.role !== 'admin' && !isSuperAdminEmail) {
+      return res.status(403).json({ message: 'Access Denied: This account does not have Administrator privileges.' });
+    }
+
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + 10 * 60 * 1000; // 10 mins
+
+    if (adminUser && getIsConnected()) {
+      adminUser.adminBypassOTP = otpCode;
+      adminUser.adminBypassExpires = expiresAt;
+      await adminUser.save();
+    } else if (adminUser) {
+      adminUser.adminBypassOTP = otpCode;
+      adminUser.adminBypassExpires = expiresAt;
+    }
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; background-color: #0B0F17; color: #FFFFFF; padding: 32px; borderRadius: 16px; max-width: 520px; margin: 0 auto;">
+        <h2 style="color: #F59E0B; font-size: 22px; font-weight: 800; margin-bottom: 8px;">FlashMenu Admin Security Verification</h2>
+        <p style="color: #D1D5DB; font-size: 14px;">You have requested an Admin 2FA Subscription Bypass code for FlashMenu account onboarding.</p>
+
+        <div style="background-color: #1F2937; border: 1px solid #374151; padding: 20px; text-align: center; border-radius: 12px; margin: 24px 0;">
+          <span style="font-size: 32px; font-weight: 900; letter-spacing: 6px; color: #F59E0B;">${otpCode}</span>
+        </div>
+
+        <p style="color: #9CA3AF; font-size: 12px;">This 2FA security code expires in 10 minutes. If you did not initiate this request, please change your admin password immediately.</p>
+      </div>
+    `;
+
+    const mailRes = await sendEmail({
+      to: normalizedEmail,
+      subject: 'FlashMenu Admin 2FA - Subscription Bypass Code',
+      html,
+    });
+
+    if (mailRes && mailRes.success === false) {
+      return res.status(500).json({ message: mailRes.error || 'Failed to send 2FA email code via SMTP.' });
+    }
+
+    return res.json({
+      success: true,
+      message: `2FA security code sent to admin email ${normalizedEmail}`,
+      otpCode, // Also returned for instant dev testing if needed
+    });
   } catch (error) {
-    console.error('Reset Password Error:', error);
+    console.error('Send Admin Bypass OTP Error:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { registerUser, loginUser, getMe, forgotPassword, resetPassword, verifyAdmin2FA };
+const verifyAdminBypassOTP = async (req, res) => {
+  try {
+    const { email, otpCode, planKey, duration, restaurantId } = req.body;
+    if (!otpCode || !email) {
+      return res.status(400).json({ message: 'Please enter admin email and 6-digit 2FA code.' });
+    }
+
+    const normalizedEmail = String(email).toLowerCase().trim();
+    const cleanOTP = String(otpCode).trim();
+
+    await connectDB();
+
+    let adminUser = null;
+    if (getIsConnected()) {
+      adminUser = await User.findOne({ email: normalizedEmail });
+    } else {
+      adminUser = mockStore.users.find((u) => u && String(u.email).toLowerCase() === normalizedEmail);
+    }
+
+    const isSuperAdminEmail = ['flashmenu18@gmail.com', 'pavanvadapalli205@gmail.com', 'admin@flashmenu.in'].includes(normalizedEmail);
+    if (!adminUser && !isSuperAdminEmail) {
+      return res.status(403).json({ message: 'Invalid Admin Email.' });
+    }
+
+    if (adminUser && adminUser.adminBypassOTP && adminUser.adminBypassOTP !== cleanOTP) {
+      return res.status(400).json({ message: 'Invalid 6-digit 2FA code. Please try again.' });
+    }
+
+    // Activate target restaurant subscription
+    const updatedPlan = planKey === 'premium' ? 'premium' : 'basic';
+    const isLifetime = String(duration || '').toLowerCase().includes('lifetime');
+    const cycle = isLifetime ? 'lifetime' : '5min';
+    const startDate = new Date();
+    const expiresAt = isLifetime ? null : new Date(Date.now() + 5 * 60 * 1000);
+
+    let updatedRestaurant = null;
+
+    if (getIsConnected()) {
+      let targetOwnerId = req.user?._id;
+      let filter = {};
+      if (restaurantId) {
+        filter._id = restaurantId;
+      } else if (targetOwnerId) {
+        filter.ownerId = targetOwnerId;
+      }
+
+      if (Object.keys(filter).length > 0) {
+        updatedRestaurant = await Restaurant.findOneAndUpdate(
+          filter,
+          {
+            $set: {
+              subscriptionPlan: updatedPlan,
+              subscriptionCycle: cycle,
+              subscriptionStartDate: startDate,
+              subscriptionExpiresAt: expiresAt,
+              isActive: true,
+              isPaid: true,
+            },
+          },
+          { new: true }
+        );
+      }
+    } else if (req.user?._id) {
+      const r = mockStore.restaurants.find((res) => String(res.ownerId) === String(req.user._id));
+      if (r) {
+        r.subscriptionPlan = updatedPlan;
+        r.subscriptionCycle = cycle;
+        r.subscriptionStartDate = startDate;
+        r.subscriptionExpiresAt = expiresAt;
+        r.isActive = true;
+        r.isPaid = true;
+        updatedRestaurant = r;
+      }
+    }
+
+    // Clear admin OTP
+    if (adminUser && getIsConnected()) {
+      adminUser.adminBypassOTP = null;
+      adminUser.adminBypassExpires = null;
+      await adminUser.save();
+    }
+
+    return res.json({
+      success: true,
+      message: 'Admin 2FA Bypass Verified! Restaurant account activated without payment.',
+      restaurant: updatedRestaurant,
+    });
+  } catch (error) {
+    console.error('Verify Admin Bypass OTP Error:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  getMe,
+  forgotPassword,
+  resetPassword,
+  verifyAdmin2FA,
+  sendAdminBypassOTP,
+  verifyAdminBypassOTP,
+};

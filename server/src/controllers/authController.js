@@ -42,14 +42,16 @@ const registerUser = async (req, res) => {
       }
 
       const cleanPhone = phone ? String(phone).replace(/[^0-9]/g, '') : '';
-      if (cleanPhone.length > 10) {
-        return res.status(400).json({ message: 'Phone number cannot be more than 10 digits.' });
-      }
-      if (cleanPhone && cleanPhone.length >= 10) {
-        const last10Digits = cleanPhone.slice(-10);
-        const phoneRegex = new RegExp(`${last10Digits}$`);
-        const phoneUserExists = await User.findOne({ phone: { $regex: phoneRegex } });
-        const phoneRestExists = await Restaurant.findOne({ phone: { $regex: phoneRegex } });
+      if (cleanPhone) {
+        if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+          return res.status(400).json({ message: 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.' });
+        }
+        if (/^(\d)\1{9}$/.test(cleanPhone)) {
+          return res.status(400).json({ message: 'Invalid phone number. Repetitive dummy numbers (e.g. 0000000000) are not allowed.' });
+        }
+
+        const phoneUserExists = await User.findOne({ phone: cleanPhone });
+        const phoneRestExists = await Restaurant.findOne({ phone: cleanPhone });
         if (phoneUserExists || phoneRestExists) {
           return res.status(400).json({ message: 'A restaurant account with this phone number is already registered. Please use a different phone number.' });
         }

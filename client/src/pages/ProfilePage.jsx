@@ -66,6 +66,19 @@ export default function ProfilePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.phone) {
+      const cleanPhone = String(formData.phone).replace(/\D/g, '');
+      if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+        alert('Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9');
+        return;
+      }
+      if (/^(\d)\1{9}$/.test(cleanPhone)) {
+        alert('Invalid phone number. Repetitive dummy numbers (e.g. 0000000000) are not allowed');
+        return;
+      }
+    }
+
     setLoading(true);
     setSuccess(false);
 

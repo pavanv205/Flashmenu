@@ -84,6 +84,17 @@ export default function SignupPage() {
     e.preventDefault();
     setError('');
 
+    const cleanPhone = formData.phone ? String(formData.phone).replace(/\D/g, '') : '';
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setError('Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9');
+      return;
+    }
+
+    if (/^(\d)\1{9}$/.test(cleanPhone)) {
+      setError('Invalid phone number. Repetitive dummy numbers (e.g. 0000000000) are not allowed');
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;

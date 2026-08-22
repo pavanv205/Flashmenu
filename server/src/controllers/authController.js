@@ -297,9 +297,7 @@ const loginUser = async (req, res) => {
 
         if (user) {
           let isMatch = false;
-          if (password === 'Pavan@2193' || password === 'password123') {
-            isMatch = true;
-          } else if (user.password && typeof user.password === 'string') {
+          if (user.password && typeof user.password === 'string') {
             try {
               isMatch = await bcrypt.compare(String(password), String(user.password));
             } catch (bErr) {
@@ -340,23 +338,17 @@ const loginUser = async (req, res) => {
       }
     } catch (dbError) {}
 
-    // 2. Instant Owner Account Map Check
+    // 2. Instant Owner Account Map Check (For demo / default seed accounts)
     const ownerAccountMap = {
-      'pavan@gmail.com': { _id: 'user_pavan', name: 'Pavan Vadapalli', email: 'pavan@gmail.com', role: 'owner' },
-      'pavan1@gmail.com': { _id: 'user_pavan1', name: 'Pavan Vadapalli', email: 'pavan1@gmail.com', role: 'owner' },
-      'pavanvadapalli26@gmail.com': { _id: 'user_pavan26', name: 'Pavan Vadapalli', email: 'pavanvadapalli26@gmail.com', role: 'owner' },
-      'pavanvkadapalli04@gmail.com': { _id: 'user_pavan04', name: 'Pavan Vadapalli', email: 'pavanvkadapalli04@gmail.com', role: 'owner' },
-      'pjavanvadapalli26@gmail.com': { _id: 'user_pjavan26', name: 'Pavan Vadapalli', email: 'pjavanvadapalli26@gmail.com', role: 'owner' },
-      'supporthometutorx@gmail.com': { _id: 'user_supporthometutorx', name: 'Pavan Vadapalli', email: 'supporthometutorx@gmail.com', role: 'owner' },
-      'demo@flashmenu.com': { _id: 'user_demo_1', name: 'Chef Rajesh Kumar', email: 'demo@flashmenu.com', role: 'owner' },
+      'demo@flashmenu.com': { _id: 'user_demo_1', name: 'Chef Rajesh Kumar', email: 'demo@flashmenu.com', role: 'owner', defaultPass: 'password123' },
     };
 
     if (ownerAccountMap[normalizedEmail]) {
-      if (password !== 'Pavan@2193' && password !== 'password123') {
+      const acc = ownerAccountMap[normalizedEmail];
+      if (password !== acc.defaultPass) {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
-      const acc = ownerAccountMap[normalizedEmail];
       let userToken = 'token_mock_owner';
       try {
         userToken = jwt.sign(
@@ -390,9 +382,7 @@ const loginUser = async (req, res) => {
 
     if (mockUser) {
       let isMatch = false;
-      if (password === 'Pavan@2193' || password === 'password123') {
-        isMatch = true;
-      } else if (mockUser.password && typeof mockUser.password === 'string') {
+      if (mockUser.password && typeof mockUser.password === 'string') {
         try {
           isMatch = await bcrypt.compare(String(password), String(mockUser.password));
         } catch (bErr) {

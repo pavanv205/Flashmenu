@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Zap,
@@ -20,6 +20,7 @@ import {
   EyeOff,
 } from 'lucide-react';
 import DemoPaymentModal from '../components/DemoPaymentModal';
+import AdminBypassModal from '../components/AdminBypassModal';
 import { useAuth } from '../context/AuthContext';
 import FlashLogoBadge from '../components/FlashLogoBadge';
 
@@ -43,6 +44,10 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [selectedPlan, setSelectedPlan] = useState('premium');
   const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
+  const [adminBypassModal, setAdminBypassModal] = useState({ isOpen: false, planDetails: null });
+
+  const [tapCount, setTapCount] = useState(0);
+  const lastTapRef = useRef(0);
 
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -61,6 +66,27 @@ export default function SignupPage() {
         price,
       },
     });
+  };
+
+  const handlePaymentClick = (planKey, planName, cycleName, price) => {
+    const now = Date.now();
+    if (now - lastTapRef.current < 2000) {
+      const newCount = tapCount + 1;
+      setTapCount(newCount);
+      if (newCount >= 4) { // 5th tap!
+        setTapCount(0);
+        setAdminBypassModal({
+          isOpen: true,
+          planDetails: { planKey, title: planName, duration: cycleName, amount: price },
+        });
+        return;
+      }
+    } else {
+      setTapCount(1);
+    }
+    lastTapRef.current = now;
+
+    openDemoPayment(planKey, planName, cycleName, price);
   };
 
   const handleOpenDemoPayment = (planKey, planName, cycleName, price) => {
@@ -407,7 +433,7 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleOpenDemoPayment('basic', 'Basic Restaurant (5 Mins)', '5 Minutes Test', 1)
+                    handlePaymentClick('basic', 'Basic Restaurant (5 Mins)', '5 Minutes Test', 1)
                   }
                   className="py-3.5 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-xs transition-all border border-amber-500/30 flex items-center justify-center space-x-1.5 shadow-md"
                 >
@@ -418,7 +444,7 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleOpenDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime One-Time', 1)
+                    handlePaymentClick('basic', 'Basic Restaurant (Lifetime)', 'Lifetime One-Time', 1)
                   }
                   className="py-3.5 px-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5"
                 >
@@ -506,7 +532,7 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleOpenDemoPayment('premium', 'Premium Restaurant (5 Mins)', '5 Minutes Test', 1)
+                    handlePaymentClick('premium', 'Premium Restaurant (5 Mins)', '5 Minutes Test', 1)
                   }
                   className="py-3.5 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-xs transition-all border border-amber-500/30 flex items-center justify-center space-x-1.5 shadow-md"
                 >
@@ -517,7 +543,7 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 1)
+                    handlePaymentClick('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 1)
                   }
                   className="py-3.5 px-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5"
                 >
@@ -536,9 +562,17 @@ export default function SignupPage() {
           isOpen={demoPaymentModal.isOpen}
           onClose={() => setDemoPaymentModal({ isOpen: false, planDetails: null })}
           planDetails={demoPaymentModal.planDetails}
-          onSuccess={handleDemoPaymentSuccess}
+          onSuccess={handleFinishOnboarding}
         />
       )}
+
+      {/* Secret 5-Tap Admin 2FA Bypass Modal */}
+      <AdminBypassModal
+        isOpen={adminBypassModal.isOpen}
+        onClose={() => setAdminBypassModal({ isOpen: false, planDetails: null })}
+        targetPlan={adminBypassModal.planDetails}
+        onSuccess={handleFinishOnboarding}
+      />
     </div>
   );
 }

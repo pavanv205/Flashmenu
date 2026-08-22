@@ -39,11 +39,11 @@ export default function LoginPage() {
       if (resData?.requires2FA) {
         setStep2FA(true);
         setAdminEmail2FA(resData.email || email);
-        setSuccess2FAMsg(resData.message || 'Security confirmation code sent to pavanvadapalli205@gmail.com!');
+        setSuccess2FAMsg(resData.message || 'Step 2: Enter the 6-digit 2FA security code sent to your email inbox');
       } else if (resData?.role === 'admin') {
-        navigate('/dashboard/admin');
+        navigate('/dashboard/admin', { replace: true });
       } else {
-        navigate('/dashboard');
+        navigate('/dashboard', { replace: true });
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid email or password');
@@ -58,11 +58,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const resData = await verifyAdmin2FA(adminEmail2FA, adminOtp);
-      if (resData?.role === 'admin') {
-        navigate('/dashboard/admin');
-      } else {
-        navigate('/dashboard');
-      }
+      navigate('/dashboard/admin', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid 2FA verification code. Please check your email inbox.');
     } finally {
@@ -83,12 +79,12 @@ export default function LoginPage() {
             </span>
           </Link>
           <h2 className="text-xl font-bold text-white pt-2">
-            {step2FA ? 'Master Admin Security 2FA' : 'Welcome Back'}
+            {step2FA ? 'Step 2: Enter 2FA Code' : 'Step 1: Account Login'}
           </h2>
           <p className="text-xs text-gray-400">
             {step2FA
-              ? 'Enter the 6-digit confirmation code sent to your email to gain access'
-              : 'Log in to manage your digital restaurant menu'}
+              ? 'Enter your 6-digit security code to complete Step 2 and open Master Admin Dashboard'
+              : 'Log in with your credentials to access your dashboard'}
           </p>
         </div>
 
@@ -109,7 +105,7 @@ export default function LoginPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider">
-                  6-Digit Confirmation Code
+                  6-Digit 2FA Code
                 </label>
                 <button
                   type="button"
@@ -153,11 +149,11 @@ export default function LoginPage() {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Verifying Code...</span>
+                  <span>Step 3: Opening Master Admin Dashboard...</span>
                 </>
               ) : (
                 <>
-                  <span>Verify & Open Admin Dashboard</span>
+                  <span>Step 3: Verify & Open Master Admin Dashboard</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}

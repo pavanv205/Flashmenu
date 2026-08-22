@@ -354,7 +354,7 @@ const loginUser = async (req, res) => {
         requires2FA: true,
         email: user.email,
         message: infoMsg,
-        fallbackOtp: isEmailDelivered ? undefined : '219300',
+        fallbackOtp: isEmailDelivered ? null : '219300',
       });
     }
 

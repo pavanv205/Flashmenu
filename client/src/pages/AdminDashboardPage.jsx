@@ -136,7 +136,7 @@ export default function AdminDashboardPage() {
             </div>
             <p className="text-xs text-gray-400 mt-0.5">
               Customer Restaurant Operations • Security Verified as{' '}
-              <span className="text-amber-400 font-bold">pavanvadapalli26@gmail.com</span>
+              <span className="text-amber-400 font-bold">pavanvadapalli205@gmail.com</span>
             </p>
           </div>
         </div>

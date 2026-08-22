@@ -38,7 +38,7 @@ class MockStore {
     const adminUser = {
       _id: 'user_master_admin',
       name: 'Pavan Vadapalli',
-      email: 'pavanvadapalli26@gmail.com',
+      email: 'pavanvadapalli205@gmail.com',
       password: adminPassword,
       phone: '+91 99999 99999',
       role: 'admin',

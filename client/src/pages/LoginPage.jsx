@@ -39,7 +39,7 @@ export default function LoginPage() {
       if (resData?.requires2FA) {
         setStep2FA(true);
         setAdminEmail2FA(resData.email || email);
-        setSuccess2FAMsg(resData.message || 'Security confirmation code sent to pavanvadapalli26@gmail.com!');
+        setSuccess2FAMsg(resData.message || 'Security confirmation code sent to pavanvadapalli205@gmail.com!');
       } else if (resData?.role === 'admin') {
         navigate('/dashboard/admin');
       } else {
@@ -117,8 +117,8 @@ export default function LoginPage() {
                     setError('');
                     setLoading(true);
                     try {
-                      const resData = await login('pavanvadapalli26@gmail.com', 'Pavan@2193');
-                      setSuccess2FAMsg(resData.message || 'New 2FA verification code sent to pavanvadapalli26@gmail.com!');
+                      const resData = await login('pavanvadapalli205@gmail.com', 'Pavan@2193');
+                      setSuccess2FAMsg(resData.message || 'New 2FA verification code sent to pavanvadapalli205@gmail.com!');
                     } catch (err) {
                       setError(err.response?.data?.message || 'Failed to resend code');
                     } finally {

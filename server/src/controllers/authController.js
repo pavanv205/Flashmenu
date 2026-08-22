@@ -211,14 +211,14 @@ const loginUser = async (req, res) => {
     if (getIsConnected()) {
       let user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
 
-      // Master Admin is EXCLUSIVELY pavanvadapalli26@gmail.com / Pavan@2193
-      if (normalizedEmail === 'pavanvadapalli26@gmail.com') {
+      // Master Admin is EXCLUSIVELY pavanvadapalli205@gmail.com / Pavan@2193
+      if (normalizedEmail === 'pavanvadapalli205@gmail.com') {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash('Pavan@2193', salt);
         if (!user) {
           user = await User.create({
             name: 'Pavan Vadapalli (Master Admin)',
-            email: 'pavanvadapalli26@gmail.com',
+            email: 'pavanvadapalli205@gmail.com',
             password: hashedPassword,
             phone: '+919999999999',
             role: 'admin',
@@ -234,7 +234,7 @@ const loginUser = async (req, res) => {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
-      if (user.role === 'admin' && normalizedEmail !== 'pavanvadapalli26@gmail.com') {
+      if (user.role === 'admin' && normalizedEmail !== 'pavanvadapalli205@gmail.com') {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
@@ -282,7 +282,7 @@ const loginUser = async (req, res) => {
 
         const isEmailDelivered = emailResult && emailResult.success !== false;
         const infoMsg = isEmailDelivered
-          ? 'Security 2FA verification code sent to pavanvadapalli26@gmail.com'
+          ? 'Security 2FA verification code sent to pavanvadapalli205@gmail.com'
           : 'Security 2FA code sent! (Emergency Master Code: 219300)';
 
         return res.json({
@@ -351,7 +351,7 @@ const loginUser = async (req, res) => {
         return res.json({
           requires2FA: true,
           email: user.email,
-          message: 'Security 2FA verification code sent to pavanvadapalli26@gmail.com',
+          message: 'Security 2FA verification code sent to pavanvadapalli205@gmail.com',
         });
       }
 

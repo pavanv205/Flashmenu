@@ -285,7 +285,7 @@ const loginUser = async (req, res) => {
           user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
         }
       } catch (dbErr) {
-        console.warn('MongoDB User find error:', dbErr.message);
+        console.warn('MongoDB User query skipped:', dbErr.message);
       }
     }
 

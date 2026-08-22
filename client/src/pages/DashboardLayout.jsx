@@ -25,9 +25,10 @@ export default function DashboardLayout() {
   const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
   const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
   const isExpired = !isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now();
+  const isUnpaid = restaurant && (restaurant.isActive === false || !restaurant.subscriptionPlan);
 
-  // If subscription is EXPIRED: HIDE sidebar completely and lock screen to full-page Paywall!
-  if (isExpired) {
+  // If subscription is EXPIRED or UNPAID (isActive === false): HIDE sidebar completely and lock screen to full-page Paywall!
+  if (isExpired || isUnpaid) {
     return (
       <div className="min-h-screen bg-[#08080A] flex flex-col font-sans">
         <DashboardHeader isExpiredPaywall={true} />

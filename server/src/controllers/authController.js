@@ -89,6 +89,9 @@ const registerUser = async (req, res) => {
         phone: phone ? String(phone).trim() : '',
         email: normalizedEmail,
         subscriptionPlan: plan,
+        isActive: false,
+        subscriptionStartDate: null,
+        subscriptionExpiresAt: null,
       });
 
       // Lazy/background seed default starter categories and items

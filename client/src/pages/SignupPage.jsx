@@ -32,9 +32,10 @@ export default function SignupPage() {
     name: '',
     email: '',
     phone: '',
+    city: '',
+    address: '',
     password: '',
     confirmPassword: '',
-    city: '',
     cuisineType: 'Multi-Cuisine',
   });
 
@@ -107,7 +108,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-[#08080A] flex items-center justify-center p-4 py-12 relative overflow-hidden font-sans">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-brand-500/10 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-amber-500/10 rounded-full blur-[160px] pointer-events-none" />
 
       {/* STEP 1: RESTAURANT ACCOUNT CREATION FORM */}
       {step === 1 && (

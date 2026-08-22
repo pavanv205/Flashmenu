@@ -42,6 +42,9 @@ const registerUser = async (req, res) => {
       }
 
       const cleanPhone = phone ? String(phone).replace(/[^0-9]/g, '') : '';
+      if (cleanPhone.length > 10) {
+        return res.status(400).json({ message: 'Phone number cannot be more than 10 digits.' });
+      }
       if (cleanPhone && cleanPhone.length >= 10) {
         const last10Digits = cleanPhone.slice(-10);
         const phoneRegex = new RegExp(`${last10Digits}$`);

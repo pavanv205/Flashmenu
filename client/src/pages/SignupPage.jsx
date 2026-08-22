@@ -72,7 +72,12 @@ export default function SignupPage() {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.name === 'phone') {
+      const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 10);
+      setFormData({ ...formData, phone: digitsOnly });
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
   };
 
   const handleSubmitAccount = async (e) => {
@@ -188,18 +193,19 @@ export default function SignupPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                  Phone Number *
+                  Phone Number * (10 Digits)
                 </label>
                 <div className="relative">
                   <Phone className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
                   <input
-                    type="text"
+                    type="tel"
                     name="phone"
                     required
-                    placeholder="+91 98765 43210"
+                    maxLength={10}
+                    placeholder="9876543210"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dark-base border border-dark-border text-white text-sm focus:outline-none focus:border-amber-500 font-mono tracking-wider"
                   />
                 </div>
               </div>

@@ -40,16 +40,22 @@ export default function SignupPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState('premium');
   const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
 
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const openDemoPayment = (planKey, planName, cycleName, price) => {
+    setSelectedPlan(planKey);
     setDemoPaymentModal({
       isOpen: true,
       planDetails: { planKey, planName, cycleName, price },
     });
+  };
+
+  const handleOpenDemoPayment = (planKey, planName, cycleName, price) => {
+    openDemoPayment(planKey, planName, cycleName, price);
   };
 
   const handleDemoPaymentSuccess = (planKey) => {

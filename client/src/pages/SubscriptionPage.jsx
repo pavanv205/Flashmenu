@@ -9,7 +9,8 @@ export default function SubscriptionPage() {
   const [loadingPlan, setLoadingPlan] = useState('');
   const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
 
-  const currentPlan = restaurant?.subscriptionPlan || 'basic';
+  const isPaidAccount = Boolean(restaurant && restaurant.isActive !== false && restaurant.subscriptionStartDate);
+  const currentPlan = isPaidAccount ? (restaurant?.subscriptionPlan || 'basic') : 'UNPAID';
   const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
   const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
   const startDateDate = restaurant?.subscriptionStartDate ? new Date(restaurant.subscriptionStartDate) : null;
@@ -17,7 +18,7 @@ export default function SubscriptionPage() {
   const [timeLeftSec, setTimeLeftSec] = useState(0);
 
   useEffect(() => {
-    if (isLifetime || !expiresAtDate) return;
+    if (isLifetime || !expiresAtDate || !isPaidAccount) return;
     const updateTimer = () => {
       const diffMs = new Date(restaurant.subscriptionExpiresAt).getTime() - Date.now();
       setTimeLeftSec(Math.max(0, Math.floor(diffMs / 1000)));
@@ -25,9 +26,9 @@ export default function SubscriptionPage() {
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, [restaurant, isLifetime, expiresAtDate]);
+  }, [restaurant, isLifetime, expiresAtDate, isPaidAccount]);
 
-  const isExpired = !isLifetime && expiresAtDate && (expiresAtDate.getTime() <= Date.now() || timeLeftSec <= 0);
+  const isExpired = !isPaidAccount || (!isLifetime && expiresAtDate && (expiresAtDate.getTime() <= Date.now() || timeLeftSec <= 0));
 
   const formatTimer = (totalSec) => {
     const m = Math.floor(totalSec / 60);
@@ -57,19 +58,14 @@ export default function SubscriptionPage() {
     return pScore + cScore;
   };
 
-  const currentScore = getPlanScore(currentPlan, isLifetime, isExpired);
+  const currentScore = getPlanScore(currentPlan, isLifetime, !isPaidAccount || isExpired);
 
   const openDemoPayment = (planKey, title, duration, amount) => {
     const isSelectingLifetime = String(duration || '').toLowerCase().includes('lifetime');
     const targetScore = getPlanScore(planKey, isSelectingLifetime, false);
 
-    if (!isExpired && targetScore < currentScore) {
+    if (isPaidAccount && !isExpired && targetScore < currentScore) {
       alert('Downgrading subscription is not allowed. You can only upgrade your subscription plan.');
-      return;
-    }
-
-    if (!isExpired && targetScore === currentScore) {
-      alert(`Your ${planKey.toUpperCase()} Restaurant ${isSelectingLifetime ? 'Lifetime' : '5-Minute Test'} plan is already active!`);
       return;
     }
 
@@ -81,8 +77,33 @@ export default function SubscriptionPage() {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto font-sans">
-      {isExpired ? (
-        /* EXPIRED PAYWALL HERO DISPLAY (Matches Screenshot 1) */
+      {!isPaidAccount ? (
+        /* UNPAID / PENDING PAYMENT HERO DISPLAY */
+        <div className="text-center py-6 animate-fade-in space-y-4">
+          <div className="w-20 h-20 rounded-full bg-amber-500/10 border-2 border-amber-500/30 flex items-center justify-center mx-auto relative shadow-2xl shadow-amber-500/10">
+            <CreditCard className="w-9 h-9 text-amber-400" />
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Activation Required:
+              <span className="block text-3xl sm:text-5xl font-black text-amber-400 tracking-tight mt-1 mb-2 uppercase animate-pulse">
+                Select A Subscription Plan
+              </span>
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
+              Complete a plan payment below to activate <span className="text-white font-bold">{restaurant?.name || 'your restaurant'}</span> and unlock full dashboard access.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-center space-x-4 pt-4 max-w-2xl mx-auto">
+            <div className="h-px bg-white/10 flex-1"></div>
+            <span className="text-xs font-extrabold text-amber-400 uppercase tracking-widest px-3">Available Restaurant Tiers</span>
+            <div className="h-px bg-white/10 flex-1"></div>
+          </div>
+        </div>
+      ) : isExpired ? (
+        /* EXPIRED PAYWALL HERO DISPLAY */
         <div className="text-center py-6 animate-fade-in space-y-4">
           <div className="w-24 h-24 rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center mx-auto relative shadow-2xl shadow-red-500/10">
             <div className="w-12 h-14 bg-white/10 rounded-xl border border-white/20 flex flex-col justify-around p-2 space-y-1">
@@ -104,7 +125,7 @@ export default function SubscriptionPage() {
               </span>
             </h2>
             <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
-              Select a plan below to activate and continue enjoying our services.
+              Select a plan below to renew and continue enjoying our services.
             </p>
           </div>
 

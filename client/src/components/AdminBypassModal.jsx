@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Mail, KeyRound, ArrowRight, X, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
 import FlashLogoBadge from './FlashLogoBadge';
-import { authAPI } from '../services/api';
+import { authAPI, restaurantAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 export default function AdminBypassModal({ isOpen, onClose, targetPlan, onSuccess }) {
+  const navigate = useNavigate();
   const { updateRestaurantState } = useAuth();
   const [step, setStep] = useState(1); // 1 = Admin Email, 2 = 6-digit OTP Code
   const [adminEmail, setAdminEmail] = useState('');
@@ -56,7 +58,14 @@ export default function AdminBypassModal({ isOpen, onClose, targetPlan, onSucces
         duration: targetPlan?.duration || 'lifetime',
       });
 
-      const updatedRest = res.data?.restaurant;
+      let updatedRest = res.data?.restaurant;
+      if (!updatedRest) {
+        try {
+          const freshRestRes = await restaurantAPI.getMyRestaurant();
+          updatedRest = freshRestRes.data;
+        } catch (fErr) {}
+      }
+
       if (updatedRest && updateRestaurantState) {
         updateRestaurantState(updatedRest);
       }
@@ -67,7 +76,8 @@ export default function AdminBypassModal({ isOpen, onClose, targetPlan, onSucces
           await onSuccess(updatedRest);
         }
         onClose();
-      }, 1200);
+        navigate('/dashboard');
+      }, 1000);
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Verification failed. Invalid or expired code.';
       setError(msg);

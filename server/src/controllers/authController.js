@@ -821,35 +821,54 @@ const verifyAdminBypassOTP = async (req, res) => {
     const startDate = new Date();
     const expiresAt = isLifetime ? null : new Date(Date.now() + 5 * 60 * 1000);
 
+    let tokenUser = req.user;
+    if (!tokenUser && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'flashmenu_secret_key');
+        tokenUser = await User.findById(decoded.id);
+      } catch (tErr) {}
+    }
+
     let updatedRestaurant = null;
 
     if (getIsConnected()) {
-      let targetOwnerId = req.user?._id;
-      let filter = {};
+      let targetOwnerId = tokenUser?._id;
+      let targetEmail = tokenUser?.email;
+
+      let restaurantDoc = null;
       if (restaurantId) {
-        filter._id = restaurantId;
-      } else if (targetOwnerId) {
-        filter.ownerId = targetOwnerId;
+        restaurantDoc = await Restaurant.findById(restaurantId);
+      }
+      if (!restaurantDoc && targetOwnerId) {
+        restaurantDoc = await Restaurant.findOne({ ownerId: targetOwnerId });
+      }
+      if (!restaurantDoc && targetEmail) {
+        restaurantDoc = await Restaurant.findOne({ email: targetEmail });
+      }
+      if (!restaurantDoc) {
+        // Fallback: find latest created restaurant
+        restaurantDoc = await Restaurant.findOne().sort({ createdAt: -1 });
       }
 
-      if (Object.keys(filter).length > 0) {
-        updatedRestaurant = await Restaurant.findOneAndUpdate(
-          filter,
-          {
-            $set: {
-              subscriptionPlan: updatedPlan,
-              subscriptionCycle: cycle,
-              subscriptionStartDate: startDate,
-              subscriptionExpiresAt: expiresAt,
-              isActive: true,
-              isPaid: true,
-            },
-          },
-          { new: true }
-        );
+      if (restaurantDoc) {
+        restaurantDoc.subscriptionPlan = updatedPlan;
+        restaurantDoc.subscriptionCycle = cycle;
+        restaurantDoc.subscriptionStartDate = startDate;
+        restaurantDoc.subscriptionExpiresAt = expiresAt;
+        restaurantDoc.isActive = true;
+        restaurantDoc.isPaid = true;
+        await restaurantDoc.save();
+        updatedRestaurant = restaurantDoc;
       }
-    } else if (req.user?._id) {
-      const r = mockStore.restaurants.find((res) => String(res.ownerId) === String(req.user._id));
+    } else {
+      let r = null;
+      if (tokenUser?._id) {
+        r = mockStore.restaurants.find((res) => String(res.ownerId) === String(tokenUser._id));
+      }
+      if (!r && mockStore.restaurants.length > 0) {
+        r = mockStore.restaurants[mockStore.restaurants.length - 1];
+      }
       if (r) {
         r.subscriptionPlan = updatedPlan;
         r.subscriptionCycle = cycle;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { categoryAPI, itemAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { getSubCategory } from '../utils/categoryHelper';
+import { getCategoryFallbackImage } from '../utils/imageHelper';
 import ImageUploader from '../components/ImageUploader';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import {
@@ -387,19 +388,32 @@ export default function MenuItemsPage() {
 
                           {/* Image & Main Info */}
                           <div className="flex space-x-3 mb-3">
-                            {item.image ? (
-                              <img
-                                src={item.image}
-                                alt={item.name}
-                                className={`w-20 h-20 rounded-2xl object-cover border border-dark-border ${
-                                  !item.isAvailable && 'grayscale opacity-60'
-                                }`}
-                              />
-                            ) : (
-                              <div className="w-20 h-20 rounded-2xl bg-dark-base border border-dark-border flex items-center justify-center text-gray-600">
-                                <ImageIcon className="w-8 h-8" />
-                              </div>
-                            )}
+                            {(() => {
+                              const itemImage = (item.image && item.image.trim() !== '')
+                                ? item.image
+                                : getCategoryFallbackImage(
+                                    item.categoryId?.name || item.categoryName,
+                                    item.computedSubCategory || item.subCategory,
+                                    item.name
+                                  );
+                              return (
+                                <img
+                                  src={itemImage}
+                                  alt={item.name}
+                                  className={`w-20 h-20 rounded-2xl object-cover border border-dark-border ${
+                                    !item.isAvailable && 'grayscale opacity-60'
+                                  }`}
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = getCategoryFallbackImage(
+                                      item.categoryId?.name || item.categoryName,
+                                      item.computedSubCategory || item.subCategory,
+                                      item.name
+                                    );
+                                  }}
+                                />
+                              );
+                            })()}
 
                             <div className="flex-1 min-w-0">
                               <h3 className="text-sm font-bold text-white truncate">{item.name}</h3>

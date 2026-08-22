@@ -4,10 +4,15 @@ const Restaurant = require('../models/Restaurant');
 const mockStore = require('../config/mockStore');
 const { connectDB, getIsConnected } = require('../config/db');
 
-const getRazorpayInstance = () => {
-  const key_id = process.env.RAZORPAY_KEY_ID || 'rzp_test_1234567890';
-  const key_secret = process.env.RAZORPAY_KEY_SECRET || 'test_secret_1234567890';
-  return new Razorpay({ key_id, key_secret });
+const cleanCred = (val, fallback = '') => {
+  if (!val) return fallback;
+  return String(val).replace(/["'\r\n\s]/g, '').trim() || fallback;
+};
+
+const getRazorpayCredentials = () => {
+  const key_id = cleanCred(process.env.RAZORPAY_KEY_ID, 'rzp_live_TAwDF3o7rjkreE');
+  const key_secret = cleanCred(process.env.RAZORPAY_KEY_SECRET, 'KOrClbC6FdKfH1XcUTyDFUeY');
+  return { key_id, key_secret };
 };
 
 const createOrder = async (req, res) => {
@@ -22,8 +27,7 @@ const createOrder = async (req, res) => {
       return res.status(400).json({ message: 'Invalid payment amount' });
     }
 
-    const key_id = process.env.RAZORPAY_KEY_ID || 'rzp_test_1234567890';
-    const key_secret = process.env.RAZORPAY_KEY_SECRET || 'test_secret_1234567890';
+    const { key_id, key_secret } = getRazorpayCredentials();
 
     try {
       const razorpay = new Razorpay({ key_id, key_secret });
@@ -69,7 +73,7 @@ const verifyPayment = async (req, res) => {
       return res.status(400).json({ message: 'Plan details missing for verification' });
     }
 
-    const key_secret = process.env.RAZORPAY_KEY_SECRET || 'KOrClbC6FdKfH1XcUTyDFUeY';
+    const { key_secret } = getRazorpayCredentials();
     const body = razorpay_order_id + '|' + razorpay_payment_id;
     const expectedSignature = crypto
       .createHmac('sha256', key_secret)

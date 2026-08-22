@@ -20,17 +20,16 @@ const loadRazorpayScript = () => {
 
 export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSuccess }) {
   const { user, restaurant, updateRestaurantState } = useAuth();
-  const [processing, setProcessing] = useState(false);
-  const [completed, setCompleted] = useState(false);
-  const [error, setError] = useState('');
+  const [processing, setProcessing] = React.useState(false);
+  const [completed, setCompleted] = React.useState(false);
+  const [error, setError] = React.useState('');
 
-  if (!isOpen || !planDetails) return null;
+  const title = planDetails?.title || planDetails?.planName || 'Restaurant Plan';
+  const amount = Number(planDetails?.amount ?? planDetails?.price ?? 1);
+  const duration = planDetails?.duration || planDetails?.cycleName || 'Monthly';
 
-  const title = planDetails.title || planDetails.planName || 'Restaurant Plan';
-  const amount = Number(planDetails.amount ?? planDetails.price ?? 1);
-  const duration = planDetails.duration || planDetails.cycleName || 'Monthly';
-
-  const handleRazorpayCheckout = async () => {
+  const handleRazorpayCheckout = React.useCallback(async () => {
+    if (!planDetails) return;
     setProcessing(true);
     setError('');
 
@@ -109,6 +108,7 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
         modal: {
           ondismiss: function () {
             setProcessing(false);
+            onClose();
           },
         },
       };
@@ -123,7 +123,15 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
       setProcessing(false);
       setError(err.response?.data?.message || err.message || 'Payment initiation failed.');
     }
-  };
+  }, [planDetails, restaurant, user, updateRestaurantState, onSuccess, onClose, title, duration]);
+
+  React.useEffect(() => {
+    if (isOpen && planDetails) {
+      handleRazorpayCheckout();
+    }
+  }, [isOpen, planDetails, handleRazorpayCheckout]);
+
+  if (!isOpen || !planDetails) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">

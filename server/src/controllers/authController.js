@@ -359,33 +359,40 @@ const loginUser = async (req, res) => {
     }
 
     let restaurant = null;
-    try {
-      restaurant = await Restaurant.findOne({ ownerId: user._id });
-      if (!restaurant && user.role !== 'admin') {
-        const baseSlug = createSlug(user.name || 'my-restaurant');
-        let slug = baseSlug;
-        let attempts = 0;
-        while (await Restaurant.findOne({ slug })) {
-          attempts++;
-          slug = `${baseSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
-          if (attempts > 10) break;
-        }
+    if (getIsConnected()) {
+      try {
+        restaurant = await Restaurant.findOne({ ownerId: user._id });
+        if (!restaurant && user.role !== 'admin') {
+          const baseSlug = createSlug(user.name || 'my-restaurant');
+          let slug = baseSlug;
+          let attempts = 0;
+          while (await Restaurant.findOne({ slug })) {
+            attempts++;
+            slug = `${baseSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
+            if (attempts > 10) break;
+          }
 
-        restaurant = await Restaurant.create({
-          ownerId: user._id,
-          name: user.name ? `${user.name}'s Kitchen` : 'My Restaurant',
-          slug,
-          email: user.email,
-          phone: user.phone || '',
-          subscriptionPlan: 'basic',
-        });
+          restaurant = await Restaurant.create({
+            ownerId: user._id,
+            name: user.name ? `${user.name}'s Kitchen` : 'My Restaurant',
+            slug,
+            email: user.email,
+            phone: user.phone || '',
+            subscriptionPlan: 'basic',
+          });
+        }
+      } catch (rErr) {
+        console.warn('Restaurant lookup error:', rErr.message);
       }
-    } catch (rErr) {
-      console.warn('Restaurant lookup error:', rErr.message);
     }
 
     if (!restaurant) {
-      restaurant = mockStore.restaurants.find((r) => r && String(r.ownerId) === String(user._id));
+      restaurant = mockStore.restaurants.find((r) => r && String(r.ownerId) === String(user._id)) || {
+        _id: `rest_${user._id}`,
+        name: user.name ? `${user.name}'s Kitchen` : 'My Restaurant',
+        slug: 'my-restaurant',
+        subscriptionPlan: 'basic',
+      };
     }
 
     const token = generateToken(user._id, restaurant?._id || '', restaurant?.slug || '');

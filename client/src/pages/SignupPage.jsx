@@ -80,7 +80,8 @@ export default function SignupPage() {
       // Move to Step 2: Select Subscription Plan
       setStep(2);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create restaurant account');
+      const msg = err.response?.data?.message || err.message || 'Failed to create restaurant account. Please try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }

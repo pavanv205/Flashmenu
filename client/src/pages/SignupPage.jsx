@@ -204,7 +204,7 @@ export default function SignupPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1">
-                  Phone Number * (10 Digits)
+                  Phone Number *
                 </label>
                 <div className="relative">
                   <Phone className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />

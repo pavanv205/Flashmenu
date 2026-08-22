@@ -15,9 +15,7 @@ class MockStore {
   }
 
   async initDemoData() {
-    if (this.initialized) return;
-    this.initialized = true;
-
+    const salt = await bcrypt.genSalt(10);
     const pavanPassword = await bcrypt.hash('Pavan@2193', salt);
 
     // Demo User

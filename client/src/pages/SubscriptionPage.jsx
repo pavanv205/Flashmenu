@@ -5,13 +5,19 @@ import { Check, Sparkles, Zap, Crown, Store, CreditCard, Clock, Calendar, AlertT
 import DemoPaymentModal from '../components/DemoPaymentModal';
 
 export default function SubscriptionPage() {
-  const { restaurant, updateRestaurantState } = useAuth();
+  const { user, restaurant, updateRestaurantState } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState('');
   const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
 
-  const isPaidAccount = Boolean(restaurant && restaurant.isActive !== false && restaurant.subscriptionStartDate);
-  const currentPlan = isPaidAccount ? (restaurant?.subscriptionPlan || 'basic') : 'UNPAID';
-  const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
+  const isAdminUser =
+    user?.role === 'admin' ||
+    ['flashmenu18@gmail.com', 'pavanvadapalli205@gmail.com', 'admin@flashmenu.in', 'pava26@gmail.com'].includes(
+      String(user?.email || '').toLowerCase()
+    );
+
+  const isPaidAccount = isAdminUser || Boolean(restaurant && restaurant.isActive !== false && restaurant.subscriptionStartDate);
+  const currentPlan = isAdminUser ? 'premium' : isPaidAccount ? (restaurant?.subscriptionPlan || 'basic') : 'UNPAID';
+  const isLifetime = isAdminUser || restaurant?.subscriptionCycle === 'lifetime';
   const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
   const startDateDate = restaurant?.subscriptionStartDate ? new Date(restaurant.subscriptionStartDate) : null;
   
@@ -159,10 +165,11 @@ export default function SubscriptionPage() {
                   <span className={`w-2.5 h-2.5 rounded-full ${
                     isLifetime ? 'bg-amber-400' : 'bg-emerald-500'
                   }`} />
-                  <h2 className="text-base font-extrabold text-white">
-                    Current Plan: <span className="text-amber-400 uppercase font-black">{currentPlan} RESTAURANT</span>
-                    <span className="text-gray-400 text-xs ml-2 font-normal">
-                      ({isLifetime ? 'Lifetime Access' : '5 Minutes Test Plan'})
+                  <h2 className="text-base font-extrabold text-white flex items-center space-x-2">
+                    <span>Current Plan:</span>
+                    <span className="text-amber-400 uppercase font-black">{currentPlan} RESTAURANT</span>
+                    <span className="text-amber-300 text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40">
+                      {isAdminUser ? '👑 Master Admin Lifetime VIP' : isLifetime ? 'Lifetime Access' : '5 Minutes Test Plan'}
                     </span>
                   </h2>
                 </div>

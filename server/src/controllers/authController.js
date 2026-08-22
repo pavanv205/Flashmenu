@@ -459,27 +459,62 @@ const verifyAdmin2FA = async (req, res) => {
         user.adminOtpExpires = null;
         try { await user.save(); } catch (sErr) {}
 
-        const token = generateToken(user._id, '', '');
+        let adminRest = await Restaurant.findOne({ ownerId: user._id });
+        if (!adminRest) {
+          adminRest = await Restaurant.create({
+            ownerId: user._id,
+            name: 'FlashMenu Master Headquarters',
+            slug: 'master-admin-vip',
+            email: user.email,
+            subscriptionPlan: 'premium',
+            subscriptionCycle: 'lifetime',
+            subscriptionStartDate: new Date(),
+            subscriptionExpiresAt: null,
+            isActive: true,
+            isPaid: true,
+          }).catch(() => null);
+        } else if (!adminRest.isActive || !adminRest.isPaid) {
+          adminRest.subscriptionPlan = 'premium';
+          adminRest.subscriptionCycle = 'lifetime';
+          adminRest.subscriptionStartDate = new Date();
+          adminRest.subscriptionExpiresAt = null;
+          adminRest.isActive = true;
+          adminRest.isPaid = true;
+          await adminRest.save().catch(() => {});
+        }
+
+        const token = generateToken(user._id, adminRest?._id || '', adminRest?.slug || 'master-admin-vip');
         return res.json({
           _id: String(user._id),
           name: String(user.name),
           email: String(user.email),
           role: String(user.role),
           token,
-          restaurant: null,
+          restaurant: adminRest,
         });
       }
     }
 
-    // In-memory fallback
-    const token = generateToken('admin_master_id', '', '');
+    // In-memory fallback for Master Admin
+    const token = generateToken('admin_master_id', 'master_vip_rest', 'master-admin-vip');
+    const fallbackMasterRest = {
+      _id: 'master_vip_rest',
+      name: 'FlashMenu Master Headquarters',
+      slug: 'master-admin-vip',
+      subscriptionPlan: 'premium',
+      subscriptionCycle: 'lifetime',
+      subscriptionStartDate: new Date(),
+      subscriptionExpiresAt: null,
+      isActive: true,
+      isPaid: true,
+    };
     return res.json({
       _id: 'admin_master_id',
       name: 'Pavan Vadapalli (Master Admin)',
       email: 'pavanvadapalli205@gmail.com',
       role: 'admin',
       token,
-      restaurant: null,
+      restaurant: fallbackMasterRest,
     });
   } catch (error) {
     console.error('Verify Admin 2FA Error:', error);
@@ -507,7 +542,34 @@ const getMe = async (req, res) => {
       user = mockStore.users.find((u) => u && String(u._id) === String(req.user._id)) || req.user;
     }
 
-    if (!restaurant && user) {
+    const isMasterAdmin =
+      user?.role === 'admin' ||
+      ['flashmenu18@gmail.com', 'pavanvadapalli205@gmail.com', 'admin@flashmenu.in', 'pava26@gmail.com'].includes(
+        String(user?.email || '').toLowerCase()
+      );
+
+    if (isMasterAdmin) {
+      if (!restaurant) {
+        restaurant = {
+          _id: 'master_vip_rest',
+          name: 'FlashMenu Master Headquarters',
+          slug: 'master-admin-vip',
+          subscriptionPlan: 'premium',
+          subscriptionCycle: 'lifetime',
+          subscriptionStartDate: new Date(),
+          subscriptionExpiresAt: null,
+          isActive: true,
+          isPaid: true,
+        };
+      } else {
+        restaurant.subscriptionPlan = 'premium';
+        restaurant.subscriptionCycle = 'lifetime';
+        restaurant.subscriptionStartDate = restaurant.subscriptionStartDate || new Date();
+        restaurant.subscriptionExpiresAt = null;
+        restaurant.isActive = true;
+        restaurant.isPaid = true;
+      }
+    } else if (!restaurant && user) {
       restaurant = mockStore.restaurants.find((r) => r && String(r.ownerId) === String(user._id)) || {
         _id: `rest_${user._id || '1'}`,
         name: user.name ? `${user.name}'s Kitchen` : 'My Restaurant',

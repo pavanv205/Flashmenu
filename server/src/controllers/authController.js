@@ -284,6 +284,11 @@ const loginUser = async (req, res) => {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+
       // Enforce 2FA OTP verification for Master Admin role
       if (user.role === 'admin') {
         const otpCode = Math.floor(100000 + Math.random() * 900000).toString();

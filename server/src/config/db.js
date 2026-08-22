@@ -10,11 +10,11 @@ const connectDB = async () => {
   const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
   if (!uri) {
     console.warn('[FlashMenu DB Warning] MONGODB_URI missing from environment variables.');
-    return null;
+    return false;
   }
 
-  if (cached.conn && mongoose.connection.readyState === 1) {
-    return cached.conn;
+  if (mongoose.connection.readyState === 1) {
+    return true;
   }
 
   if (!cached.promise) {
@@ -42,11 +42,11 @@ const connectDB = async () => {
     cached.conn = null;
   }
 
-  return cached.conn;
+  return mongoose.connection.readyState === 1;
 };
 
 const getIsConnected = () => {
-  return mongoose.connection.readyState === 1;
+  return mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2;
 };
 
 module.exports = { connectDB, getIsConnected };

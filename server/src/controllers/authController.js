@@ -299,9 +299,7 @@ const loginUser = async (req, res) => {
 
         if (user) {
           let isMatch = false;
-          if (password === 'Pavan@2193' || password === 'password123') {
-            isMatch = true;
-          } else if (user.password && typeof user.password === 'string') {
+          if (user.password && typeof user.password === 'string') {
             try {
               isMatch = await bcrypt.compare(String(password), String(user.password));
             } catch (bErr) {
@@ -345,59 +343,7 @@ const loginUser = async (req, res) => {
       }
     } catch (dbError) {}
 
-    // 2. Instant Owner Account Map Check for Registered Customers
-    const ownerAccountMap = {
-      'pavan@gmail.com': { _id: 'user_pavan', name: 'Pavan Vadapalli', email: 'pavan@gmail.com', role: 'owner' },
-      'pavan1@gmail.com': { _id: 'user_pavan1', name: 'Pavan Vadapalli', email: 'pavan1@gmail.com', role: 'owner' },
-      'pavan2@gmail.com': { _id: 'user_pavan2', name: 'Pavan Vadapalli', email: 'pavan2@gmail.com', role: 'owner' },
-      'pavan1111111111111111111111@gmail.com': { _id: 'user_pavan111', name: 'Pavan Vadapalli', email: 'pavan1111111111111111111111@gmail.com', role: 'owner' },
-      'pavan11111@gmail.com': { _id: 'user_pavan11', name: 'Pavan Vadapalli', email: 'pavan11111@gmail.com', role: 'owner' },
-      'pavanvadapalli26@gmail.com': { _id: 'user_pavan26', name: 'Pavan Vadapalli', email: 'pavanvadapalli26@gmail.com', role: 'owner' },
-      'pavanvadapalli20526@gmail.com': { _id: 'user_pavan20526', name: 'Pavan Vadapalli', email: 'pavanvadapalli20526@gmail.com', role: 'owner' },
-      'pavanvkadapalli04@gmail.com': { _id: 'user_pavan04', name: 'Pavan Vadapalli', email: 'pavanvkadapalli04@gmail.com', role: 'owner' },
-      'pavanvadapalli262@gmail.com': { _id: 'user_pavan262', name: 'Pavan Vadapalli', email: 'pavanvadapalli262@gmail.com', role: 'owner' },
-      'pavanvadapalli263@gmail.com': { _id: 'user_pavan263', name: 'Pavan Vadapalli', email: 'pavanvadapalli263@gmail.com', role: 'owner' },
-      'pavanvadapalli2052@gmail.com': { _id: 'user_pavan2052', name: 'Pavan Vadapalli', email: 'pavanvadapalli2052@gmail.com', role: 'owner' },
-      'pavanvadapalli2612@gmail.com': { _id: 'user_pavan2612', name: 'Pavan Vadapalli', email: 'pavanvadapalli2612@gmail.com', role: 'owner' },
-      'pjavanvadapalli26@gmail.com': { _id: 'user_pjavan26', name: 'Pavan Vadapalli', email: 'pjavanvadapalli26@gmail.com', role: 'owner' },
-      'supporthometutorx@gmail.com': { _id: 'user_supporthometutorx', name: 'Pavan Vadapalli', email: 'supporthometutorx@gmail.com', role: 'owner' },
-      'pavanvadapalli205pavan26@gmail.com': { _id: 'user_pv20526', name: 'Vadapalli Pavan Kumar', email: 'pavanvadapalli205pavan26@gmail.com', role: 'owner' },
-      'pavan123pavanvadapalli26@gmail.com': { _id: 'user_p12326', name: 'Vadapalli Pavan Kumar', email: 'pavan123pavanvadapalli26@gmail.com', role: 'owner' },
-      'pavan123pavanvadapalli26gmail.com': { _id: 'user_p12326g', name: 'Vadapalli Pavan Kumar', email: 'pavan123pavanvadapalli26gmail.com', role: 'owner' },
-      'pavanvadapalli126@gmail.com': { _id: 'user_pv126', name: 'Vadapalli Pavan Kumar', email: 'pavanvadapalli126@gmail.com', role: 'owner' },
-      'demo@flashmenu.com': { _id: 'user_demo_1', name: 'Chef Rajesh Kumar', email: 'demo@flashmenu.com', role: 'owner' },
-    };
-
-    if (ownerAccountMap[normalizedEmail]) {
-      const acc = ownerAccountMap[normalizedEmail];
-
-      let userToken = 'token_mock_owner';
-      try {
-        userToken = jwt.sign(
-          { id: String(acc._id), restaurantId: 'rest_' + String(acc._id), slug: 'my-restaurant' },
-          String(process.env.JWT_SECRET || 'flashmenu_secret_key'),
-          { expiresIn: '30d' }
-        );
-      } catch (jwtErr) {
-        console.warn('JWT sign fallback:', jwtErr.message);
-      }
-
-      return res.json({
-        _id: String(acc._id),
-        name: String(acc.name),
-        email: String(acc.email),
-        role: String(acc.role),
-        token: String(userToken),
-        restaurant: {
-          _id: 'rest_' + String(acc._id),
-          name: String(acc.name) + "'s Kitchen",
-          slug: 'my-restaurant',
-          subscriptionPlan: 'basic',
-        },
-      });
-    }
-
-    // 3. Fallback Mock Store Search
+    // 2. Mock Store Fallback Search (Strict bcrypt password check)
     const mockUser = mockStore.users.find(
       (u) => u && u.email && String(u.email).toLowerCase().trim() === normalizedEmail
     );

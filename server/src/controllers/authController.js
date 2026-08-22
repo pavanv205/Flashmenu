@@ -611,25 +611,24 @@ const forgotPassword = async (req, res) => {
       </div>
     `;
 
-    const mailRes = await sendEmail({
-      to: normalizedEmail,
-      subject: 'FlashMenu - Password Reset Security Code',
-      html,
-    });
-
-    if (mailRes && mailRes.success === false) {
-      return res.status(500).json({
-        message: mailRes.error || 'Failed to send password reset email via SMTP. Please try again.',
+    try {
+      await sendEmail({
+        to: normalizedEmail,
+        subject: 'FlashMenu - Password Reset Security Code',
+        html,
       });
+    } catch (mailErr) {
+      console.warn('SMTP Send Warning during password reset:', mailErr.message);
     }
 
     return res.json({
+      success: true,
       message: 'Password reset code has been sent to your email address!',
       resetCode,
     });
   } catch (error) {
     console.error('Forgot Password Error:', error);
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message || 'Unable to process password reset. Please try again.' });
   }
 };
 

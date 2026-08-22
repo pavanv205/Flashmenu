@@ -8,6 +8,7 @@ const mockStore = require('../config/mockStore');
 const { createSlug } = require('../utils/slugify');
 const { connectDB, getIsConnected } = require('../config/db');
 const { defaultCategories } = require('../utils/defaultMenu');
+const sendEmail = require('../utils/sendEmail');
 
 const generateToken = (id, restaurantId = '', slug = '') => {
   return jwt.sign(

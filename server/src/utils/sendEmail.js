@@ -1,18 +1,26 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async ({ to, subject, html, text }) => {
-  try {
-    const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
-    const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
-    const smtpFrom = process.env.FROM_EMAIL || process.env.SMTP_FROM || `"FlashMenu Support" <${smtpUser || 'noreply@flashmenu.com'}>`;
+  const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  const smtpFrom = process.env.FROM_EMAIL || process.env.SMTP_FROM || `"FlashMenu Support" <${smtpUser || 'noreply@flashmenu.com'}>`;
 
-    if (smtpUser && smtpPass) {
+  if (!smtpUser || !smtpPass) {
+    console.log(`[SMTP DEMO MODE] Email to ${to}:`);
+    console.log(`Subject: ${subject}`);
+    return { success: true, demoMode: true };
+  }
+
+  // 2-Attempt Retry Loop for DNS EBUSY / Network Glitches
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
       const transporter = nodemailer.createTransport({
+        service: smtpHost.includes('gmail') ? 'gmail' : undefined,
         host: smtpHost,
         port: smtpPort,
-        secure: smtpPort === 465, // true for 465, false for other ports
+        secure: smtpPort === 465,
         auth: {
           user: smtpUser,
           pass: smtpPass,
@@ -20,6 +28,9 @@ const sendEmail = async ({ to, subject, html, text }) => {
         tls: {
           rejectUnauthorized: false,
         },
+        connectionTimeout: 15000,
+        greetingTimeout: 15000,
+        socketTimeout: 15000,
       });
 
       const info = await transporter.sendMail({
@@ -32,16 +43,17 @@ const sendEmail = async ({ to, subject, html, text }) => {
 
       console.log(`Email sent successfully to ${to} (MessageId: ${info.messageId})`);
       return { success: true, messageId: info.messageId };
-    } else {
-      console.log(`[SMTP DEMO MODE] Email to ${to}:`);
-      console.log(`Subject: ${subject}`);
-      console.log(`HTML: ${html}`);
-      return { success: true, demoMode: true };
+    } catch (error) {
+      console.warn(`SMTP Attempt ${attempt} Warning:`, error.message);
+      if (attempt === 1) {
+        await new Promise((res) => setTimeout(res, 800)); // Short pause before retry
+      } else {
+        return {
+          success: false,
+          error: 'Email service is temporarily busy. Please try again in a few seconds.',
+        };
+      }
     }
-  } catch (error) {
-    console.error('SMTP Email Error:', error);
-    // Don't crash the server, return failure status
-    return { success: false, error: error.message };
   }
 };
 

@@ -196,6 +196,7 @@ const submitFeedback = async (req, res) => {
 const createPublicOrder = async (req, res) => {
   try {
     const { restaurantSlug, tableNumber, items, customerName, customerPhone } = req.body;
+    if (getIsConnected()) {
       const restaurant = await Restaurant.findOne({ slug: restaurantSlug });
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 

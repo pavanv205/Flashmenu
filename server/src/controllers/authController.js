@@ -180,6 +180,7 @@ const registerUser = async (req, res) => {
           subscriptionPlan: restaurant.subscriptionPlan || 'basic',
         },
       });
+    }
   } catch (error) {
     console.error('Registration error:', error);
     if (error.code === 11000) {

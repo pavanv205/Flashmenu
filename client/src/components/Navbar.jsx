@@ -48,12 +48,21 @@ export default function Navbar() {
               <span>{user.role === 'admin' ? 'Master Admin' : 'Dashboard'}</span>
             </Link>
           ) : (
-            <Link
-              to="/login"
-              className="px-3.5 py-2 text-xs font-bold text-gray-300 hover:text-white transition-colors"
-            >
-              Login
-            </Link>
+            <>
+              <Link
+                to="/login"
+                className="px-3.5 py-2 text-xs font-bold text-gray-300 hover:text-white transition-colors"
+              >
+                Login
+              </Link>
+              <Link
+                to="/admin/login"
+                className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500 hover:text-black font-extrabold text-xs transition-all shadow-sm"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Admin Login</span>
+              </Link>
+            </>
           )}
         </div>
       </div>

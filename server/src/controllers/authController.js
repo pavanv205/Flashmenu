@@ -301,21 +301,26 @@ const loginUser = async (req, res) => {
       }
 
       const acc = ownerAccountMap[normalizedEmail];
-      const token = jwt.sign(
-        { id: acc._id, restaurantId: 'rest_' + acc._id, slug: 'my-restaurant' },
-        process.env.JWT_SECRET || 'flashmenu_secret_key',
-        { expiresIn: '30d' }
-      );
+      let userToken = 'token_mock_owner';
+      try {
+        userToken = jwt.sign(
+          { id: String(acc._id), restaurantId: 'rest_' + String(acc._id), slug: 'my-restaurant' },
+          String(process.env.JWT_SECRET || 'flashmenu_secret_key'),
+          { expiresIn: '30d' }
+        );
+      } catch (jwtErr) {
+        console.warn('JWT sign fallback:', jwtErr.message);
+      }
 
       return res.json({
-        _id: acc._id,
-        name: acc.name,
-        email: acc.email,
-        role: acc.role,
-        token: token,
+        _id: String(acc._id),
+        name: String(acc.name),
+        email: String(acc.email),
+        role: String(acc.role),
+        token: String(userToken),
         restaurant: {
-          _id: 'rest_' + acc._id,
-          name: acc.name + "'s Kitchen",
+          _id: 'rest_' + String(acc._id),
+          name: String(acc.name) + "'s Kitchen",
           slug: 'my-restaurant',
           subscriptionPlan: 'basic',
         },

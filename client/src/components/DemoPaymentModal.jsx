@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { ShieldCheck, CheckCircle2, QrCode, CreditCard, Lock, X, Loader2, Zap, ArrowRight } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, CreditCard, Lock, X, Loader2, Zap, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { paymentAPI, restaurantAPI } from '../services/api';
+import { paymentAPI } from '../services/api';
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -19,7 +19,6 @@ const loadRazorpayScript = () => {
 
 export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSuccess }) {
   const { user, restaurant, updateRestaurantState } = useAuth();
-  const [paymentMethod, setPaymentMethod] = useState('razorpay'); // razorpay, upi, demo
   const [processing, setProcessing] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [error, setError] = useState('');
@@ -30,172 +29,98 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
   const amount = Number(planDetails.amount ?? planDetails.price ?? 1);
   const duration = planDetails.duration || planDetails.cycleName || 'Monthly';
 
-  const handleSimulatePayment = async () => {
-    setProcessing(true);
-    setError('');
-
-    try {
-      let updatedRest = null;
-
-      // 1. Call verification API
-      const isSelectingLifetime =
-        String(duration || '').toLowerCase().includes('lifetime') ||
-        String(title || '').toLowerCase().includes('lifetime');
-
-      try {
-        const verifyRes = await paymentAPI.verifyPayment({
-          razorpay_order_id: `order_demo_${Date.now()}`,
-          razorpay_payment_id: `pay_demo_${Date.now()}`,
-          razorpay_signature: `sig_demo_${Date.now()}`,
-          planKey: planDetails.planKey,
-          duration: planDetails.duration,
-          title: planDetails.title,
-          isLifetime: isSelectingLifetime,
-        });
-        if (verifyRes.data?.restaurant) {
-          updatedRest = verifyRes.data.restaurant;
-        } else if (verifyRes.data?._id) {
-          updatedRest = verifyRes.data;
-        }
-      } catch (e) {
-        console.warn('Backend payment verify fallback:', e);
-      }
-
-      // 2. Direct restaurant plan update fallback if verify failed
-      if (!updatedRest) {
-        try {
-          const isLifetime = String(planDetails.duration || '').toLowerCase().includes('lifetime') || restaurant?.subscriptionCycle === 'lifetime';
-          const res = await restaurantAPI.updateMyRestaurant({
-            subscriptionPlan: planDetails.planKey,
-            subscriptionCycle: isLifetime ? 'lifetime' : '1month',
-            subscriptionStartDate: new Date(),
-            subscriptionExpiresAt: isLifetime ? null : new Date(Date.now() + 5 * 60 * 1000),
-          });
-          if (res.data) {
-            updatedRest = res.data;
-          }
-        } catch (err) {
-          console.warn('Direct plan update fallback:', err);
-        }
-      }
-
-      if (updatedRest && updateRestaurantState) {
-        updateRestaurantState(updatedRest);
-      }
-
-      setProcessing(false);
-      setCompleted(true);
-
-      setTimeout(async () => {
-        setCompleted(false);
-        if (onSuccess) {
-          await onSuccess(updatedRest || planDetails.planKey);
-        }
-        onClose();
-      }, 1200);
-    } catch (err) {
-      setProcessing(false);
-      setError('Payment simulation failed. Please try again.');
-    }
-  };
-
   const handleRazorpayCheckout = async () => {
     setProcessing(true);
     setError('');
 
     try {
-      // 1. Create order on backend
-      let orderId = `order_demo_${Date.now()}`;
-      let keyId = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TAwDF3o7rjkreE';
-      let amount = Math.round(Number(planDetails.amount) * 100);
+      // 1. Create Order on Backend via Razorpay API
+      const orderRes = await paymentAPI.createOrder({
+        amount: planDetails.amount,
+        planKey: planDetails.planKey,
+        title: planDetails.title,
+      });
 
-      try {
-        const orderRes = await paymentAPI.createOrder({
-          amount: planDetails.amount,
-          planKey: planDetails.planKey,
-          title: planDetails.title,
-        });
-        if (orderRes.data) {
-          orderId = orderRes.data.orderId || orderId;
-          keyId = orderRes.data.keyId || keyId;
-          amount = orderRes.data.amount || amount;
-        }
-      } catch (e) {
-        console.warn('Order API creation fallback:', e);
+      if (!orderRes.data || !orderRes.data.orderId) {
+        throw new Error('Failed to initiate Razorpay order. Please try again.');
       }
 
-      // 2. Try loading official Razorpay JS SDK
+      const { orderId, keyId, amount: razorpayAmount } = orderRes.data;
+
+      // 2. Load Official Razorpay JS SDK
       const isLoaded = await loadRazorpayScript();
-
-      if (isLoaded && window.Razorpay) {
-        const options = {
-          key: keyId,
-          amount: amount,
-          currency: 'INR',
-          name: 'FlashMenu Solutions',
-          description: `${planDetails.title} Subscription (${planDetails.duration})`,
-          handler: async function (response) {
-            setProcessing(true);
-            try {
-              const isSelectingLifetime =
-                String(planDetails.duration || '').toLowerCase().includes('lifetime') ||
-                String(planDetails.title || '').toLowerCase().includes('lifetime');
-
-              const verifyRes = await paymentAPI.verifyPayment({
-                razorpay_order_id: response.razorpay_order_id || orderId,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                planKey: planDetails.planKey,
-                duration: planDetails.duration,
-                title: planDetails.title,
-                isLifetime: isSelectingLifetime,
-              });
-
-              let updatedRest = verifyRes.data?.restaurant || verifyRes.data;
-              if (updatedRest && updateRestaurantState) {
-                updateRestaurantState(updatedRest);
-              }
-
-              setProcessing(false);
-              setCompleted(true);
-              setTimeout(async () => {
-                setCompleted(false);
-                if (onSuccess) {
-                  await onSuccess(updatedRest || planDetails.planKey);
-                }
-                onClose();
-              }, 1200);
-            } catch (vErr) {
-              await handleSimulatePayment();
-            }
-          },
-          prefill: {
-            name: restaurant?.name || user?.name || '',
-            email: user?.email || '',
-            contact: user?.phone || '',
-          },
-          theme: {
-            color: '#F59E0B',
-          },
-        };
-
-        if (orderId && !orderId.startsWith('order_demo_')) {
-          options.order_id = orderId;
-        }
-
-        const rzp = new window.Razorpay(options);
-        rzp.on('payment.failed', function (resp) {
-          setProcessing(false);
-          setError(resp.error?.description || 'Payment failed or cancelled.');
-        });
-        rzp.open();
-        return;
-      } else {
-        // Fallback to seamless Instant Test Payment processing
-        await handleSimulatePayment();
+      if (!isLoaded || !window.Razorpay) {
+        throw new Error('Failed to load Razorpay Payment Gateway. Please check your internet connection.');
       }
+
+      const isSelectingLifetime =
+        String(planDetails.duration || '').toLowerCase().includes('lifetime') ||
+        String(planDetails.title || '').toLowerCase().includes('lifetime');
+
+      // 3. Open Official Razorpay Live Checkout Modal
+      const options = {
+        key: keyId || import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TAwDF3o7rjkreE',
+        amount: razorpayAmount,
+        currency: 'INR',
+        name: 'FlashMenu Solutions',
+        description: `${title} Subscription (${duration})`,
+        order_id: orderId,
+        handler: async function (response) {
+          setProcessing(true);
+          try {
+            const verifyRes = await paymentAPI.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              planKey: planDetails.planKey,
+              duration: planDetails.duration,
+              title: planDetails.title,
+              isLifetime: isSelectingLifetime,
+            });
+
+            const updatedRest = verifyRes.data?.restaurant || verifyRes.data;
+            if (updatedRest && updateRestaurantState) {
+              updateRestaurantState(updatedRest);
+            }
+
+            setProcessing(false);
+            setCompleted(true);
+            setTimeout(async () => {
+              setCompleted(false);
+              if (onSuccess) {
+                await onSuccess(updatedRest || planDetails.planKey);
+              }
+              onClose();
+            }, 1500);
+          } catch (vErr) {
+            setProcessing(false);
+            setError(vErr.response?.data?.message || 'Payment verification failed. Please try again.');
+          }
+        },
+        prefill: {
+          name: restaurant?.name || user?.name || '',
+          email: user?.email || '',
+          contact: user?.phone || '',
+        },
+        theme: {
+          color: '#F59E0B',
+        },
+        modal: {
+          ondismiss: function () {
+            setProcessing(false);
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (resp) {
+        setProcessing(false);
+        setError(resp.error?.description || 'Payment failed or cancelled.');
+      });
+      rzp.open();
     } catch (err) {
-      await handleSimulatePayment();
+      setProcessing(false);
+      setError(err.response?.data?.message || err.message || 'Payment initiation failed.');
     }
   };
 
@@ -210,12 +135,12 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
             </div>
             <div>
               <h3 className="font-extrabold text-sm text-white flex items-center space-x-1.5">
-                <span>FlashMenu Demo Gateway</span>
+                <span>FlashMenu Razorpay Gateway</span>
                 <span className="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">
-                  TEST & LIVE GATEWAY
+                  LIVE SECURE
                 </span>
               </h3>
-              <p className="text-[11px] text-gray-400">Subscription Plan Activation</p>
+              <p className="text-[11px] text-gray-400">Official Razorpay Subscription Activation</p>
             </div>
           </div>
           <button
@@ -268,90 +193,33 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
               </div>
             </div>
 
-            {/* Payment Options Selection */}
-            <div className="space-y-2">
-              <label className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400">
-                Select Payment Mode
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('razorpay')}
-                  className={`p-3 rounded-xl border text-xs font-bold transition-all flex flex-col items-center justify-center space-y-1 ${
-                    paymentMethod === 'razorpay'
-                      ? 'bg-amber-500/15 border-amber-500 text-amber-400 shadow-md ring-1 ring-amber-500/40'
-                      : 'bg-dark-base border-dark-border text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <CreditCard className="w-4 h-4 text-amber-400" />
-                  <span>Razorpay Live</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('upi')}
-                  className={`p-3 rounded-xl border text-xs font-bold transition-all flex flex-col items-center justify-center space-y-1 ${
-                    paymentMethod === 'upi'
-                      ? 'bg-amber-500/15 border-amber-500 text-amber-400 shadow-md ring-1 ring-amber-500/40'
-                      : 'bg-dark-base border-dark-border text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <QrCode className="w-4 h-4 text-amber-400" />
-                  <span>UPI QR Code</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('demo')}
-                  className={`p-3 rounded-xl border text-xs font-bold transition-all flex flex-col items-center justify-center space-y-1 ${
-                    paymentMethod === 'demo'
-                      ? 'bg-amber-500/15 border-amber-500 text-amber-400 shadow-md ring-1 ring-amber-500/40'
-                      : 'bg-dark-base border-dark-border text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <ShieldCheck className="w-4 h-4 text-amber-400" />
-                  <span>Instant Test</span>
-                </button>
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2 text-center">
+              <div className="flex items-center justify-center space-x-1.5 text-amber-400 font-bold text-xs">
+                <Lock className="w-4 h-4" />
+                <span>256-Bit SSL Encrypted Razorpay Checkout</span>
               </div>
+              <p className="text-[11px] text-gray-300">
+                Supports UPI, Google Pay, PhonePe, Paytm, Credit/Debit Cards & Netbanking.
+              </p>
             </div>
-
-            {paymentMethod === 'upi' && (
-              <div className="p-4 rounded-2xl bg-dark-base border border-dark-border text-center space-y-2">
-                <div className="w-28 h-28 mx-auto bg-white p-2 rounded-xl flex items-center justify-center shadow-inner">
-                  <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
-                      `upi://pay?pa=${import.meta.env.VITE_UPI_ID || 'flashmenu@paytm'}&pn=FlashMenu&am=${amount}&cu=INR`
-                    )}`}
-                    alt="UPI QR Code"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <p className="text-[11px] text-gray-400">Scan with GPay, PhonePe, Paytm or BHIM</p>
-                <div className="inline-block px-3 py-1 rounded-full bg-gray-800 text-[11px] font-mono text-amber-400 border border-dark-border">
-                  {import.meta.env.VITE_UPI_ID || 'flashmenu@paytm'}
-                </div>
-              </div>
-            )}
 
             {/* Main Action Button */}
             <div className="pt-2">
               <button
                 type="button"
-                onClick={paymentMethod === 'razorpay' ? handleRazorpayCheckout : handleSimulatePayment}
+                onClick={handleRazorpayCheckout}
                 disabled={processing}
                 className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-sm shadow-xl shadow-amber-500/20 transition-all flex items-center justify-center space-x-2"
               >
                 {processing ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Processing Payment & Activating Plan...</span>
+                    <span>Opening Razorpay Secure Checkout...</span>
                   </>
                 ) : (
                   <>
                     <CreditCard className="w-4 h-4" />
-                    <span>
-                      {paymentMethod === 'razorpay'
-                        ? `Pay ₹${amount.toLocaleString()} via Razorpay Live`
-                        : `Complete Payment (₹${amount.toLocaleString()})`}
-                    </span>
+                    <span>Pay ₹{amount.toLocaleString()} via Razorpay Live</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}

@@ -48,17 +48,8 @@ const createOrder = async (req, res) => {
         keyId: key_id,
       });
     } catch (rzpErr) {
-      console.warn('Razorpay SDK Order Error (using fallback order id):', rzpErr.message);
-      // Fallback for development/testing when keys are mock
-      const fallbackOrderId = `order_demo_${Date.now()}`;
-      return res.json({
-        success: true,
-        orderId: fallbackOrderId,
-        amount: Math.round(numAmount * 100),
-        currency: 'INR',
-        keyId: key_id,
-        isDemo: true,
-      });
+      console.error('Razorpay Order Creation Error:', rzpErr);
+      return res.status(500).json({ message: `Razorpay Order Error: ${rzpErr.message}` });
     }
   } catch (error) {
     console.error('Create Payment Order Error:', error);
@@ -70,25 +61,22 @@ const verifyPayment = async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, planKey } = req.body;
 
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ message: 'Missing required Razorpay payment signature details' });
+    }
+
     if (!planKey) {
       return res.status(400).json({ message: 'Plan details missing for verification' });
     }
 
-    const key_secret = process.env.RAZORPAY_KEY_SECRET || 'test_secret_1234567890';
-    let isValid = false;
+    const key_secret = process.env.RAZORPAY_KEY_SECRET || 'KOrClbC6FdKfH1XcUTyDFUeY';
+    const body = razorpay_order_id + '|' + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac('sha256', key_secret)
+      .update(body.toString())
+      .digest('hex');
 
-    if (razorpay_order_id && razorpay_payment_id && razorpay_signature) {
-      const body = razorpay_order_id + '|' + razorpay_payment_id;
-      const expectedSignature = crypto
-        .createHmac('sha256', key_secret)
-        .update(body.toString())
-        .digest('hex');
-
-      isValid = expectedSignature === razorpay_signature || razorpay_order_id.startsWith('order_demo_');
-    } else {
-      // Demo fallback verification
-      isValid = true;
-    }
+    const isValid = expectedSignature === razorpay_signature;
 
     if (!isValid) {
       return res.status(400).json({ message: 'Payment verification failed. Invalid signature.' });

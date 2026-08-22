@@ -301,22 +301,21 @@ const loginUser = async (req, res) => {
       }
 
       const acc = ownerAccountMap[normalizedEmail];
-      let token = '';
-      try {
-        token = generateToken(acc._id, `rest_${acc._id}`, 'my-restaurant');
-      } catch (tErr) {
-        token = 'token_mock_' + Date.now();
-      }
+      const token = jwt.sign(
+        { id: acc._id, restaurantId: 'rest_' + acc._id, slug: 'my-restaurant' },
+        process.env.JWT_SECRET || 'flashmenu_secret_key',
+        { expiresIn: '30d' }
+      );
 
       return res.json({
         _id: acc._id,
         name: acc.name,
         email: acc.email,
         role: acc.role,
-        token,
+        token: token,
         restaurant: {
-          _id: `rest_${acc._id}`,
-          name: `${acc.name}'s Kitchen`,
+          _id: 'rest_' + acc._id,
+          name: acc.name + "'s Kitchen",
           slug: 'my-restaurant',
           subscriptionPlan: 'basic',
         },

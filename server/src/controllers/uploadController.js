@@ -1,6 +1,8 @@
 const multer = require('multer');
 const { uploadImageBuffer } = require('../services/cloudinaryService');
 const Restaurant = require('../models/Restaurant');
+const mockStore = require('../config/mockStore');
+const { connectDB, getIsConnected } = require('../config/db');
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -26,8 +28,14 @@ const uploadImage = async (req, res) => {
     let restaurantId = req.user?.restaurantId;
 
     if (!restaurantId && req.user?._id) {
-      const rest = await Restaurant.findOne({ ownerId: req.user._id });
-      if (rest) restaurantId = rest._id.toString();
+      await connectDB();
+      if (getIsConnected()) {
+        const rest = await Restaurant.findOne({ ownerId: req.user._id });
+        if (rest) restaurantId = rest._id.toString();
+      } else {
+        const rest = mockStore.restaurants.find((r) => String(r.ownerId) === String(req.user._id));
+        if (rest) restaurantId = String(rest._id);
+      }
     }
 
     const folderPath = restaurantId

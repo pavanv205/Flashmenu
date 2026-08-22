@@ -3,9 +3,9 @@ const nodemailer = require('nodemailer');
 const sendEmail = async ({ to, subject, html, text }) => {
   const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
   const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
-  const smtpFrom = process.env.FROM_EMAIL || process.env.SMTP_FROM || `"FlashMenu Support" <${smtpUser || 'noreply@flashmenu.com'}>`;
+  const smtpUser = process.env.SMTP_USER || 'pavanvadapalli205@gmail.com';
+  const smtpPass = process.env.SMTP_PASS || 'lgsqiyndqtmusjsq';
+  const smtpFrom = process.env.FROM_EMAIL || process.env.SMTP_FROM || `"FlashMenu Support" <${smtpUser}>`;
 
   if (!smtpUser || !smtpPass) {
     console.log(`[SMTP DEMO MODE] Email to ${to}:`);

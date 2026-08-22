@@ -275,7 +275,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    await connectDB().catch(() => {});
+    await connectDB();
 
     let user = null;
     try {
@@ -284,7 +284,8 @@ const loginUser = async (req, res) => {
         user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
       }
     } catch (dbErr) {
-      console.warn('MongoDB User find error:', dbErr.message);
+      console.error('MongoDB User find error:', dbErr);
+      return res.status(500).json({ message: 'DB_CONN_ERROR: ' + dbErr.message });
     }
 
     if (!user) {

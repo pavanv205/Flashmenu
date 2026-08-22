@@ -18,23 +18,42 @@ class MockStore {
     if (this.initialized) return;
     this.initialized = true;
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('password123', salt);
+    const pavanPassword = await bcrypt.hash('Pavan@2193', salt);
 
     // Demo User
     const user = {
       _id: 'user_demo_1',
       name: 'Chef Rajesh Kumar',
       email: 'demo@flashmenu.com',
-      password: hashedPassword,
+      password: pavanPassword,
       phone: '+91 98765 43210',
       role: 'owner',
       createdAt: new Date(),
     };
     this.users.push(user);
 
+    // Owner Accounts
+    const ownerAccounts = [
+      'pavanvadapalli26@gmail.com',
+      'pavanvkadapalli04@gmail.com',
+      'pjavanvadapalli26@gmail.com',
+      'pavan1@gmail.com',
+    ];
+
+    ownerAccounts.forEach((emailAddr, idx) => {
+      this.users.push({
+        _id: `user_owner_${idx + 1}`,
+        name: `Pavan Vadapalli (${emailAddr})`,
+        email: emailAddr,
+        password: pavanPassword,
+        phone: '+91 99999 99999',
+        role: 'owner',
+        createdAt: new Date(),
+      });
+    });
+
     // Master Admin User
-    const adminPassword = await bcrypt.hash('Pavan@2193', salt);
+    const adminPassword = pavanPassword;
     const adminUser = {
       _id: 'user_master_admin',
       name: 'Pavan Vadapalli',

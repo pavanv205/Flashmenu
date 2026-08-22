@@ -62,37 +62,50 @@ const registerUser = async (req, res) => {
         baseSlug = `restaurant-${Math.floor(1000 + Math.random() * 9000)}`;
       }
 
-      let slug = baseSlug;
+      let slug = `${baseSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
       let attempts = 0;
       while (await Restaurant.findOne({ slug })) {
         attempts++;
-        slug = `${baseSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
+        slug = `${baseSlug}-${Date.now().toString().slice(-4)}${Math.floor(100 + Math.random() * 900)}`;
         if (attempts > 10) break;
       }
 
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const user = await User.create({
-        name: String(name).trim(),
-        email: normalizedEmail,
-        password: hashedPassword,
-        phone: phone ? String(phone).trim() : '',
-      });
+      // Check if orphan user exists (created in failed past run without restaurant)
+      let user = await User.findOne({ email: normalizedEmail });
+      if (!user) {
+        user = await User.create({
+          name: String(name).trim(),
+          email: normalizedEmail,
+          password: hashedPassword,
+          phone: phone ? String(phone).trim() : '',
+        });
+      } else {
+        // Update user password and name if orphan
+        user.password = hashedPassword;
+        user.name = String(name).trim();
+        user.phone = phone ? String(phone).trim() : '';
+        await user.save().catch(() => {});
+      }
 
-      const restaurant = await Restaurant.create({
-        ownerId: user._id,
-        name: String(restaurantName).trim(),
-        slug,
-        city: city ? String(city).trim() : '',
-        address: address ? String(address).trim() : '',
-        phone: phone ? String(phone).trim() : '',
-        email: normalizedEmail,
-        subscriptionPlan: plan,
-        isActive: false,
-        subscriptionStartDate: null,
-        subscriptionExpiresAt: null,
-      });
+      let restaurant = await Restaurant.findOne({ ownerId: user._id });
+      if (!restaurant) {
+        restaurant = await Restaurant.create({
+          ownerId: user._id,
+          name: String(restaurantName).trim(),
+          slug,
+          city: city ? String(city).trim() : '',
+          address: address ? String(address).trim() : '',
+          phone: phone ? String(phone).trim() : '',
+          email: normalizedEmail,
+          subscriptionPlan: plan,
+          isActive: false,
+          subscriptionStartDate: null,
+          subscriptionExpiresAt: null,
+        });
+      }
 
       // Lazy/background seed default starter categories and items
       const { ensureDefaultMenuForRestaurant } = require('../utils/seedHelper');
@@ -123,31 +136,25 @@ const registerUser = async (req, res) => {
       }
 
       const cleanPhone = phone ? String(phone).replace(/[^0-9]/g, '') : '';
-      if (cleanPhone && cleanPhone.length >= 10) {
-        const last10Digits = cleanPhone.slice(-10);
-        const existingPhone = mockStore.users.find(
-          (u) => u && u.phone && String(u.phone).replace(/[^0-9]/g, '').slice(-10) === last10Digits
-        ) || mockStore.restaurants.find(
-          (r) => r && r.phone && String(r.phone).replace(/[^0-9]/g, '').slice(-10) === last10Digits
-        );
-        if (existingPhone) {
+      if (cleanPhone) {
+        const phoneUserExists = mockStore.users.find((u) => u && u.phone && String(u.phone).replace(/[^0-9]/g, '') === cleanPhone);
+        if (phoneUserExists) {
           return res.status(400).json({ message: 'A restaurant account with this phone number is already registered. Please use a different phone number.' });
         }
       }
 
-      let slug = createSlug(restaurantName);
-      if (mockStore.restaurants.some((r) => r && r.slug && String(r.slug).toLowerCase() === slug)) {
-        slug = `${slug}-${Math.floor(1000 + Math.random() * 9000)}`;
+      let baseSlug = createSlug(restaurantName);
+      if (!baseSlug || baseSlug.length < 2) {
+        baseSlug = `restaurant-${Math.floor(1000 + Math.random() * 9000)}`;
       }
 
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
+      let slug = `${baseSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
 
       const user = {
         _id: `user_${Date.now()}`,
         name: String(name).trim(),
         email: normalizedEmail,
-        password: hashedPassword,
+        password: password,
         phone: phone ? String(phone).trim() : '',
         role: 'owner',
       };
@@ -162,13 +169,11 @@ const registerUser = async (req, res) => {
         address: address ? String(address).trim() : '',
         phone: phone ? String(phone).trim() : '',
         email: normalizedEmail,
-        cuisineType: 'Multi-Cuisine',
-        openingHours: '10:00 AM - 11:00 PM',
-        primaryColor: '#F59E0B',
-        currency: '₹',
-        tableCount: 20,
         isOpen: true,
+        isActive: false,
         subscriptionPlan: plan,
+        subscriptionStartDate: null,
+        subscriptionExpiresAt: null,
       };
       mockStore.restaurants.push(restaurant);
 
@@ -223,15 +228,15 @@ const registerUser = async (req, res) => {
   } catch (error) {
     console.error('Registration error:', error);
     if (error.code === 11000) {
-      if (error.keyPattern?.email || error.message?.includes('email')) {
+      if (error.keyPattern?.email || String(error.message).includes('email')) {
         return res.status(400).json({ message: 'This email address is already registered. Please sign in.' });
       }
-      if (error.keyPattern?.slug || error.message?.includes('slug')) {
-        return res.status(400).json({ message: 'Restaurant name slug is already taken. Please try a slightly different name.' });
+      if (error.keyPattern?.slug || String(error.message).includes('slug')) {
+        return res.status(400).json({ message: 'Restaurant name is already taken. Please try a slightly different name.' });
       }
-      return res.status(400).json({ message: 'An account with these details already exists.' });
+      return res.status(400).json({ message: 'An account or restaurant with these details already exists.' });
     }
-    res.status(500).json({ message: error.message || 'Failed to create restaurant account. Please try again.' });
+    return res.status(400).json({ message: error.message || 'Failed to complete registration. Please try again.' });
   }
 };
 

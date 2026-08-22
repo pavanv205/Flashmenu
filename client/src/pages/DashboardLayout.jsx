@@ -22,13 +22,19 @@ export default function DashboardLayout() {
     return <Navigate to="/login" replace />;
   }
 
+  const isAdminUser =
+    user?.role === 'admin' ||
+    ['flashmenu18@gmail.com', 'pavanvadapalli205@gmail.com', 'admin@flashmenu.in', 'pava26@gmail.com'].includes(
+      String(user?.email || '').toLowerCase()
+    );
+
   const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
   const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
   const isExpired = !isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now();
   const isUnpaid = !restaurant || restaurant.isActive === false || !restaurant.subscriptionStartDate;
 
-  // If subscription is EXPIRED or UNPAID (isActive === false or no payment start date): HIDE sidebar completely and lock screen to full-page Paywall!
-  if (isExpired || isUnpaid) {
+  // If subscription is EXPIRED or UNPAID (and user is NOT an Admin): lock screen to full-page Paywall!
+  if (!isAdminUser && (isExpired || isUnpaid)) {
     return (
       <div className="min-h-screen bg-[#08080A] flex flex-col font-sans">
         <DashboardHeader isExpiredPaywall={true} />

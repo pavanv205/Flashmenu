@@ -366,7 +366,7 @@ const loginUser = async (req, res) => {
     }
 
     let restaurant = null;
-    if (getIsConnected()) {
+    if (getIsConnected() && user._id) {
       try {
         restaurant = await Restaurant.findOne({ ownerId: user._id });
         if (!restaurant && user.role !== 'admin') {
@@ -405,14 +405,14 @@ const loginUser = async (req, res) => {
     const token = generateToken(user._id, restaurant?._id || '', restaurant?.slug || '');
 
     return res.json({
-      _id: user._id,
-      name: user.name,
+      _id: String(user._id),
+      name: user.name || 'Restaurant Owner',
       email: user.email,
-      role: user.role,
+      role: user.role || 'owner',
       token,
       restaurant: restaurant
         ? {
-            _id: restaurant._id,
+            _id: String(restaurant._id),
             name: restaurant.name,
             slug: restaurant.slug,
             subscriptionPlan: restaurant.subscriptionPlan || 'basic',
@@ -420,7 +420,8 @@ const loginUser = async (req, res) => {
         : null,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Login User Fatal Error:', error);
+    return res.status(500).json({ message: error.message || 'Internal login error' });
   }
 };
 

@@ -68,37 +68,9 @@ const registerUser = async (req, res) => {
         subscriptionPlan: plan,
       });
 
-      // Create main categories and starter items (resilient non-blocking execution)
-      try {
-        for (const catData of defaultCategories) {
-          const c = await Category.create({
-            restaurantId: restaurant._id,
-            name: catData.name,
-            order: catData.order,
-          });
-
-          if (catData.items && catData.items.length > 0) {
-            const itemDocs = catData.items.map((item, idx) => ({
-              restaurantId: restaurant._id,
-              categoryId: c._id,
-              subCategory: item.subCategory || '',
-              name: item.name,
-              description: item.description || '',
-              price: item.price,
-              image: item.image || '',
-              vegType: item.vegType || 'veg',
-              spicyLevel: item.spicyLevel || 0,
-              isBestseller: Boolean(item.isBestseller),
-              isChefSpecial: Boolean(item.isChefSpecial),
-              isAvailable: true,
-              order: idx + 1,
-            }));
-            await MenuItem.insertMany(itemDocs);
-          }
-        }
-      } catch (seedErr) {
-        console.warn('[Register Seed Warning] Default menu creation deferred:', seedErr.message);
-      }
+      // Lazy/background seed default starter categories and items
+      const { ensureDefaultMenuForRestaurant } = require('../utils/seedHelper');
+      ensureDefaultMenuForRestaurant(restaurant._id).catch(() => {});
 
       const token = generateToken(user._id, restaurant._id, restaurant.slug);
 

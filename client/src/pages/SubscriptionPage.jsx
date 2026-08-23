@@ -174,11 +174,7 @@ export default function SubscriptionPage() {
           </div>
 
           <div className="space-y-2">
-            <h2
-              onClick={handleSecretPaymentClick}
-              className="text-xl sm:text-3xl font-extrabold text-white tracking-tight cursor-pointer select-none"
-              title="Click 5 times for Master Admin Zero-Fee Activation"
-            >
+            <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
               Activation Required:
               <span className="block text-3xl sm:text-5xl font-black text-amber-400 tracking-tight mt-1 mb-2 uppercase animate-pulse">
                 Select A Subscription Plan
@@ -191,13 +187,7 @@ export default function SubscriptionPage() {
 
           <div className="flex items-center justify-center space-x-4 pt-4 max-w-2xl mx-auto">
             <div className="h-px bg-white/10 flex-1"></div>
-            <span
-              onClick={handleSecretPaymentClick}
-              className="text-xs font-extrabold text-amber-400 uppercase tracking-widest px-3 cursor-pointer select-none"
-              title="Click 5 times for Master Admin Zero-Fee Activation"
-            >
-              Available Restaurant Tiers
-            </span>
+            <span className="text-xs font-extrabold text-amber-400 uppercase tracking-widest px-3">Available Restaurant Tiers</span>
             <div className="h-px bg-white/10 flex-1"></div>
           </div>
         </div>

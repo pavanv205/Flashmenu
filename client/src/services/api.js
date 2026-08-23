@@ -96,7 +96,7 @@ export const adminAPI = {
     API.put(`/admin/restaurants/${id}/status`, { secretCode, adminPassword: secretCode }),
   deleteRestaurant: (id) => API.delete(`/admin/restaurants/${id}`),
   createOwner: (data) => API.post('/admin/create-owner', data),
-  sendCreateOwnerOTP: (secretCode) => API.post('/admin/send-create-owner-otp', { secretCode }),
+  sendCreateOwnerOTP: (secretCode, email, phone) => API.post('/admin/send-create-owner-otp', { secretCode, email, phone }),
 };
 
 export default API;

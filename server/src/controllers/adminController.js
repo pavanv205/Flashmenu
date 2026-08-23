@@ -178,14 +178,49 @@ const deleteRestaurant = async (req, res) => {
   }
 };
 
-// Send 2FA OTP Code for Restaurant Owner Creation after PIN verification
+// Send 2FA OTP Code for Restaurant Owner Creation after PIN verification & uniqueness check
 const sendCreateOwnerOTP = async (req, res) => {
   try {
-    const { secretCode } = req.body;
+    const { secretCode, email, phone } = req.body;
     const cleanSecret = String(secretCode || '').trim();
 
     if (cleanSecret !== '2193' && cleanSecret !== 'Pavan@2193') {
       return res.status(401).json({ message: 'Invalid Master Security PIN Key. Access Denied.' });
+    }
+
+    if (email) {
+      const normalizedEmail = String(email).toLowerCase().trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(normalizedEmail)) {
+        return res.status(400).json({ message: 'Please enter a valid email address (e.g. owner@example.com).' });
+      }
+
+      await connectDB();
+      if (getIsConnected()) {
+        const existingEmail = await User.findOne({ email: normalizedEmail });
+        if (existingEmail) {
+          return res.status(400).json({ message: `An account with email '${normalizedEmail}' already exists. Please use a unique email.` });
+        }
+      }
+    }
+
+    if (phone) {
+      const cleanPhone = String(phone).replace(/\D/g, '').slice(-10);
+      if (cleanPhone.length === 10) {
+        const phoneRegex = /^[6-9]\d{9}$/;
+        if (!phoneRegex.test(cleanPhone)) {
+          return res.status(400).json({ message: 'Please enter a valid 10-digit Indian mobile number.' });
+        }
+
+        await connectDB();
+        if (getIsConnected()) {
+          const existingPhoneUser = await User.findOne({ phone: cleanPhone });
+          const existingPhoneRest = await Restaurant.findOne({ phone: cleanPhone });
+          if (existingPhoneUser || existingPhoneRest) {
+            return res.status(400).json({ message: `Phone number ${cleanPhone} is already registered to another account. Please use a unique phone number.` });
+          }
+        }
+      }
     }
 
     const adminEmail = req.user?.email || 'pavanvadapalli205@gmail.com';
@@ -258,6 +293,19 @@ const createRestaurantOwner = async (req, res) => {
     }
 
     const normalizedEmail = String(email).toLowerCase().trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalizedEmail)) {
+      return res.status(400).json({ message: 'Please enter a valid email address.' });
+    }
+
+    const formattedPhone = phone ? String(phone).replace(/\D/g, '').slice(-10) : '';
+    if (formattedPhone && formattedPhone.length === 10) {
+      const phoneRegex = /^[6-9]\d{9}$/;
+      if (!phoneRegex.test(formattedPhone)) {
+        return res.status(400).json({ message: 'Please enter a valid 10-digit Indian phone number starting with 6-9.' });
+      }
+    }
+
     const plan = subscriptionPlan === 'premium' ? 'premium' : 'basic';
     const enforce2FA = requires2FA !== false;
 
@@ -267,7 +315,15 @@ const createRestaurantOwner = async (req, res) => {
     if (getIsConnected()) {
       const existingUser = await User.findOne({ email: normalizedEmail });
       if (existingUser) {
-        return res.status(400).json({ message: 'An account with this email address already exists.' });
+        return res.status(400).json({ message: `An account with email '${normalizedEmail}' already exists. Please use a unique email.` });
+      }
+
+      if (formattedPhone) {
+        const existingPhoneUser = await User.findOne({ phone: formattedPhone });
+        const existingPhoneRest = await Restaurant.findOne({ phone: formattedPhone });
+        if (existingPhoneUser || existingPhoneRest) {
+          return res.status(400).json({ message: `Phone number ${formattedPhone} is already registered. Please use a unique phone number.` });
+        }
       }
 
       const { createSlug } = require('../utils/slugify');

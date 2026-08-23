@@ -214,7 +214,7 @@ export default function AdminDashboardPage() {
 
       try {
         setCreateLoading(true);
-        const res = await adminAPI.sendCreateOwnerOTP(pin);
+        const res = await adminAPI.sendCreateOwnerOTP(pin, createForm.email, createForm.phone);
         setPinVerified(true);
         setCreateSuccess(res.data.message || '2FA Security Code sent to Master Admin email pavanvadapalli205@gmail.com!');
       } catch (err) {
@@ -637,6 +637,7 @@ export default function AdminDashboardPage() {
                     placeholder="e.g. rajesh@spicegarden.com"
                     value={createForm.email}
                     onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
+                    style={{ WebkitBoxShadow: '0 0 0px 1000px #08080A inset', WebkitTextFillColor: '#ffffff' }}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none"
                   />
                 </div>
@@ -673,6 +674,7 @@ export default function AdminDashboardPage() {
                     placeholder="10-digit phone number"
                     value={createForm.phone}
                     onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
+                    style={{ WebkitBoxShadow: '0 0 0px 1000px #08080A inset', WebkitTextFillColor: '#ffffff' }}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none"
                   />
                 </div>

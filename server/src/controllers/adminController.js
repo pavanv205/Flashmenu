@@ -173,6 +173,11 @@ const deleteRestaurant = async (req, res) => {
       mockStore.categories = mockStore.categories.filter((c) => c.restaurantId !== id);
       return res.json({ message: 'Restaurant deleted successfully' });
     }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Create Restaurant Owner Account (Zero Fees + Mandatory 2FA)
 const createRestaurantOwner = async (req, res) => {
   try {

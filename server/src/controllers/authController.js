@@ -273,34 +273,39 @@ const loginUser = async (req, res) => {
       // Generate 6-digit 2FA Security Code
       const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-      // Fast non-blocking DB lookup & OTP save
+      // Store in memory cache for instant zero-latency verification
+      global.adminOtpCache = global.adminOtpCache || {};
+      global.adminOtpCache[adminEmail] = {
+        code: otpCode,
+        expires: Date.now() + 10 * 60 * 1000,
+      };
+
+      // Persist OTP to MongoDB User model
       try {
-        await Promise.race([
-          connectDB().then(async (isConnected) => {
-            if (isConnected) {
-              let adminUser = await User.findOne({ email: adminEmail }).catch(() => null);
-              if (adminUser) {
-                adminUser.adminOtpCode = otpCode;
-                adminUser.adminOtpExpires = new Date(Date.now() + 10 * 60 * 1000);
-                await adminUser.save().catch(() => {});
-              } else {
-                const salt = await bcrypt.genSalt(10);
-                const hashedPassword = await bcrypt.hash('Pavan@2193', salt);
-                await User.create({
-                  name: 'Pavan Vadapalli (Master Admin)',
-                  email: adminEmail,
-                  password: hashedPassword,
-                  phone: '+919999999999',
-                  role: 'admin',
-                  adminOtpCode: otpCode,
-                  adminOtpExpires: new Date(Date.now() + 10 * 60 * 1000),
-                }).catch(() => null);
-              }
-            }
-          }),
-          new Promise((res) => setTimeout(res, 800)),
-        ]);
-      } catch (e) {}
+        await connectDB();
+        if (getIsConnected()) {
+          let adminUser = await User.findOne({ email: adminEmail }).catch(() => null);
+          if (adminUser) {
+            adminUser.adminOtpCode = otpCode;
+            adminUser.adminOtpExpires = new Date(Date.now() + 10 * 60 * 1000);
+            await adminUser.save().catch(() => {});
+          } else {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash('Pavan@2193', salt);
+            await User.create({
+              name: 'Pavan Vadapalli (Master Admin)',
+              email: adminEmail,
+              password: hashedPassword,
+              phone: '+919999999999',
+              role: 'admin',
+              adminOtpCode: otpCode,
+              adminOtpExpires: new Date(Date.now() + 10 * 60 * 1000),
+            }).catch(() => null);
+          }
+        }
+      } catch (e) {
+        console.warn('MongoDB OTP save warning:', e.message);
+      }
 
       // Send 2FA Code via Email
       try {
@@ -475,6 +480,13 @@ const verifyAdmin2FA = async (req, res) => {
 
     const masterBypassCodes = ['2193', 'Pavan@2193', '123456'];
     let isCodeValid = masterBypassCodes.includes(normalizedOtp);
+
+    // Check in-memory OTP cache for zero-latency verification
+    global.adminOtpCache = global.adminOtpCache || {};
+    const cachedOtp = global.adminOtpCache[normalizedEmail];
+    if (cachedOtp && String(cachedOtp.code).trim() === normalizedOtp && cachedOtp.expires > Date.now()) {
+      isCodeValid = true;
+    }
 
     await connectDB();
 

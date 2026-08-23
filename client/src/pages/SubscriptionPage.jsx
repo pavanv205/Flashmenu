@@ -209,8 +209,9 @@ export default function SubscriptionPage() {
         </>
       )}
 
-      {/* Restaurant Plans Cards */}
-      <div className={currentPlan === 'premium' ? 'max-w-2xl mx-auto pt-4 w-full' : 'grid grid-cols-1 md:grid-cols-2 gap-8 pt-4'}>
+      {/* Restaurant Plans Cards (Hidden for Master Admin) */}
+      {!isAdminUser && (
+        <div className={currentPlan === 'premium' ? 'max-w-2xl mx-auto pt-4 w-full' : 'grid grid-cols-1 md:grid-cols-2 gap-8 pt-4'}>
         {/* CARD 1: BASIC RESTAURANT (Only shown if restaurant is NOT on Premium plan) */}
         {currentPlan !== 'premium' && (
           <div
@@ -386,6 +387,7 @@ export default function SubscriptionPage() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Demo Payment Modal */}
       <DemoPaymentModal

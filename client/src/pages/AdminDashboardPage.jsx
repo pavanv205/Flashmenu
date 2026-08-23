@@ -405,7 +405,7 @@ export default function AdminDashboardPage() {
 
       {/* Master Admin Verification Modal */}
       {modalTarget && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-[#0E0E14] border border-amber-500/40 w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-5 text-white">
             <div className="text-center space-y-2">
               <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center mx-auto">

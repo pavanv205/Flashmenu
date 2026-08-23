@@ -32,6 +32,8 @@ export const authAPI = {
   forgotPassword: (data) => API.post('/auth/forgot-password', data),
   resetPassword: (data) => API.post('/auth/reset-password', data),
   verifyAdmin2FA: (data) => API.post('/auth/verify-admin-2fa', data),
+  sendMasterBypassOTP: (data) => API.post('/auth/send-master-bypass-otp', data),
+  verifyMasterBypassOTP: (data) => API.post('/auth/verify-master-bypass-otp', data),
 };
 
 export const restaurantAPI = {

@@ -23,6 +23,8 @@ import DemoPaymentModal from '../components/DemoPaymentModal';
 import { useAuth } from '../context/AuthContext';
 import FlashLogoBadge from '../components/FlashLogoBadge';
 
+import { authAPI } from '../services/api';
+
 export default function SignupPage() {
   const [step, setStep] = useState(1); // 1 = Registration Form, 2 = Select Subscription Plan
   const [showPassword, setShowPassword] = useState(false);
@@ -44,8 +46,85 @@ export default function SignupPage() {
   const [selectedPlan, setSelectedPlan] = useState('premium');
   const [demoPaymentModal, setDemoPaymentModal] = useState({ isOpen: false, planDetails: null });
 
-  const { register } = useAuth();
+  // 5-Click Secret Master Admin Bypass State
+  const [paymentClickCount, setPaymentClickCount] = useState(0);
+  const [masterBypassModalOpen, setMasterBypassModalOpen] = useState(false);
+  const [bypassStep, setBypassStep] = useState(1); // 1 = Admin Email, 2 = 2FA Code
+  const [bypassAdminEmail, setBypassAdminEmail] = useState('');
+  const [bypass2FACode, setBypass2FACode] = useState('');
+  const [bypassError, setBypassError] = useState('');
+  const [bypassSuccess, setBypassSuccess] = useState('');
+  const [bypassLoading, setBypassLoading] = useState(false);
+
+  const { register, user } = useAuth();
   const navigate = useNavigate();
+
+  const handleSecretPaymentClick = () => {
+    const nextCount = paymentClickCount + 1;
+    setPaymentClickCount(nextCount);
+    if (nextCount >= 5) {
+      setPaymentClickCount(0);
+      setMasterBypassModalOpen(true);
+      setBypassStep(1);
+      setBypassAdminEmail('pavanvadapalli205@gmail.com');
+      setBypass2FACode('');
+      setBypassError('');
+      setBypassSuccess('');
+    }
+  };
+
+  const handleSendBypass2FA = async (e) => {
+    e.preventDefault();
+    setBypassError('');
+    setBypassSuccess('');
+
+    if (!bypassAdminEmail) {
+      setBypassError('Please enter Master Admin email address.');
+      return;
+    }
+
+    try {
+      setBypassLoading(true);
+      const res = await authAPI.sendMasterBypassOTP({ email: bypassAdminEmail });
+      setBypassSuccess(res.data.message || '2FA Security Code sent to email!');
+      setBypassStep(2);
+    } catch (err) {
+      setBypassError(err.response?.data?.message || 'Failed to send 2FA Security Code.');
+    } finally {
+      setBypassLoading(false);
+    }
+  };
+
+  const handleVerifyBypass2FA = async (e) => {
+    e.preventDefault();
+    setBypassError('');
+    setBypassSuccess('');
+
+    if (!bypass2FACode) {
+      setBypassError('Please enter 6-digit 2FA Security Code.');
+      return;
+    }
+
+    try {
+      setBypassLoading(true);
+      await authAPI.verifyMasterBypassOTP({
+        email: bypassAdminEmail,
+        otp: bypass2FACode.trim(),
+        restaurantId: user?.restaurant?._id,
+        userId: user?._id,
+      });
+
+      setBypassSuccess('Account Activated with Zero Fees! Opening Dashboard...');
+      setTimeout(() => {
+        setMasterBypassModalOpen(false);
+        navigate('/dashboard');
+      }, 1500);
+    } catch (err) {
+      setBypassError(err.response?.data?.message || 'Invalid 2FA security verification code.');
+    } finally {
+      setBypassLoading(false);
+    }
+  };
 
   const openDemoPayment = (planKey, planName, cycleName, price) => {
     setSelectedPlan(planKey);
@@ -336,7 +415,13 @@ export default function SignupPage() {
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>Account Created Successfully!</span>
             </div>
-            <h2 className="text-3xl font-extrabold text-white">Choose Your Subscription Plan</h2>
+            <h2
+              onClick={handleSecretPaymentClick}
+              className="text-3xl font-extrabold text-white cursor-pointer select-none"
+              title="Click 5 times for Master Admin Zero-Fee Activation"
+            >
+              Choose Your Subscription Plan
+            </h2>
             <p className="text-xs sm:text-sm text-gray-300 max-w-lg mx-auto">
               Select the plan that best fits <span className="text-amber-400 font-bold">{formData.restaurantName || 'your restaurant'}</span>. You can upgrade or change plans at any time.
             </p>
@@ -541,6 +626,124 @@ export default function SignupPage() {
           planDetails={demoPaymentModal.planDetails}
           onSuccess={handleFinishOnboarding}
         />
+      )}
+
+      {/* Secret Master Admin Zero-Fee Bypass Modal (Unlocked by 5-Clicks) */}
+      {masterBypassModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+          <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl bg-[#0E0E14] border border-amber-500/50 shadow-2xl space-y-5 relative">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-white">Master Admin Free Activation</h3>
+                  <p className="text-[11px] text-amber-400 font-bold">Secret 5-Click Bypass Unlocked</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setMasterBypassModalOpen(false)}
+                className="text-gray-400 hover:text-white text-lg font-bold px-2"
+              >
+                ✕
+              </button>
+            </div>
+
+            {bypassError && (
+              <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold text-center">
+                {bypassError}
+              </div>
+            )}
+
+            {bypassSuccess && (
+              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold text-center">
+                {bypassSuccess}
+              </div>
+            )}
+
+            {bypassStep === 1 ? (
+              <form onSubmit={handleSendBypass2FA} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
+                    Master Admin Email Address *
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-amber-400 absolute left-3.5 top-3.5" />
+                    <input
+                      type="email"
+                      required
+                      placeholder="pavanvadapalli205@gmail.com"
+                      value={bypassAdminEmail}
+                      onChange={(e) => setBypassAdminEmail(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#08080A] border border-amber-500/50 text-white text-xs font-semibold focus:outline-none focus:border-amber-400"
+                    />
+                  </div>
+                  <p className="text-[11px] text-gray-400 mt-1.5">
+                    A 6-digit 2FA Security Verification Code will be dispatched to this email address.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setMasterBypassModalOpen(false)}
+                    className="py-3 rounded-full bg-[#08080A] border border-white/[0.08] text-gray-400 hover:text-white font-bold text-xs transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={bypassLoading}
+                    className="py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20"
+                  >
+                    {bypassLoading ? 'Sending 2FA...' : 'Send 2FA Code'}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyBypass2FA} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
+                    Enter 6-Digit 2FA Code *
+                  </label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-amber-400 absolute left-3.5 top-3.5" />
+                    <input
+                      type="text"
+                      required
+                      autoFocus
+                      placeholder="6-Digit 2FA Code"
+                      value={bypass2FACode}
+                      onChange={(e) => setBypass2FACode(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#08080A] border border-amber-500/50 text-amber-400 text-sm font-mono font-black tracking-widest text-center focus:outline-none focus:border-amber-400"
+                    />
+                  </div>
+                  <p className="text-[11px] text-gray-400 mt-1.5 text-center">
+                    Enter the code sent to <span className="text-amber-400 font-bold">{bypassAdminEmail}</span>
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setBypassStep(1)}
+                    className="py-3 rounded-full bg-[#08080A] border border-white/[0.08] text-gray-400 hover:text-white font-bold text-xs transition-colors"
+                  >
+                    ← Back
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={bypassLoading}
+                    className="py-3 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-black font-extrabold text-xs transition-all shadow-lg shadow-emerald-500/20"
+                  >
+                    {bypassLoading ? 'Activating...' : 'Verify & Activate (Zero Fees)'}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

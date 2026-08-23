@@ -118,6 +118,28 @@ export default function AdminDashboardPage() {
     }
 
     try {
+      if (modalTarget.action === 'create_owner') {
+        setCreateLoading(true);
+        const payload = { ...createForm, secretCode: secretCodeInput.trim() };
+        const res = await adminAPI.createOwner(payload);
+        setModalTarget(null);
+        setCreateOwnerModalOpen(false);
+        setCreateForm({
+          name: '',
+          email: '',
+          password: '',
+          phone: '',
+          restaurantName: '',
+          city: 'Visakhapatnam',
+          subscriptionPlan: 'basic',
+          requires2FA: true,
+          secretCode: '',
+        });
+        await fetchRestaurants();
+        alert(res.data.message || 'Restaurant Owner account created successfully with Zero Fees and 2FA enabled!');
+        return;
+      }
+
       setUpdatingId(modalTarget.restaurant._id);
       if (modalTarget.action === 'plan') {
         const newPlan = modalTarget.restaurant.subscriptionPlan === 'premium' ? 'basic' : 'premium';
@@ -131,6 +153,7 @@ export default function AdminDashboardPage() {
       setSecretCodeError(error.response?.data?.message || 'Action failed.');
     } finally {
       setUpdatingId(null);
+      setCreateLoading(false);
     }
   };
 
@@ -144,36 +167,13 @@ export default function AdminDashboardPage() {
       return;
     }
 
-    if (createForm.secretCode.trim() !== '2193' && createForm.secretCode.trim() !== 'Pavan@2193') {
-      setCreateError('Invalid Master Security PIN Key.');
-      return;
-    }
-
-    try {
-      setCreateLoading(true);
-      const res = await adminAPI.createOwner(createForm);
-      setCreateSuccess(res.data.message || 'Restaurant Owner account created successfully!');
-      setTimeout(() => {
-        setCreateOwnerModalOpen(false);
-        setCreateForm({
-          name: '',
-          email: '',
-          password: '',
-          phone: '',
-          restaurantName: '',
-          city: 'Visakhapatnam',
-          subscriptionPlan: 'basic',
-          requires2FA: true,
-          secretCode: '',
-        });
-        setCreateSuccess('');
-        fetchRestaurants();
-      }, 1800);
-    } catch (err) {
-      setCreateError(err.response?.data?.message || 'Failed to create restaurant owner account.');
-    } finally {
-      setCreateLoading(false);
-    }
+    // Open Master Admin Authorization PIN Key Modal
+    setSecretCodeInput('');
+    setSecretCodeError('');
+    setModalTarget({
+      action: 'create_owner',
+      restaurant: { name: createForm.restaurantName },
+    });
   };
 
   return (
@@ -413,8 +413,8 @@ export default function AdminDashboardPage() {
               </div>
               <h3 className="text-lg font-bold text-white">Master Admin Authorization Required</h3>
               <p className="text-xs text-gray-400">
-                You are modifying {modalTarget.action === 'plan' ? 'Subscription Tier' : 'Owner Account Status'} for{' '}
-                <span className="text-amber-400 font-bold">{modalTarget.restaurant.name}</span>.
+                You are {modalTarget.action === 'create_owner' ? 'creating a Zero-Fee Owner Account' : modalTarget.action === 'plan' ? 'modifying Subscription Tier' : 'modifying Owner Account Status'} for{' '}
+                <span className="text-amber-400 font-bold">{modalTarget.restaurant?.name || 'Restaurant'}</span>.
               </p>
             </div>
 
@@ -600,18 +600,6 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Master Security PIN Key *</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="Enter Master Security PIN (e.g. 2193)"
-                  value={createForm.secretCode}
-                  onChange={(e) => setCreateForm({ ...createForm, secretCode: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#08080A] border border-amber-500/50 text-amber-400 text-xs font-mono font-black focus:border-amber-500 focus:outline-none"
-                />
-              </div>
-
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
                   type="button"
@@ -625,7 +613,7 @@ export default function AdminDashboardPage() {
                   disabled={createLoading}
                   className="py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20"
                 >
-                  {createLoading ? 'Creating Account...' : 'Create Account (Zero Fees)'}
+                  {createLoading ? 'Processing...' : 'Proceed to Authorization →'}
                 </button>
               </div>
             </form>

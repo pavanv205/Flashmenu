@@ -51,7 +51,7 @@ export default function AdminDashboardPage() {
     phone: '',
     restaurantName: '',
     city: 'Visakhapatnam',
-    subscriptionPlan: 'basic',
+    subscriptionPlan: 'basic_lifetime',
     requires2FA: true,
     secretCode: '',
   });
@@ -156,7 +156,7 @@ export default function AdminDashboardPage() {
             phone: '',
             restaurantName: '',
             city: 'Visakhapatnam',
-            subscriptionPlan: 'basic',
+            subscriptionPlan: 'basic_lifetime',
             requires2FA: true,
             secretCode: '',
           });
@@ -246,7 +246,7 @@ export default function AdminDashboardPage() {
             phone: '',
             restaurantName: '',
             city: 'Visakhapatnam',
-            subscriptionPlan: 'basic',
+            subscriptionPlan: 'basic_lifetime',
             requires2FA: true,
             secretCode: '',
           });

@@ -11,6 +11,9 @@ export default function Footer() {
           <p className="text-[10px] text-gray-500 pt-1">© {new Date().getFullYear()} FlashMenu. All rights reserved.</p>
         </div>
         <div className="mt-4 sm:mt-0 flex items-center space-x-6">
+          <Link to="/admin/login" className="text-amber-400 hover:text-amber-300 font-extrabold transition-colors">
+            🛡️ Admin Login
+          </Link>
           <Link to="/privacy" className="hover:text-amber-400 transition-colors">
             Privacy Policy
           </Link>

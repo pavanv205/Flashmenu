@@ -305,6 +305,7 @@ const loginUser = async (req, res) => {
       // Send 2FA Code via Email
       try {
         await sendEmail({
+          to: adminEmail,
           email: adminEmail,
           subject: '⚡ FlashMenu Master Admin 2FA Security Code',
           message: `Hello Pavan Vadapalli,\n\nYour Master Admin 2FA Security Verification Code is: ${otpCode}\n\nThis code is valid for 10 minutes.\n\nFlashMenu Team`,

@@ -1,6 +1,11 @@
 const nodemailer = require('nodemailer');
 
-const sendEmail = async ({ to, subject, html, text }) => {
+const sendEmail = async (options) => {
+  const to = options.to || options.email || options.emailAddress;
+  const subject = options.subject;
+  const html = options.html;
+  const text = options.text || options.message;
+
   const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
   const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
   const smtpUser = process.env.SMTP_USER || 'pavanvadapalli205@gmail.com';

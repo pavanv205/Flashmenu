@@ -3,7 +3,7 @@ const User = require('../models/User');
 const MenuItem = require('../models/MenuItem');
 const Category = require('../models/Category');
 const mockStore = require('../config/mockStore');
-const { getIsConnected } = require('../config/db');
+const { connectDB, getIsConnected } = require('../config/db');
 
 // Get all restaurants for Master Admin
 const getAllRestaurants = async (req, res) => {

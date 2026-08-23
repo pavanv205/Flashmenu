@@ -106,37 +106,63 @@ export default function AdminDashboardPage() {
     setModalTarget({ restaurant, action });
     setSecretCodeInput('');
     setSecretCodeError('');
+    setPinVerified(false);
+    setOtpInput('');
+    setCreateOwnerMsg('');
   };
 
   const handleConfirmModalAction = async (e) => {
     e.preventDefault();
     setSecretCodeError('');
-
-    if (secretCodeInput.trim() !== '2193' && secretCodeInput.trim() !== 'Pavan@2193') {
-      setSecretCodeError('Invalid Master Admin Security Key. Access Denied.');
-      return;
-    }
+    setCreateOwnerMsg('');
 
     try {
       if (modalTarget.action === 'create_owner') {
-        setCreateLoading(true);
-        const payload = { ...createForm, secretCode: secretCodeInput.trim() };
-        const res = await adminAPI.createOwner(payload);
-        setModalTarget(null);
-        setCreateOwnerModalOpen(false);
-        setCreateForm({
-          name: '',
-          email: '',
-          password: '',
-          phone: '',
-          restaurantName: '',
-          city: 'Visakhapatnam',
-          subscriptionPlan: 'basic',
-          requires2FA: true,
-          secretCode: '',
-        });
-        await fetchRestaurants();
-        alert(res.data.message || 'Restaurant Owner account created successfully with Zero Fees and 2FA enabled!');
+        if (!pinVerified) {
+          // STEP 1: Verify PIN Key & Send 2FA Code to Admin Email
+          if (secretCodeInput.trim() !== '2193' && secretCodeInput.trim() !== 'Pavan@2193') {
+            setSecretCodeError('Invalid Master Admin Security PIN Key. Access Denied.');
+            return;
+          }
+          setCreateLoading(true);
+          const res = await adminAPI.sendCreateOwnerOTP(secretCodeInput.trim());
+          setPinVerified(true);
+          setCreateOwnerMsg(res.data.message || '2FA Security Code sent to pavanvadapalli205@gmail.com');
+          setCreateLoading(false);
+          return;
+        } else {
+          // STEP 2: Verify 2FA OTP Code & Create Zero-Fee Restaurant Owner Account
+          if (!otpInput.trim()) {
+            setSecretCodeError('Please enter the 6-digit 2FA security code.');
+            return;
+          }
+          setCreateLoading(true);
+          const payload = { ...createForm, secretCode: otpInput.trim() };
+          const res = await adminAPI.createOwner(payload);
+          setModalTarget(null);
+          setCreateOwnerModalOpen(false);
+          setPinVerified(false);
+          setOtpInput('');
+          setCreateForm({
+            name: '',
+            email: '',
+            password: '',
+            phone: '',
+            restaurantName: '',
+            city: 'Visakhapatnam',
+            subscriptionPlan: 'basic',
+            requires2FA: true,
+            secretCode: '',
+          });
+          await fetchRestaurants();
+          alert(res.data.message || 'Restaurant Owner account created successfully with Zero Fees and Mandatory 2FA!');
+          setCreateLoading(false);
+          return;
+        }
+      }
+
+      if (secretCodeInput.trim() !== '2193' && secretCodeInput.trim() !== 'Pavan@2193') {
+        setSecretCodeError('Invalid Master Admin Security Key. Access Denied.');
         return;
       }
 
@@ -167,9 +193,12 @@ export default function AdminDashboardPage() {
       return;
     }
 
-    // Open Master Admin Authorization PIN Key Modal
+    // Open Master Admin Authorization PIN Key Modal (Step 1)
     setSecretCodeInput('');
     setSecretCodeError('');
+    setPinVerified(false);
+    setOtpInput('');
+    setCreateOwnerMsg('');
     setModalTarget({
       action: 'create_owner',
       restaurant: { name: createForm.restaurantName },
@@ -424,34 +453,71 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            <form onSubmit={handleConfirmModalAction} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
-                  Master Security PIN Key
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="Enter PIN Key"
-                  value={secretCodeInput}
-                  onChange={(e) => setSecretCodeInput(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-[#08080A] border border-amber-500/50 text-amber-400 text-sm font-mono tracking-widest font-black focus:outline-none focus:border-amber-500"
-                />
+            {createOwnerMsg && (
+              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold text-center">
+                {createOwnerMsg}
               </div>
+            )}
+
+            <form onSubmit={handleConfirmModalAction} className="space-y-4">
+              {modalTarget.action === 'create_owner' && pinVerified ? (
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
+                    ENTER 6-DIGIT 2FA CODE (SENT TO MAIL)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    autoFocus
+                    placeholder="Enter 6-Digit 2FA Code"
+                    value={otpInput}
+                    onChange={(e) => setOtpInput(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-[#08080A] border border-amber-500/50 text-amber-400 text-base font-mono tracking-widest font-black text-center focus:outline-none focus:border-amber-500"
+                  />
+                  <p className="text-[11px] text-gray-400 mt-1 text-center">
+                    Check <span className="text-amber-400 font-bold">pavanvadapalli205@gmail.com</span> for your 2FA code.
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
+                    Master Security PIN Key
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Enter PIN Key"
+                    value={secretCodeInput}
+                    onChange={(e) => setSecretCodeInput(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-[#08080A] border border-amber-500/50 text-amber-400 text-sm font-mono tracking-widest font-black focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setModalTarget(null)}
+                  onClick={() => {
+                    setModalTarget(null);
+                    setPinVerified(false);
+                    setOtpInput('');
+                  }}
                   className="py-3 rounded-full bg-[#08080A] border border-white/[0.08] text-gray-400 hover:text-white font-bold text-xs transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20"
+                  disabled={createLoading}
+                  className="py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20"
                 >
-                  Confirm & Apply Change
+                  {createLoading
+                    ? 'Processing...'
+                    : modalTarget.action === 'create_owner'
+                    ? pinVerified
+                      ? 'Verify Code & Create Account'
+                      : 'Verify PIN & Send 2FA Code →'
+                    : 'Confirm & Apply Change'}
                 </button>
               </div>
             </form>

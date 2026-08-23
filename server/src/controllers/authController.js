@@ -76,7 +76,7 @@ const registerUser = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, salt);
 
       // Check if orphan user exists (created in failed past run without restaurant)
-      let user = await User.findOne({ email: normalizedEmail });
+      user = user || (await User.findOne({ email: normalizedEmail }));
       if (!user) {
         user = await User.create({
           name: String(name).trim(),

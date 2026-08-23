@@ -306,7 +306,13 @@ const createRestaurantOwner = async (req, res) => {
       }
     }
 
-    const plan = subscriptionPlan === 'premium' ? 'premium' : 'basic';
+    const planVal = String(subscriptionPlan || 'basic_lifetime').toLowerCase();
+    const isPremium = planVal.includes('premium');
+    const is5Min = planVal.includes('5min');
+
+    const plan = isPremium ? 'premium' : 'basic';
+    const cycle = is5Min ? '5min' : 'lifetime';
+    const expiresAt = is5Min ? new Date(Date.now() + 5 * 60 * 1000) : null;
     const enforce2FA = requires2FA !== false;
 
     const bcrypt = require('bcryptjs');
@@ -359,9 +365,9 @@ const createRestaurantOwner = async (req, res) => {
         city: city ? String(city).trim() : 'Visakhapatnam',
         phone: phone ? String(phone).trim() : '',
         subscriptionPlan: plan,
-        subscriptionCycle: 'lifetime',
+        subscriptionCycle: cycle,
         subscriptionStartDate: new Date(),
-        subscriptionExpiresAt: null,
+        subscriptionExpiresAt: expiresAt,
         isActive: true,
         isPaid: true,
       });

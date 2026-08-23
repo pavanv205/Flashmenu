@@ -711,10 +711,13 @@ export default function AdminDashboardPage() {
                   <select
                     value={createForm.subscriptionPlan}
                     onChange={(e) => setCreateForm({ ...createForm, subscriptionPlan: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-amber-400 font-bold text-xs focus:border-amber-500 focus:outline-none"
+                    style={{ WebkitBoxShadow: '0 0 0px 1000px #08080A inset', WebkitTextFillColor: '#fbbf24' }}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-amber-500/40 text-amber-400 font-bold text-xs focus:border-amber-500 focus:outline-none"
                   >
-                    <option value="basic">BASIC PLAN (Zero Fees - Lifetime)</option>
-                    <option value="premium">PREMIUM PLAN (Zero Fees - VIP Grant)</option>
+                    <option value="basic_lifetime">BASIC PLAN (Zero Fees - Lifetime Access)</option>
+                    <option value="basic_5min">BASIC PLAN (Zero Fees - 5 Mins Test)</option>
+                    <option value="premium_lifetime">PREMIUM VIP PLAN (Zero Fees - Lifetime Access)</option>
+                    <option value="premium_5min">PREMIUM VIP PLAN (Zero Fees - 5 Mins VIP Test)</option>
                   </select>
                 </div>
 

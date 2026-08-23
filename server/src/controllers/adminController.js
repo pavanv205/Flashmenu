@@ -188,7 +188,7 @@ const sendCreateOwnerOTP = async (req, res) => {
       return res.status(401).json({ message: 'Invalid Master Security PIN Key. Access Denied.' });
     }
 
-    const adminEmail = 'pavanvadapalli205@gmail.com';
+    const adminEmail = req.user?.email || 'pavanvadapalli205@gmail.com';
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     const sendEmail = require('../utils/sendEmail');

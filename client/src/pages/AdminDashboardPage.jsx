@@ -53,6 +53,7 @@ export default function AdminDashboardPage() {
   const [createError, setCreateError] = useState('');
   const [createSuccess, setCreateSuccess] = useState('');
   const [createLoading, setCreateLoading] = useState(false);
+  const [showOwnerPassword, setShowOwnerPassword] = useState(false);
 
   const fetchRestaurants = async () => {
     try {
@@ -193,7 +194,8 @@ export default function AdminDashboardPage() {
       return;
     }
 
-    // Open Master Admin Authorization PIN Key Modal (Step 1)
+    // Close Create Owner form modal and open Master Admin Authorization PIN Key Modal (Step 1)
+    setCreateOwnerModalOpen(false);
     setSecretCodeInput('');
     setSecretCodeError('');
     setPinVerified(false);
@@ -589,14 +591,25 @@ export default function AdminDashboardPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Password *</label>
-                  <input
-                    type="password"
-                    required
-                    placeholder="Owner Login Password"
-                    value={createForm.password}
-                    onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showOwnerPassword ? 'text' : 'password'}
+                      required
+                      placeholder="Owner Login Password"
+                      value={createForm.password}
+                      onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
+                      style={{ WebkitBoxShadow: '0 0 0px 1000px #08080A inset', WebkitTextFillColor: '#ffffff' }}
+                      className="w-full px-3.5 pr-10 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowOwnerPassword(!showOwnerPassword)}
+                      className="absolute right-3 top-2.5 text-gray-400 hover:text-white transition-colors"
+                      title={showOwnerPassword ? 'Hide password' : 'View password'}
+                    >
+                      {showOwnerPassword ? <EyeOff className="w-4 h-4 text-amber-400" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
 
                 <div>

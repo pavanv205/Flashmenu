@@ -31,17 +31,17 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// API Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/restaurants', require('./routes/restaurantRoutes'));
-app.use('/api/categories', require('./routes/categoryRoutes'));
-app.use('/api/items', require('./routes/itemRoutes'));
-app.use('/api/public', require('./routes/publicRoutes'));
-app.use('/api/analytics', require('./routes/analyticsRoutes'));
-app.use('/api/orders', require('./routes/orderRoutes'));
-app.use('/api/upload', require('./routes/uploadRoutes'));
-app.use('/api/admin', require('./routes/adminRoutes'));
-app.use('/api/payment', require('./routes/paymentRoutes'));
+// API Routes (Dual mounted for /api/* and /* for Vercel Serverless compatibility)
+app.use(['/api/auth', '/auth'], require('./routes/authRoutes'));
+app.use(['/api/restaurants', '/restaurants'], require('./routes/restaurantRoutes'));
+app.use(['/api/categories', '/categories'], require('./routes/categoryRoutes'));
+app.use(['/api/items', '/items'], require('./routes/itemRoutes'));
+app.use(['/api/public', '/public'], require('./routes/publicRoutes'));
+app.use(['/api/analytics', '/analytics'], require('./routes/analyticsRoutes'));
+app.use(['/api/orders', '/orders'], require('./routes/orderRoutes'));
+app.use(['/api/upload', '/upload'], require('./routes/uploadRoutes'));
+app.use(['/api/admin', '/admin'], require('./routes/adminRoutes'));
+app.use(['/api/payment', '/payment'], require('./routes/paymentRoutes'));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

@@ -270,17 +270,31 @@ const loginUser = async (req, res) => {
     if (isMasterAdmin) {
       const adminEmail = normalizedEmail || 'pavanvadapalli205@gmail.com';
 
-      let adminUser = null;
-      let adminRest = null;
+      // Generate 6-digit 2FA Security Code
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-      // Fast non-blocking DB lookup race (max 800ms)
+      // Fast non-blocking DB lookup & OTP save
       try {
         await Promise.race([
           connectDB().then(async (isConnected) => {
             if (isConnected) {
-              adminUser = await User.findOne({ email: adminEmail }).catch(() => null);
+              let adminUser = await User.findOne({ email: adminEmail }).catch(() => null);
               if (adminUser) {
-                adminRest = await Restaurant.findOne({ ownerId: adminUser._id }).catch(() => null);
+                adminUser.adminOtpCode = otpCode;
+                adminUser.adminOtpExpires = new Date(Date.now() + 10 * 60 * 1000);
+                await adminUser.save().catch(() => {});
+              } else {
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash('Pavan@2193', salt);
+                await User.create({
+                  name: 'Pavan Vadapalli (Master Admin)',
+                  email: adminEmail,
+                  password: hashedPassword,
+                  phone: '+919999999999',
+                  role: 'admin',
+                  adminOtpCode: otpCode,
+                  adminOtpExpires: new Date(Date.now() + 10 * 60 * 1000),
+                }).catch(() => null);
               }
             }
           }),
@@ -288,30 +302,30 @@ const loginUser = async (req, res) => {
         ]);
       } catch (e) {}
 
-      if (!adminRest) {
-        adminRest = {
-          _id: 'master_vip_rest',
-          name: 'FlashMenu Master Headquarters',
-          slug: 'master-admin-vip',
-          subscriptionPlan: 'premium',
-          subscriptionCycle: 'lifetime',
-          subscriptionStartDate: new Date(),
-          subscriptionExpiresAt: null,
-          isActive: true,
-          isPaid: true,
-        };
-      }
-
-      const userId = adminUser?._id ? String(adminUser._id) : 'admin_master_id';
-      const token = generateToken(userId, adminRest._id, adminRest.slug);
+      // Send 2FA Code via Email
+      try {
+        await sendEmail({
+          email: adminEmail,
+          subject: '⚡ FlashMenu Master Admin 2FA Security Code',
+          message: `Hello Pavan Vadapalli,\n\nYour Master Admin 2FA Security Verification Code is: ${otpCode}\n\nThis code is valid for 10 minutes.\n\nFlashMenu Team`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 25px; background-color: #0f172a; color: #f8fafc; border-radius: 16px; border: 1px solid #1e293b;">
+              <h2 style="color: #f59e0b; text-align: center; margin-top: 0;">🛡️ Master Admin 2FA Security Verification</h2>
+              <p>Hello <strong>Pavan Vadapalli</strong>,</p>
+              <p>Your Master Admin 2FA Security Code for portal login is:</p>
+              <div style="background-color: #1e293b; color: #f59e0b; font-size: 36px; font-weight: 900; text-align: center; padding: 18px; border-radius: 12px; letter-spacing: 8px; margin: 20px 0;">
+                ${otpCode}
+              </div>
+              <p style="font-size: 12px; color: #94a3b8; text-align: center;">This code will expire in 10 minutes. FlashMenu Security Protected.</p>
+            </div>
+          `,
+        }).catch(() => {});
+      } catch (mailErr) {}
 
       return res.json({
-        _id: userId,
-        name: String(adminUser?.name || 'Pavan Vadapalli (Master Admin)'),
+        requires2FA: true,
         email: adminEmail,
-        role: 'admin',
-        token,
-        restaurant: adminRest,
+        message: 'Master Admin 2FA Security Code sent to your registered email address.',
       });
     }
 

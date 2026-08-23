@@ -9,6 +9,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [step2FA, setStep2FA] = useState(false);
   const [twoFACode, setTwoFACode] = useState('');
   const [twoFAEmail, setTwoFAEmail] = useState('');

@@ -190,21 +190,70 @@ export default function AdminDashboardPage() {
     setCreateSuccess('');
 
     if (!createForm.name || !createForm.email || !createForm.password || !createForm.restaurantName) {
-      setCreateError('Please fill out all required fields.');
+      setCreateError('Please fill out all required fields (Name, Email, Password, Restaurant Name).');
       return;
     }
 
-    // Close Create Owner form modal and open Master Admin Authorization PIN Key Modal (Step 1)
-    setCreateOwnerModalOpen(false);
-    setSecretCodeInput('');
-    setSecretCodeError('');
-    setPinVerified(false);
-    setOtpInput('');
-    setCreateOwnerMsg('');
-    setModalTarget({
-      action: 'create_owner',
-      restaurant: { name: createForm.restaurantName },
-    });
+    if (!pinVerified) {
+      // Step 1: Verify PIN & Send 2FA OTP to Master Admin Email
+      const pin = (createForm.secretCode || '').trim();
+      if (!pin) {
+        setCreateError('Please enter the Master Security PIN Key.');
+        return;
+      }
+
+      if (pin !== '2193' && pin !== 'Pavan@2193') {
+        setCreateError('Invalid Master Security PIN Key. Access Denied.');
+        return;
+      }
+
+      try {
+        setCreateLoading(true);
+        const res = await adminAPI.sendCreateOwnerOTP(pin);
+        setPinVerified(true);
+        setCreateSuccess(res.data.message || '2FA Security Code sent to Master Admin email pavanvadapalli205@gmail.com!');
+      } catch (err) {
+        setCreateError(err.response?.data?.message || 'Failed to send 2FA Security Code.');
+      } finally {
+        setCreateLoading(false);
+      }
+    } else {
+      // Step 2: Verify 2FA OTP & Create Zero-Fee Restaurant Owner Account
+      const otp = (otpInput || '').trim();
+      if (!otp) {
+        setCreateError('Please enter the 6-digit 2FA security code sent to your email.');
+        return;
+      }
+
+      try {
+        setCreateLoading(true);
+        const payload = { ...createForm, secretCode: otp };
+        const res = await adminAPI.createOwner(payload);
+        setCreateSuccess(res.data.message || 'Restaurant Owner account created successfully with Zero Fees and 2FA!');
+        setTimeout(() => {
+          setCreateOwnerModalOpen(false);
+          setPinVerified(false);
+          setOtpInput('');
+          setCreateForm({
+            name: '',
+            email: '',
+            password: '',
+            phone: '',
+            restaurantName: '',
+            city: 'Visakhapatnam',
+            subscriptionPlan: 'basic',
+            requires2FA: true,
+            secretCode: '',
+          });
+          setCreateSuccess('');
+          fetchRestaurants();
+        }, 1500);
+      } catch (err) {
+        setCreateError(err.response?.data?.message || 'Failed to create owner account.');
+      } finally {
+        setCreateLoading(false);
+      }
+    }
   };
 
   return (
@@ -679,10 +728,45 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
+              {!pinVerified ? (
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Master Security PIN Key *</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Enter Master Security PIN (e.g. 2193)"
+                    value={createForm.secretCode}
+                    onChange={(e) => setCreateForm({ ...createForm, secretCode: e.target.value })}
+                    style={{ WebkitBoxShadow: '0 0 0px 1000px #08080A inset', WebkitTextFillColor: '#ffffff' }}
+                    className="w-full px-4 py-2.5 rounded-xl bg-[#08080A] border border-amber-500/50 text-amber-400 text-xs font-mono font-black focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase mb-1">
+                    ENTER 6-DIGIT 2FA CODE (SENT TO MAIL) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    autoFocus
+                    placeholder="Enter 6-Digit 2FA Security Code"
+                    value={otpInput}
+                    onChange={(e) => setOtpInput(e.target.value)}
+                    style={{ WebkitBoxShadow: '0 0 0px 1000px #08080A inset', WebkitTextFillColor: '#ffffff' }}
+                    className="w-full px-4 py-3 rounded-xl bg-[#08080A] border border-amber-500/50 text-amber-400 text-base font-mono font-black text-center focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setCreateOwnerModalOpen(false)}
+                  onClick={() => {
+                    setCreateOwnerModalOpen(false);
+                    setPinVerified(false);
+                    setOtpInput('');
+                  }}
                   className="py-3 rounded-full bg-[#08080A] border border-white/[0.08] text-gray-400 hover:text-white font-bold text-xs transition-colors"
                 >
                   Cancel
@@ -692,7 +776,11 @@ export default function AdminDashboardPage() {
                   disabled={createLoading}
                   className="py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20"
                 >
-                  {createLoading ? 'Processing...' : 'Proceed to Authorization →'}
+                  {createLoading
+                    ? 'Processing...'
+                    : pinVerified
+                    ? 'Verify 2FA & Create Account'
+                    : 'Verify PIN & Send 2FA Code →'}
                 </button>
               </div>
             </form>

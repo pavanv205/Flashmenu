@@ -343,6 +343,38 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password. Please double-check your password or click Forgot Password.' });
           }
 
+          if (user.requires2FA) {
+            const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+            user.adminOtpCode = otpCode;
+            user.adminOtpExpires = new Date(Date.now() + 10 * 60 * 1000);
+            await user.save().catch(() => {});
+
+            try {
+              await sendEmail({
+                email: user.email,
+                subject: 'FlashMenu - Your 2FA Security Login Verification Code',
+                message: `Hello ${user.name},\n\nYour 2FA security verification code is: ${otpCode}\n\nThis code is valid for 10 minutes.\n\nFlashMenu Team`,
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; background-color: #0f172a; color: #f8fafc; border-radius: 12px;">
+                    <h2 style="color: #f59e0b; text-align: center;">⚡ FlashMenu 2FA Security Code</h2>
+                    <p>Hello <strong>${user.name}</strong>,</p>
+                    <p>Your 2FA security verification code for restaurant owner login is:</p>
+                    <div style="background-color: #1e293b; color: #f59e0b; font-size: 32px; font-weight: bold; text-align: center; padding: 15px; border-radius: 8px; letter-spacing: 6px; margin: 20px 0;">
+                      ${otpCode}
+                    </div>
+                    <p style="font-size: 12px; color: #94a3b8; text-align: center;">This code will expire in 10 minutes.</p>
+                  </div>
+                `,
+              }).catch(() => {});
+            } catch (mErr) {}
+
+            return res.json({
+              requires2FA: true,
+              email: user.email,
+              message: '2FA security verification code sent to your registered email address.',
+            });
+          }
+
           let restaurant = await Restaurant.findOne({ ownerId: user._id });
           if (!restaurant) {
             restaurant = await Restaurant.findOne({ email: user.email });

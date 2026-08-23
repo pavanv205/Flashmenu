@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpires: { type: Date, default: null },
     adminOtpCode: { type: String, default: null },
     adminOtpExpires: { type: Date, default: null },
+    requires2FA: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

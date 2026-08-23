@@ -37,6 +37,23 @@ export default function AdminDashboardPage() {
   const [secretCodeInput, setSecretCodeInput] = useState('');
   const [secretCodeError, setSecretCodeError] = useState('');
 
+  // Create Restaurant Owner Modal State (Zero Fees + Mandatory 2FA)
+  const [createOwnerModalOpen, setCreateOwnerModalOpen] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    restaurantName: '',
+    city: 'Visakhapatnam',
+    subscriptionPlan: 'basic',
+    requires2FA: true,
+    secretCode: '',
+  });
+  const [createError, setCreateError] = useState('');
+  const [createSuccess, setCreateSuccess] = useState('');
+  const [createLoading, setCreateLoading] = useState(false);
+
   const fetchRestaurants = async () => {
     try {
       setLoading(true);
@@ -95,27 +112,67 @@ export default function AdminDashboardPage() {
     e.preventDefault();
     setSecretCodeError('');
 
-    if (secretCodeInput.trim() !== '2193') {
+    if (secretCodeInput.trim() !== '2193' && secretCodeInput.trim() !== 'Pavan@2193') {
       setSecretCodeError('Invalid Master Admin Security Key. Access Denied.');
       return;
     }
 
-    const { restaurant, action } = modalTarget;
-    setUpdatingId(restaurant._id);
-    setModalTarget(null);
-
     try {
-      if (action === 'plan') {
-        const newPlan = restaurant.subscriptionPlan === 'premium' ? 'basic' : 'premium';
-        await adminAPI.updateSubscription(restaurant._id, newPlan);
-      } else if (action === 'status') {
-        await adminAPI.toggleStatus(restaurant._id, !restaurant.isActive);
+      setUpdatingId(modalTarget.restaurant._id);
+      if (modalTarget.action === 'plan') {
+        const newPlan = modalTarget.restaurant.subscriptionPlan === 'premium' ? 'basic' : 'premium';
+        await adminAPI.updatePlan(modalTarget.restaurant._id, newPlan, secretCodeInput);
+      } else {
+        await adminAPI.toggleStatus(modalTarget.restaurant._id, secretCodeInput);
       }
       await fetchRestaurants();
+      setModalTarget(null);
     } catch (error) {
-      alert(`Failed to update ${action}`);
+      setSecretCodeError(error.response?.data?.message || 'Action failed.');
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleCreateOwnerSubmit = async (e) => {
+    e.preventDefault();
+    setCreateError('');
+    setCreateSuccess('');
+
+    if (!createForm.name || !createForm.email || !createForm.password || !createForm.restaurantName) {
+      setCreateError('Please fill out all required fields.');
+      return;
+    }
+
+    if (createForm.secretCode.trim() !== '2193' && createForm.secretCode.trim() !== 'Pavan@2193') {
+      setCreateError('Invalid Master Security PIN Key.');
+      return;
+    }
+
+    try {
+      setCreateLoading(true);
+      const res = await adminAPI.createOwner(createForm);
+      setCreateSuccess(res.data.message || 'Restaurant Owner account created successfully!');
+      setTimeout(() => {
+        setCreateOwnerModalOpen(false);
+        setCreateForm({
+          name: '',
+          email: '',
+          password: '',
+          phone: '',
+          restaurantName: '',
+          city: 'Visakhapatnam',
+          subscriptionPlan: 'basic',
+          requires2FA: true,
+          secretCode: '',
+        });
+        setCreateSuccess('');
+        fetchRestaurants();
+      }, 1800);
+    } catch (err) {
+      setCreateError(err.response?.data?.message || 'Failed to create restaurant owner account.');
+    } finally {
+      setCreateLoading(false);
     }
   };
 
@@ -141,14 +198,28 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        <button
-          onClick={fetchRestaurants}
-          disabled={loading}
-          className="px-5 py-2.5 rounded-full bg-[#08080A] border border-white/[0.08] text-xs font-bold text-gray-300 hover:text-white hover:border-amber-500/50 transition-all flex items-center space-x-2"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-amber-400' : ''}`} />
-          <span>Refresh Live Portal</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => {
+              setCreateOwnerModalOpen(true);
+              setCreateError('');
+              setCreateSuccess('');
+            }}
+            className="px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center space-x-2"
+          >
+            <UserCheck className="w-4 h-4" />
+            <span>+ Create Owner (Zero Fees & 2FA)</span>
+          </button>
+
+          <button
+            onClick={fetchRestaurants}
+            disabled={loading}
+            className="px-4 py-2.5 rounded-full bg-[#08080A] border border-white/[0.08] text-xs font-bold text-gray-300 hover:text-white hover:border-amber-500/50 transition-all flex items-center space-x-2"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-amber-400' : ''}`} />
+            <span>Refresh</span>
+          </button>
+        </div>
       </div>
 
       {/* Overview Metric Cards */}
@@ -381,6 +452,180 @@ export default function AdminDashboardPage() {
                   className="py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20"
                 >
                   Confirm & Apply Change
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Restaurant Owner Modal (Zero Fees + Mandatory 2FA) */}
+      {createOwnerModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="w-full max-w-lg p-6 sm:p-8 rounded-3xl bg-[#0E0E14] border border-amber-500/40 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center">
+                  <UserCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Create Restaurant Owner Account</h3>
+                  <p className="text-xs text-amber-400 font-semibold">Zero Fees • Mandatory 2FA Security Enabled</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setCreateOwnerModalOpen(false)}
+                className="text-gray-400 hover:text-white text-xl font-bold px-2"
+              >
+                ✕
+              </button>
+            </div>
+
+            {createError && (
+              <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold text-center">
+                {createError}
+              </div>
+            )}
+
+            {createSuccess && (
+              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold text-center">
+                {createSuccess}
+              </div>
+            )}
+
+            <form onSubmit={handleCreateOwnerSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Owner Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Chef Rajesh Kumar"
+                    value={createForm.name}
+                    onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Owner Email *</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="e.g. rajesh@spicegarden.com"
+                    value={createForm.email}
+                    onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Password *</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Owner Login Password"
+                    value={createForm.password}
+                    onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    placeholder="10-digit phone number"
+                    value={createForm.phone}
+                    onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Restaurant Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Spice Garden Restaurant"
+                    value={createForm.restaurantName}
+                    onChange={(e) => setCreateForm({ ...createForm, restaurantName: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase mb-1">City / Location</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Visakhapatnam"
+                    value={createForm.city}
+                    onChange={(e) => setCreateForm({ ...createForm, city: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Subscription Plan Tier</label>
+                  <select
+                    value={createForm.subscriptionPlan}
+                    onChange={(e) => setCreateForm({ ...createForm, subscriptionPlan: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-amber-400 font-bold text-xs focus:border-amber-500 focus:outline-none"
+                  >
+                    <option value="basic">BASIC PLAN (Zero Fees - Lifetime)</option>
+                    <option value="premium">PREMIUM PLAN (Zero Fees - VIP Grant)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Security Requirement</label>
+                  <div className="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-amber-500/30 text-xs">
+                    <input
+                      type="checkbox"
+                      id="requires2FA"
+                      checked={createForm.requires2FA}
+                      onChange={(e) => setCreateForm({ ...createForm, requires2FA: e.target.checked })}
+                      className="w-4 h-4 accent-amber-500"
+                    />
+                    <label htmlFor="requires2FA" className="text-amber-400 font-bold cursor-pointer">
+                      Mandatory 2FA Security Code
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Master Security PIN Key *</label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Enter Master Security PIN (e.g. 2193)"
+                  value={createForm.secretCode}
+                  onChange={(e) => setCreateForm({ ...createForm, secretCode: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#08080A] border border-amber-500/50 text-amber-400 text-xs font-mono font-black focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setCreateOwnerModalOpen(false)}
+                  className="py-3 rounded-full bg-[#08080A] border border-white/[0.08] text-gray-400 hover:text-white font-bold text-xs transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={createLoading}
+                  className="py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20"
+                >
+                  {createLoading ? 'Creating Account...' : 'Create Account (Zero Fees)'}
                 </button>
               </div>
             </form>

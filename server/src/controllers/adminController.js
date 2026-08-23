@@ -173,9 +173,132 @@ const deleteRestaurant = async (req, res) => {
       mockStore.categories = mockStore.categories.filter((c) => c.restaurantId !== id);
       return res.json({ message: 'Restaurant deleted successfully' });
     }
+// Create Restaurant Owner Account (Zero Fees + Mandatory 2FA)
+const createRestaurantOwner = async (req, res) => {
+  try {
+    const { name, email, password, phone, restaurantName, city, subscriptionPlan, requires2FA, secretCode } = req.body;
+
+    const cleanCode = String(secretCode || '').trim();
+    if (cleanCode !== 'Pavan@2193' && cleanCode !== '2193') {
+      return res.status(401).json({ message: 'Invalid Master Admin authorization code.' });
+    }
+
+    if (!name || !email || !password || !restaurantName) {
+      return res.status(400).json({ message: 'Name, Email, Password, and Restaurant Name are required.' });
+    }
+
+    const normalizedEmail = String(email).toLowerCase().trim();
+    const plan = subscriptionPlan === 'premium' ? 'premium' : 'basic';
+    const enforce2FA = requires2FA !== false;
+
+    const bcrypt = require('bcryptjs');
+    const { defaultCategories } = require('../utils/defaultMenu');
+
+    if (getIsConnected()) {
+      const existingUser = await User.findOne({ email: normalizedEmail });
+      if (existingUser) {
+        return res.status(400).json({ message: 'An account with this email address already exists.' });
+      }
+
+      const { createSlug } = require('../utils/slugify');
+      let baseSlug = createSlug(restaurantName);
+      if (!baseSlug || baseSlug.length < 2) {
+        baseSlug = `restaurant-${Math.floor(1000 + Math.random() * 9000)}`;
+      }
+
+      let slug = `${baseSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
+      let attempts = 0;
+      while (await Restaurant.findOne({ slug })) {
+        attempts++;
+        slug = `${baseSlug}-${Date.now().toString().slice(-4)}${Math.floor(100 + Math.random() * 900)}`;
+        if (attempts > 10) break;
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const newOwner = await User.create({
+        name: String(name).trim(),
+        email: normalizedEmail,
+        password: hashedPassword,
+        phone: phone ? String(phone).trim() : '',
+        role: 'owner',
+        requires2FA: enforce2FA,
+      });
+
+      const newRestaurant = await Restaurant.create({
+        ownerId: newOwner._id,
+        name: String(restaurantName).trim(),
+        slug,
+        city: city ? String(city).trim() : 'Visakhapatnam',
+        phone: phone ? String(phone).trim() : '',
+        subscriptionPlan: plan,
+        subscriptionCycle: 'lifetime',
+        subscriptionStartDate: new Date(),
+        subscriptionExpiresAt: null,
+        isActive: true,
+        isPaid: true,
+      });
+
+      try {
+        if (defaultCategories && Array.isArray(defaultCategories)) {
+          for (const cat of defaultCategories) {
+            await Category.create({
+              restaurantId: newRestaurant._id,
+              name: cat.name,
+              sortOrder: cat.sortOrder,
+            });
+          }
+        }
+      } catch (catErr) {}
+
+      return res.status(201).json({
+        message: `Restaurant Owner "${name}" created successfully with Zero Fees and ${enforce2FA ? 'Mandatory 2FA' : 'Standard'} Login!`,
+        owner: {
+          _id: newOwner._id,
+          name: newOwner.name,
+          email: newOwner.email,
+          requires2FA: newOwner.requires2FA,
+        },
+        restaurant: newRestaurant,
+      });
+    } else {
+      const newMockOwner = {
+        _id: `user_${Date.now()}`,
+        name: String(name).trim(),
+        email: normalizedEmail,
+        password: password,
+        phone: phone ? String(phone).trim() : '',
+        role: 'owner',
+        requires2FA: enforce2FA,
+      };
+
+      const newMockRest = {
+        _id: `rest_${Date.now()}`,
+        ownerId: newMockOwner._id,
+        name: String(restaurantName).trim(),
+        slug: `mock-${Date.now()}`,
+        city: city || 'Visakhapatnam',
+        phone: phone || '',
+        subscriptionPlan: plan,
+        subscriptionCycle: 'lifetime',
+        isActive: true,
+        isPaid: true,
+      };
+
+      mockStore.users.push(newMockOwner);
+      mockStore.restaurants.push(newMockRest);
+
+      return res.status(201).json({
+        message: `Restaurant Owner "${name}" created successfully in mock store with Zero Fees!`,
+        owner: newMockOwner,
+        restaurant: newMockRest,
+      });
+    }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Create Restaurant Owner Error:', error);
+    return res.status(500).json({ message: error.message || 'Failed to create restaurant owner account.' });
   }
 };
 
-module.exports = { getAllRestaurants, updateRestaurantPlan, toggleRestaurantStatus, deleteRestaurant };
+module.exports = { getAllRestaurants, updateRestaurantPlan, toggleRestaurantStatus, deleteRestaurant, createRestaurantOwner };

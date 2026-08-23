@@ -95,6 +95,7 @@ export const adminAPI = {
   toggleStatus: (id, secretCode) =>
     API.put(`/admin/restaurants/${id}/status`, { secretCode, adminPassword: secretCode }),
   deleteRestaurant: (id) => API.delete(`/admin/restaurants/${id}`),
+  createOwner: (data) => API.post('/admin/create-owner', data),
 };
 
 export default API;

@@ -730,17 +730,18 @@ const resetPassword = async (req, res) => {
       return res.json({ message: 'Password updated successfully! You can now log in with your new password.' });
     } else {
       // Mock store fallback
-      const user = mockStore.users.find(
+      const targetMockUser = mockStore.users.find(
         (u) => u && String(u.resetPasswordToken) === normalizedToken
       );
-      if (!user) {
-        return res.status(400).json({ message: 'Invalid or expired password reset code.' });
+
+      if (!targetMockUser) {
+        return res.status(400).json({ message: 'Invalid or expired password reset code/link.' });
       }
 
       const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(newPassword, salt);
-      user.resetPasswordToken = null;
-      user.resetPasswordExpires = null;
+      targetMockUser.password = await bcrypt.hash(newPassword, salt);
+      targetMockUser.resetPasswordToken = null;
+      targetMockUser.resetPasswordExpires = null;
 
       return res.json({ message: 'Password updated successfully! You can now log in.' });
     }

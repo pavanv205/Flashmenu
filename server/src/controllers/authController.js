@@ -269,39 +269,37 @@ const loginUser = async (req, res) => {
 
     if (isMasterAdmin) {
       const adminEmail = normalizedEmail || 'pavanvadapalli205@gmail.com';
-      try { await connectDB(); } catch (e) {}
+      try {
+        await Promise.race([
+          connectDB(),
+          new Promise((r) => setTimeout(r, 1000)),
+        ]);
+      } catch (e) {}
 
       let adminUser = null;
       let adminRest = null;
 
       if (getIsConnected()) {
         try {
-          adminUser = await User.findOne({
-            $or: [
-              { email: adminEmail },
-              { email: { $regex: new RegExp(`^${adminEmail}$`, 'i') } },
-            ],
-          });
-
-          const salt = await bcrypt.genSalt(10);
-          const hashedPassword = await bcrypt.hash(password || 'Pavan@2193', salt);
+          adminUser = await User.findOne({ email: adminEmail }).catch(() => null);
 
           if (!adminUser) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password || 'Pavan@2193', salt);
             adminUser = await User.create({
               name: 'Pavan Vadapalli (Master Admin)',
               email: adminEmail,
               password: hashedPassword,
               phone: '+919999999999',
               role: 'admin',
-            });
-          } else {
+            }).catch(() => null);
+          } else if (adminUser.role !== 'admin') {
             adminUser.role = 'admin';
-            adminUser.password = hashedPassword;
             await adminUser.save().catch(() => {});
           }
 
           if (adminUser) {
-            adminRest = await Restaurant.findOne({ ownerId: adminUser._id });
+            adminRest = await Restaurant.findOne({ ownerId: adminUser._id }).catch(() => null);
             if (!adminRest) {
               adminRest = await Restaurant.create({
                 ownerId: adminUser._id,

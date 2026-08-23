@@ -16,21 +16,17 @@ const connectDB = async () => {
     return true;
   }
 
-  if (mongoose.connection.readyState === 2 && cached.promise) {
-    try {
-      await Promise.race([
-        cached.promise,
-        new Promise((res) => setTimeout(() => res(null), 2000)),
-      ]);
-    } catch (e) {}
-    return mongoose.connection.readyState === 1;
-  }
-
   try {
-    cached.promise = mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 5000,
-    });
-    cached.conn = await cached.promise;
+    if (!cached.promise) {
+      cached.promise = mongoose.connect(uri, {
+        serverSelectionTimeoutMS: 2000,
+        connectTimeoutMS: 2000,
+      });
+    }
+    await Promise.race([
+      cached.promise,
+      new Promise((res) => setTimeout(() => res(null), 2000)),
+    ]);
     return mongoose.connection.readyState === 1;
   } catch (err) {
     cached.promise = null;

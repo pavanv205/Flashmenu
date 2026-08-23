@@ -269,56 +269,24 @@ const loginUser = async (req, res) => {
 
     if (isMasterAdmin) {
       const adminEmail = normalizedEmail || 'pavanvadapalli205@gmail.com';
-      try {
-        await Promise.race([
-          connectDB(),
-          new Promise((r) => setTimeout(r, 1000)),
-        ]);
-      } catch (e) {}
 
       let adminUser = null;
       let adminRest = null;
 
-      if (getIsConnected()) {
-        try {
-          adminUser = await User.findOne({ email: adminEmail }).catch(() => null);
-
-          if (!adminUser) {
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password || 'Pavan@2193', salt);
-            adminUser = await User.create({
-              name: 'Pavan Vadapalli (Master Admin)',
-              email: adminEmail,
-              password: hashedPassword,
-              phone: '+919999999999',
-              role: 'admin',
-            }).catch(() => null);
-          } else if (adminUser.role !== 'admin') {
-            adminUser.role = 'admin';
-            await adminUser.save().catch(() => {});
-          }
-
-          if (adminUser) {
-            adminRest = await Restaurant.findOne({ ownerId: adminUser._id }).catch(() => null);
-            if (!adminRest) {
-              adminRest = await Restaurant.create({
-                ownerId: adminUser._id,
-                name: 'FlashMenu Master Headquarters',
-                slug: 'master-admin-vip',
-                email: adminEmail,
-                subscriptionPlan: 'premium',
-                subscriptionCycle: 'lifetime',
-                subscriptionStartDate: new Date(),
-                subscriptionExpiresAt: null,
-                isActive: true,
-                isPaid: true,
-              }).catch(() => null);
+      // Fast non-blocking DB lookup race (max 800ms)
+      try {
+        await Promise.race([
+          connectDB().then(async (isConnected) => {
+            if (isConnected) {
+              adminUser = await User.findOne({ email: adminEmail }).catch(() => null);
+              if (adminUser) {
+                adminRest = await Restaurant.findOne({ ownerId: adminUser._id }).catch(() => null);
+              }
             }
-          }
-        } catch (dbErr) {
-          console.warn('Master admin DB sync warning:', dbErr.message);
-        }
-      }
+          }),
+          new Promise((res) => setTimeout(res, 800)),
+        ]);
+      } catch (e) {}
 
       if (!adminRest) {
         adminRest = {

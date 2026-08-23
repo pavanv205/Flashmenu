@@ -19,16 +19,24 @@ const connectDB = async () => {
   try {
     if (!cached.promise) {
       cached.promise = mongoose.connect(uri, {
-        serverSelectionTimeoutMS: 2000,
-        connectTimeoutMS: 2000,
+        serverSelectionTimeoutMS: 2500,
+        connectTimeoutMS: 2500,
+        family: 4,
+      }).catch((err) => {
+        console.warn('[MongoDB Connect Warning]', err.message);
+        return null;
       });
     }
-    await Promise.race([
+    const connRes = await Promise.race([
       cached.promise,
-      new Promise((res) => setTimeout(() => res(null), 2000)),
+      new Promise((res) => setTimeout(() => res(null), 2500)),
     ]);
+    if (!connRes) {
+      cached.promise = null;
+    }
     return mongoose.connection.readyState === 1;
   } catch (err) {
+    console.warn('[MongoDB Connect Exception]', err.message);
     cached.promise = null;
     cached.conn = null;
     return false;

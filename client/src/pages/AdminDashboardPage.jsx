@@ -38,6 +38,9 @@ export default function AdminDashboardPage() {
   const [modalTarget, setModalTarget] = useState(null); // { restaurant, action: 'plan' | 'status' }
   const [secretCodeInput, setSecretCodeInput] = useState('');
   const [secretCodeError, setSecretCodeError] = useState('');
+  const [pinVerified, setPinVerified] = useState(false);
+  const [otpInput, setOtpInput] = useState('');
+  const [createOwnerMsg, setCreateOwnerMsg] = useState('');
 
   // Create Restaurant Owner Modal State (Zero Fees + Mandatory 2FA)
   const [createOwnerModalOpen, setCreateOwnerModalOpen] = useState(false);

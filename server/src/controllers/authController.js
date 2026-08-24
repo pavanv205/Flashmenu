@@ -43,10 +43,13 @@ const registerUser = async (req, res) => {
         return res.status(400).json({ message: 'An account with this email address already exists. Please sign in or use a different email.' });
       }
 
-      const cleanPhone = phone ? String(phone).replace(/[^0-9]/g, '') : '';
+      let cleanPhone = phone ? String(phone).replace(/\D/g, '') : '';
+      if (cleanPhone.length === 11 && cleanPhone.startsWith('0')) cleanPhone = cleanPhone.slice(1);
+      if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) cleanPhone = cleanPhone.slice(2);
+
       if (cleanPhone) {
-        if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
-          return res.status(400).json({ message: 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.' });
+        if (cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+          return res.status(400).json({ message: 'Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.' });
         }
         if (/^(\d)\1{9}$/.test(cleanPhone)) {
           return res.status(400).json({ message: 'Invalid phone number. Repetitive dummy numbers (e.g. 0000000000) are not allowed.' });

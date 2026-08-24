@@ -111,16 +111,21 @@ export default function AdminDashboardPage() {
       return;
     }
 
-    if (
-      !window.confirm(
-        `Are you sure you want to permanently delete "${restaurant.name}" and all associated menu items, categories, and customer data?`
-      )
-    )
+    const pinInput = window.prompt(
+      `SECURITY AUTHORIZATION REQUIRED:\nTo permanently delete "${restaurant.name}" and all associated customer data, enter your Master Security PIN Key (e.g. 2193):`
+    );
+
+    if (!pinInput) return;
+
+    const cleanPin = pinInput.trim();
+    if (cleanPin !== '2193' && cleanPin !== 'Pavan@2193') {
+      alert('Invalid Master Security PIN Key. Account deletion cancelled.');
       return;
+    }
 
     try {
       setUpdatingId(restaurant._id);
-      const res = await adminAPI.deleteRestaurant(restaurant._id);
+      const res = await adminAPI.deleteRestaurant(restaurant._id, cleanPin);
       await fetchRestaurants();
       alert(res.data?.message || `Restaurant "${restaurant.name}" deleted successfully.`);
     } catch (error) {

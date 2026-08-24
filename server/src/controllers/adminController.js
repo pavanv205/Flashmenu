@@ -145,10 +145,16 @@ const toggleRestaurantStatus = async (req, res) => {
   }
 };
 
-// Delete Restaurant & Associated Data
+// Delete Restaurant & Associated Data (Requires Master Security PIN)
 const deleteRestaurant = async (req, res) => {
   try {
     const { id } = req.params;
+    const secretCode = req.body?.secretCode || req.query?.secretCode || req.body?.adminPassword;
+    const cleanCode = String(secretCode || '').trim();
+
+    if (cleanCode !== '2193' && cleanCode !== 'Pavan@2193') {
+      return res.status(400).json({ message: 'Invalid Master Security PIN Key. Account deletion denied.' });
+    }
 
     await connectDB();
     const restaurant = await Restaurant.findById(id);

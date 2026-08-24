@@ -630,6 +630,9 @@ const getMe = async (req, res) => {
         user = await User.findById(req.user._id).select('-password');
         if (user) {
           restaurant = await Restaurant.findOne({ ownerId: user._id });
+          if (!restaurant && user.email) {
+            restaurant = await Restaurant.findOne({ email: user.email });
+          }
         }
       } catch (dbErr) {}
     }

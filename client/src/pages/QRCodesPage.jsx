@@ -45,7 +45,9 @@ export default function QRCodesPage() {
       downloadLink.download = `${restaurant.slug || 'flashmenu'}-qr-card-${activeTable ? `table-${activeTable}` : 'master'}.png`;
       document.body.appendChild(downloadLink);
       downloadLink.click();
-      document.body.removeChild(downloadLink);
+      if (document.body.contains(downloadLink)) {
+        document.body.removeChild(downloadLink);
+      }
     } catch (err) {
       console.error('Failed to download QR card PNG:', err);
     } finally {

@@ -22,10 +22,8 @@ export default function SubscriptionPage() {
   const [showExpiredModal, setShowExpiredModal] = useState(false);
   const [hasDismissedModal, setHasDismissedModal] = useState(false);
 
-  const is4MinTest = !isLifetime && (restaurant?.subscriptionCycle === '4min' || restaurant?.subscriptionCycle === '5min' || !restaurant?.subscriptionCycle);
-  const effectiveExpiresAtDate = (is4MinTest && startDateDate)
-    ? new Date(startDateDate.getTime() + 4 * 60 * 1000)
-    : expiresAtDate;
+  const is6MonthPlan = !isLifetime && (restaurant?.subscriptionCycle === '6months' || restaurant?.subscriptionCycle === '1month' || restaurant?.subscriptionCycle === '4min' || !restaurant?.subscriptionCycle);
+  const effectiveExpiresAtDate = expiresAtDate;
 
   const isExpired = !isAdminUser && (
     (!isLifetime && effectiveExpiresAtDate && effectiveExpiresAtDate.getTime() <= Date.now()) ||
@@ -50,16 +48,15 @@ export default function SubscriptionPage() {
     const updateTimer = () => {
       const diffMs = expiresMs - Date.now();
       const rawSecs = Math.max(0, Math.floor(diffMs / 1000));
-      const secs = is4MinTest ? Math.min(240, rawSecs) : rawSecs;
-      setTimeLeftSec(secs);
-      if (secs <= 0 && !isAdminUser && !hasDismissedModal) {
+      setTimeLeftSec(rawSecs);
+      if (rawSecs <= 0 && !isAdminUser && !hasDismissedModal) {
         setShowExpiredModal(true);
       }
     };
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, [expiresAtStr, isLifetime, hasEverPaid, isAdminUser, hasDismissedModal, is4MinTest]);
+  }, [expiresAtStr, isLifetime, hasEverPaid, isAdminUser, hasDismissedModal]);
 
   const formatTimer = (totalSec) => {
     if (totalSec > 3600) {
@@ -222,7 +219,7 @@ export default function SubscriptionPage() {
                     <span>Current Plan:</span>
                     <span className="text-amber-400 uppercase font-black">{currentPlan} RESTAURANT</span>
                     <span className="text-amber-300 text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40">
-                      {isAdminUser ? '👑 Master Admin Lifetime VIP' : isLifetime ? 'Lifetime Access' : '4 Minutes Test Plan'}
+                      {isAdminUser ? '👑 Master Admin Lifetime VIP' : isLifetime ? 'Lifetime Access' : '6 Months Plan'}
                     </span>
                   </h2>
                 </div>
@@ -296,14 +293,14 @@ export default function SubscriptionPage() {
               <div className="grid grid-cols-2 rounded-2xl bg-[#08080A] border border-white/[0.08] divide-x divide-white/[0.08] overflow-hidden">
                 <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
                   <div>
-                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">4 MINUTES</span>
+                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">6 MONTHS</span>
                     <p className="text-2xl font-black text-white mt-1">₹1</p>
-                    <span className="text-[10px] text-gray-500">Valid for 4 Mins</span>
+                    <span className="text-[10px] text-gray-500">Valid for 6 Months</span>
                   </div>
                   <button
                     type="button"
                     disabled={currentPlan === 'basic' && !isLifetime && !isExpired}
-                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (4 Mins)', '4 Minutes Test', 1)}
+                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (6 Months)', '6 Months Access', 1)}
                     className={`w-full py-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center space-x-1 ${
                       currentPlan === 'basic' && !isLifetime && !isExpired
                         ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-default'
@@ -313,10 +310,10 @@ export default function SubscriptionPage() {
                     <CreditCard className="w-3.5 h-3.5" />
                     <span>
                       {currentPlan === 'basic' && !isLifetime && !isExpired
-                        ? '✓ 4-Min Plan Active'
+                        ? '✓ 6-Month Plan Active'
                         : isExpired && currentPlan === 'basic'
-                        ? 'Renew 4 Mins (₹1)'
-                        : 'Pay 4 Mins (₹1)'}
+                        ? 'Renew 6 Months (₹1)'
+                        : 'Pay 6 Months (₹1)'}
                     </span>
                   </button>
                 </div>
@@ -403,14 +400,14 @@ export default function SubscriptionPage() {
             <div className="grid grid-cols-2 rounded-2xl bg-[#08080A] border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
               <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
                 <div>
-                  <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">4 MINUTES</span>
+                  <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
                   <p className="text-2xl font-black text-white mt-1">₹1</p>
-                  <span className="text-[10px] text-gray-400 font-semibold block">Valid for 4 Mins</span>
+                  <span className="text-[10px] text-gray-400 font-semibold block">Valid for 6 Months</span>
                 </div>
                 <button
                   type="button"
                   disabled={currentRank >= 40 || (currentPlan === 'premium' && !isLifetime && !isExpired)}
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (4 Mins)', '4 Minutes Test', 1)}
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months Access', 1)}
                   className={`w-full py-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center space-x-1 ${
                     currentRank >= 40 || (currentPlan === 'premium' && !isLifetime && !isExpired)
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-default'
@@ -422,12 +419,12 @@ export default function SubscriptionPage() {
                     {currentRank >= 40
                       ? '👑 Lifetime VIP Active'
                       : (currentPlan === 'premium' && !isLifetime && !isExpired)
-                      ? '✓ Premium 4-Min Active'
+                      ? '✓ Premium 6-Month Active'
                       : isExpired && currentPlan === 'premium'
-                      ? 'Renew 4 Mins (₹1)'
+                      ? 'Renew 6 Months (₹1)'
                       : currentPlan === 'basic'
-                      ? 'Upgrade to Premium 4 Mins (₹1)'
-                      : 'Pay 4 Mins (₹1)'}
+                      ? 'Upgrade to Premium 6 Months (₹1)'
+                      : 'Pay 6 Months (₹1)'}
                   </span>
                 </button>
               </div>

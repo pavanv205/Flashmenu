@@ -107,10 +107,10 @@ const verifyPayment = async (req, res) => {
       const finalPlan = isSelectingPremium ? 'premium' : 'basic';
 
       const finalIsLifetime = isLifetime;
-      const finalCycle = finalIsLifetime ? 'lifetime' : '4min';
+      const finalCycle = finalIsLifetime ? 'lifetime' : '6months';
       const finalExpiresAt = finalIsLifetime
         ? null
-        : new Date(Date.now() + 4 * 60 * 1000);
+        : new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
 
       const updatePayload = {
         $set: {
@@ -141,9 +141,9 @@ const verifyPayment = async (req, res) => {
         const finalIsLifetime = isLifetime;
 
         r.subscriptionPlan = finalPlan;
-        r.subscriptionCycle = finalIsLifetime ? 'lifetime' : '4min';
+        r.subscriptionCycle = finalIsLifetime ? 'lifetime' : '6months';
         r.subscriptionStartDate = startDate;
-        r.subscriptionExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 4 * 60 * 1000);
+        r.subscriptionExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
         r.isActive = true;
         updatedRestaurant = r;
       }

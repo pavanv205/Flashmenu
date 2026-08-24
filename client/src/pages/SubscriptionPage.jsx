@@ -227,15 +227,15 @@ export default function SubscriptionPage() {
                 <div className="flex flex-wrap items-center gap-4 text-xs text-gray-300 pt-1">
                   {startDateDate && (
                     <div className="flex items-center space-x-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                      <span>Started: <strong>{startDateDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
+                      <Calendar className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Started: <strong className="text-white">{startDateDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}, {startDateDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</strong></span>
                     </div>
                   )}
 
                   {!isLifetime && effectiveExpiresAtDate && (
                     <div className="flex items-center space-x-1.5">
-                      <Clock className="w-3.5 h-3.5 text-gray-400" />
-                      <span>Expires: <strong>{effectiveExpiresAtDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
+                      <Clock className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Expires: <strong className="text-white">{effectiveExpiresAtDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}, {effectiveExpiresAtDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</strong></span>
                     </div>
                   )}
                 </div>

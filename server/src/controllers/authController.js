@@ -40,7 +40,10 @@ const registerUser = async (req, res) => {
       let existingRest = user ? await Restaurant.findOne({ ownerId: user._id }) : null;
 
       if (user && existingRest) {
-        return res.status(400).json({ message: 'An account with this email address already exists. Please sign in or use a different email.' });
+        const isPaidAndActive = existingRest.isActive && existingRest.subscriptionStartDate;
+        if (isPaidAndActive) {
+          return res.status(400).json({ message: 'An account with this email address already exists. Please sign in or use a different email.' });
+        }
       }
 
       let cleanPhone = phone ? String(phone).replace(/\D/g, '') : '';
@@ -110,6 +113,12 @@ const registerUser = async (req, res) => {
           subscriptionStartDate: null,
           subscriptionExpiresAt: null,
         });
+      } else {
+        restaurant.name = String(restaurantName).trim();
+        restaurant.subscriptionPlan = plan;
+        if (city) restaurant.city = String(city).trim();
+        if (address) restaurant.address = String(address).trim();
+        await restaurant.save().catch(() => {});
       }
 
       // Lazy/background seed default starter categories and items

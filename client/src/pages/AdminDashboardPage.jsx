@@ -322,6 +322,15 @@ export default function AdminDashboardPage() {
     }
   };
 
+  if (loading && (!data.restaurants || data.restaurants.length === 0)) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4">
+        <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-sm font-bold text-amber-400">Loading Master Admin Control Panel...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto font-sans">
       {/* Top Admin Header */}

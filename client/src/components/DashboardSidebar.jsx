@@ -28,15 +28,20 @@ export default function DashboardSidebar({ closeMobileMenu }) {
     navigate('/login');
   };
 
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/dashboard/admin');
+
   const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
   const isMasterAdmin =
+    isAdminRoute ||
     user?.role === 'admin' ||
     String(user?.email || '').toLowerCase().trim() === 'pavanvadapalli205@gmail.com';
 
   const navItems = isMasterAdmin
     ? [
-        { name: 'Master Admin Control Panel', path: '/dashboard/admin', icon: ShieldCheck, badge: 'SUPER' },
+        { name: 'Master Admin Panel', path: '/dashboard/admin', icon: ShieldCheck, badge: 'SUPER' },
+        { name: 'My Restaurant Dashboard', path: '/dashboard', icon: LayoutDashboard, exact: true },
       ]
     : [
         { name: 'Overview', path: '/dashboard', icon: LayoutDashboard, exact: true },

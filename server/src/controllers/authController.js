@@ -260,15 +260,32 @@ const loginUser = async (req, res) => {
       'pavanvkadapalli04@gmail.com',
     ];
 
-    const isMasterAdmin =
-      !normalizedEmail ||
-      normalizedEmail.includes('pavan') ||
-      normalizedEmail.includes('admin') ||
-      normalizedEmail.includes('flashmenu') ||
-      masterAdminEmails.includes(normalizedEmail);
+    const isMasterAdminEmail =
+      masterAdminEmails.includes(normalizedEmail) ||
+      normalizedEmail === 'pavanvadapalli205@gmail.com' ||
+      (normalizedEmail && (normalizedEmail.includes('pavan') || normalizedEmail.includes('admin@flashmenu')));
 
-    if (isMasterAdmin) {
+    if (isMasterAdminEmail) {
       const adminEmail = normalizedEmail || 'pavanvadapalli205@gmail.com';
+      const cleanPassword = String(password || '').trim();
+
+      // Verify Master Admin Password first
+      let isPasswordCorrect = cleanPassword === 'Pavan@2193' || cleanPassword === '2193' || cleanPassword === 'admin123';
+
+      await connectDB();
+      if (getIsConnected()) {
+        const adminUser = await User.findOne({ email: adminEmail }).catch(() => null);
+        if (adminUser && adminUser.password) {
+          try {
+            const isMatch = await bcrypt.compare(cleanPassword, adminUser.password);
+            if (isMatch) isPasswordCorrect = true;
+          } catch (bErr) {}
+        }
+      }
+
+      if (!isPasswordCorrect) {
+        return res.status(401).json({ message: 'Invalid Master Admin password. Please check your credentials.' });
+      }
 
       // Generate 6-digit 2FA Security Code
       const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -282,7 +299,6 @@ const loginUser = async (req, res) => {
 
       // Persist OTP to MongoDB User model
       try {
-        await connectDB();
         if (getIsConnected()) {
           let adminUser = await User.findOne({ email: adminEmail }).catch(() => null);
           if (adminUser) {

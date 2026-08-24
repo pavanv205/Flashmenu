@@ -371,7 +371,7 @@ export default function SignupPage() {
                 <div className="grid grid-cols-2 rounded-2xl bg-dark-card border border-dark-border divide-x divide-dark-border overflow-hidden">
                   <div className="p-3 text-center space-y-1">
                     <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">4 MINUTES</span>
-                    <span className="text-xl font-black text-white block">₹1</span>
+                    <span className="text-xl font-black text-white block">₹2</span>
                     <span className="text-[10px] text-gray-500 font-semibold block">Valid for 4 Mins</span>
                   </div>
                   <div className="p-3 text-center space-y-1 bg-amber-500/5">
@@ -410,12 +410,12 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleOpenDemoPayment('basic', 'Basic Restaurant (4 Mins)', '4 Minutes Test', 1)
+                    handleOpenDemoPayment('basic', 'Basic Restaurant (4 Mins)', '4 Minutes Test', 2)
                   }
                   className="py-3.5 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-xs transition-all border border-amber-500/30 flex items-center justify-center space-x-1.5 shadow-md"
                 >
                   <CreditCard className="w-4 h-4 shrink-0" />
-                  <span>Pay 4 Mins (₹1)</span>
+                  <span>Pay 4 Mins (₹2)</span>
                 </button>
 
                 <button
@@ -466,7 +466,7 @@ export default function SignupPage() {
                 <div className="grid grid-cols-2 rounded-2xl bg-dark-card border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
                   <div className="p-3 text-center space-y-1">
                     <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">4 MINUTES</span>
-                    <span className="text-xl font-black text-white block">₹1</span>
+                    <span className="text-xl font-black text-white block">₹2</span>
                     <span className="text-[10px] text-gray-400 font-semibold block">Valid for 4 Mins</span>
                   </div>
                   <div className="p-3 text-center space-y-1 bg-amber-500/10">
@@ -509,12 +509,12 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleOpenDemoPayment('premium', 'Premium Restaurant (4 Mins)', '4 Minutes Test', 1)
+                    handleOpenDemoPayment('premium', 'Premium Restaurant (4 Mins)', '4 Minutes Test', 2)
                   }
                   className="py-3.5 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-xs transition-all border border-amber-500/30 flex items-center justify-center space-x-1.5 shadow-md"
                 >
                   <CreditCard className="w-4 h-4 shrink-0" />
-                  <span>Pay 4 Mins (₹1)</span>
+                  <span>Pay 4 Mins (₹2)</span>
                 </button>
 
                 <button

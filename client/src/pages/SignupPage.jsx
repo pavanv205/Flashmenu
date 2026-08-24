@@ -376,7 +376,7 @@ export default function SignupPage() {
                   </div>
                   <div className="p-3 text-center space-y-1 bg-amber-500/5">
                     <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                    <span className="text-xl font-black text-amber-400 block">₹1</span>
+                    <span className="text-xl font-black text-amber-400 block">₹2</span>
                     <span className="text-[10px] text-amber-400/80 font-bold block">One-Time Pay</span>
                   </div>
                 </div>
@@ -421,12 +421,12 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleOpenDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime One-Time', 1)
+                    handleOpenDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime One-Time', 2)
                   }
                   className="py-3.5 px-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5"
                 >
                   <CreditCard className="w-4 h-4 shrink-0" />
-                  <span>Pay Lifetime (₹1)</span>
+                  <span>Pay Lifetime (₹2)</span>
                 </button>
               </div>
             </div>
@@ -471,7 +471,7 @@ export default function SignupPage() {
                   </div>
                   <div className="p-3 text-center space-y-1 bg-amber-500/10">
                     <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                    <span className="text-xl font-black text-amber-400 block">₹1</span>
+                    <span className="text-xl font-black text-amber-400 block">₹2</span>
                     <span className="text-[10px] text-amber-400/90 font-bold block">One-Time Pay</span>
                   </div>
                 </div>
@@ -520,12 +520,12 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 1)
+                    handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 2)
                   }
                   className="py-3.5 px-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5"
                 >
                   <CreditCard className="w-4 h-4 shrink-0" />
-                  <span>Pay Lifetime (₹1)</span>
+                  <span>Pay Lifetime (₹2)</span>
                 </button>
               </div>
             </div>

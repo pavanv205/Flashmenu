@@ -324,16 +324,16 @@ export default function SubscriptionPage() {
                 <div className="p-4 flex flex-col justify-between space-y-3 text-center bg-amber-500/5 hover:bg-amber-500/10 transition-colors">
                   <div>
                     <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                    <p className="text-2xl font-black text-amber-400 mt-1">₹1</p>
+                    <p className="text-2xl font-black text-amber-400 mt-1">₹2</p>
                     <span className="text-[10px] text-amber-400/80">One-Time Pay</span>
                   </div>
                   <button
                     type="button"
-                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime Access', 1)}
+                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime Access', 2)}
                     className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
                   >
                     <CreditCard className="w-3.5 h-3.5" />
-                    <span>{isLifetime && currentPlan === 'basic' ? 'Lifetime Active (Re-Sync)' : 'Pay Lifetime (₹1)'}</span>
+                    <span>{isLifetime && currentPlan === 'basic' ? 'Lifetime Active (Re-Sync)' : 'Pay Lifetime (₹2)'}</span>
                   </button>
                 </div>
               </div>
@@ -424,13 +424,13 @@ export default function SubscriptionPage() {
               <div className="p-4 flex flex-col justify-between space-y-3 text-center bg-amber-500/10 hover:bg-amber-500/20 transition-colors">
                 <div>
                   <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                  <p className="text-2xl font-black text-amber-400 mt-1">₹1</p>
+                  <p className="text-2xl font-black text-amber-400 mt-1">₹2</p>
                   <span className="text-[10px] text-amber-400/90">One-Time Pay</span>
                 </div>
                 <button
                   type="button"
                   disabled={currentRank >= 40}
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 1)}
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 2)}
                   className={`w-full py-2.5 rounded-xl font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md ${
                     currentRank >= 40
                       ? 'bg-amber-500/20 text-amber-400/70 border border-amber-500/30 cursor-not-allowed'
@@ -438,7 +438,7 @@ export default function SubscriptionPage() {
                   }`}
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>{currentRank >= 40 ? '👑 Premium Lifetime Active' : 'Upgrade to Premium Lifetime (₹1)'}</span>
+                  <span>{currentRank >= 40 ? '👑 Premium Lifetime Active' : 'Upgrade to Premium Lifetime (₹2)'}</span>
                 </button>
               </div>
             </div>

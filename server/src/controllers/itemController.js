@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const MenuItem = require('../models/MenuItem');
 const Restaurant = require('../models/Restaurant');
 const mockStore = require('../config/mockStore');
@@ -66,6 +67,9 @@ const updateMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
     if (getIsConnected()) {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ message: 'Item not found' });
+      }
       const item = await MenuItem.findById(id);
       if (!item) return res.status(404).json({ message: 'Item not found' });
 
@@ -92,6 +96,9 @@ const toggleAvailability = async (req, res) => {
   try {
     const { id } = req.params;
     if (getIsConnected()) {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ message: 'Item not found' });
+      }
       const item = await MenuItem.findById(id);
       if (!item) return res.status(404).json({ message: 'Item not found' });
       item.isAvailable = !item.isAvailable;
@@ -112,6 +119,9 @@ const duplicateMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
     if (getIsConnected()) {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ message: 'Item not found' });
+      }
       const item = await MenuItem.findById(id);
       if (!item) return res.status(404).json({ message: 'Item not found' });
       const copy = await MenuItem.create({
@@ -136,11 +146,13 @@ const deleteMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
     if (getIsConnected()) {
-      const item = await MenuItem.findById(id);
-      if (item && item.imagePublicId) {
-        await deleteImage(item.imagePublicId);
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        const item = await MenuItem.findById(id);
+        if (item && item.imagePublicId) {
+          await deleteImage(item.imagePublicId);
+        }
+        await MenuItem.deleteOne({ _id: id });
       }
-      await MenuItem.deleteOne({ _id: id });
       return res.json({ message: 'Item deleted' });
     } else {
       const item = mockStore.menuItems.find((i) => String(i._id) === String(id));

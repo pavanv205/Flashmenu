@@ -466,12 +466,12 @@ export default function SignupPage() {
                 <div className="grid grid-cols-2 rounded-2xl bg-dark-card border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
                   <div className="p-3 text-center space-y-1">
                     <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
-                    <span className="text-xl font-black text-white block">₹1</span>
+                    <span className="text-xl font-black text-white block">₹5,999</span>
                     <span className="text-[10px] text-gray-400 font-semibold block">Valid for 6 Months</span>
                   </div>
                   <div className="p-3 text-center space-y-1 bg-amber-500/10">
                     <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                    <span className="text-xl font-black text-amber-400 block">₹2</span>
+                    <span className="text-xl font-black text-amber-400 block">₹24,999</span>
                     <span className="text-[10px] text-amber-400/90 font-bold block">One-Time Pay</span>
                   </div>
                 </div>
@@ -509,23 +509,23 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleOpenDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months Access', 1)
+                    handleOpenDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months Access', 5999)
                   }
                   className="py-3.5 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-xs transition-all border border-amber-500/30 flex items-center justify-center space-x-1.5 shadow-md"
                 >
                   <CreditCard className="w-4 h-4 shrink-0" />
-                  <span>Pay 6 Months (₹1)</span>
+                  <span>Pay 6 Months (₹5,999)</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() =>
-                    handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 2)
+                    handleOpenDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime One-Time', 24999)
                   }
                   className="py-3.5 px-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black text-xs transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5"
                 >
                   <CreditCard className="w-4 h-4 shrink-0" />
-                  <span>Pay Lifetime (₹2)</span>
+                  <span>Pay Lifetime (₹24,999)</span>
                 </button>
               </div>
             </div>

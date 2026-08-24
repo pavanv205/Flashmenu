@@ -405,13 +405,13 @@ export default function SubscriptionPage() {
               <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
                 <div>
                   <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">6 MONTHS</span>
-                  <p className="text-2xl font-black text-white mt-1">₹1</p>
+                  <p className="text-2xl font-black text-white mt-1">₹5,999</p>
                   <span className="text-[10px] text-gray-400 font-semibold block">Valid for 6 Months</span>
                 </div>
                 <button
                   type="button"
                   disabled={currentRank >= 40 || (currentPlan === 'premium' && !isLifetime && !isExpired)}
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months Access', 1)}
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (6 Months)', '6 Months Access', 5999)}
                   className={`w-full py-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center space-x-1 ${
                     currentRank >= 40 || (currentPlan === 'premium' && !isLifetime && !isExpired)
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-default'
@@ -425,10 +425,10 @@ export default function SubscriptionPage() {
                       : (currentPlan === 'premium' && !isLifetime && !isExpired)
                       ? '✓ Premium 6-Month Active'
                       : isExpired && currentPlan === 'premium'
-                      ? 'Renew 6 Months (₹1)'
+                      ? 'Renew 6 Months (₹5,999)'
                       : currentPlan === 'basic'
-                      ? 'Upgrade to Premium 6 Months (₹1)'
-                      : 'Pay 6 Months (₹1)'}
+                      ? 'Upgrade to Premium 6 Months (₹5,999)'
+                      : 'Pay 6 Months (₹5,999)'}
                   </span>
                 </button>
               </div>
@@ -436,13 +436,13 @@ export default function SubscriptionPage() {
               <div className="p-4 flex flex-col justify-between space-y-3 text-center bg-amber-500/10 hover:bg-amber-500/20 transition-colors">
                 <div>
                   <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest block">LIFETIME</span>
-                  <p className="text-2xl font-black text-amber-400 mt-1">₹2</p>
+                  <p className="text-2xl font-black text-amber-400 mt-1">₹24,999</p>
                   <span className="text-[10px] text-amber-400/90">One-Time Pay</span>
                 </div>
                 <button
                   type="button"
                   disabled={currentRank >= 40}
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 2)}
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 24999)}
                   className={`w-full py-2.5 rounded-xl font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md ${
                     currentRank >= 40
                       ? 'bg-amber-500/20 text-amber-400/70 border border-amber-500/30 cursor-default'
@@ -450,7 +450,7 @@ export default function SubscriptionPage() {
                   }`}
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>{currentRank >= 40 ? '👑 Premium Lifetime Active' : 'Upgrade to Premium Lifetime (₹2)'}</span>
+                  <span>{currentRank >= 40 ? '👑 Premium Lifetime Active' : 'Upgrade to Premium Lifetime (₹24,999)'}</span>
                 </button>
               </div>
             </div>

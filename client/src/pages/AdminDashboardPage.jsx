@@ -658,7 +658,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            <form onSubmit={handleCreateOwnerSubmit} className="space-y-4">
+            <form onSubmit={handleCreateOwnerSubmit} autoComplete="off" className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Owner Name *</label>
@@ -677,6 +677,7 @@ export default function AdminDashboardPage() {
                   <input
                     type="email"
                     required
+                    autoComplete="off"
                     placeholder="e.g. rajesh@spicegarden.com"
                     value={createForm.email}
                     onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
@@ -693,6 +694,7 @@ export default function AdminDashboardPage() {
                     <input
                       type={showOwnerPassword ? 'text' : 'password'}
                       required
+                      autoComplete="new-password"
                       placeholder="Owner Login Password"
                       value={createForm.password}
                       onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
@@ -809,6 +811,7 @@ export default function AdminDashboardPage() {
                     type="text"
                     required
                     autoFocus
+                    autoComplete="one-time-code"
                     placeholder="Enter 6-Digit 2FA Security Code"
                     value={otpInput}
                     onChange={(e) => setOtpInput(e.target.value)}

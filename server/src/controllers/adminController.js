@@ -248,26 +248,39 @@ const createRestaurantOwner = async (req, res) => {
     const cleanCode = String(secretCode || '').trim();
     let isCodeValid = cleanCode === 'Pavan@2193' || cleanCode === '2193';
 
-    const adminEmail = req.user?.email || 'pavanvadapalli205@gmail.com';
     global.adminOtpCache = global.adminOtpCache || {};
-    const cachedOtp = global.adminOtpCache[adminEmail];
-    if (cachedOtp && String(cachedOtp.code).trim() === cleanCode && cachedOtp.expires > Date.now()) {
-      isCodeValid = true;
+    const possibleKeys = [
+      req.user?.email,
+      'pavanvadapalli205@gmail.com',
+      'flashmenu18@gmail.com',
+      'admin@flashmenu.in',
+    ].filter(Boolean);
+
+    for (const k of possibleKeys) {
+      const cached = global.adminOtpCache[k];
+      if (cached && String(cached.code).trim() === cleanCode && cached.expires > Date.now()) {
+        isCodeValid = true;
+        break;
+      }
     }
 
+    await connectDB();
     if (!isCodeValid && getIsConnected()) {
-      const adminUser = await User.findOne({ email: adminEmail }).catch(() => null);
-      if (
-        adminUser &&
-        adminUser.adminOtpCode &&
-        String(adminUser.adminOtpCode).trim() === cleanCode &&
-        adminUser.adminOtpExpires &&
-        new Date(adminUser.adminOtpExpires).getTime() > Date.now()
-      ) {
-        isCodeValid = true;
-        adminUser.adminOtpCode = null;
-        adminUser.adminOtpExpires = null;
-        await adminUser.save().catch(() => {});
+      const adminUsers = await User.find({ role: 'admin' }).catch(() => []);
+      for (const adminUser of adminUsers) {
+        if (
+          adminUser &&
+          adminUser.adminOtpCode &&
+          String(adminUser.adminOtpCode).trim() === cleanCode &&
+          adminUser.adminOtpExpires &&
+          new Date(adminUser.adminOtpExpires).getTime() > Date.now()
+        ) {
+          isCodeValid = true;
+          adminUser.adminOtpCode = null;
+          adminUser.adminOtpExpires = null;
+          await adminUser.save().catch(() => {});
+          break;
+        }
       }
     }
 

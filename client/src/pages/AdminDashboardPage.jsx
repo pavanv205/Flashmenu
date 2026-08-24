@@ -199,6 +199,21 @@ export default function AdminDashboardPage() {
       return;
     }
 
+    if (createForm.phone) {
+      let cleanPhone = createForm.phone.replace(/\D/g, '');
+      if (cleanPhone.length === 11 && cleanPhone.startsWith('0')) cleanPhone = cleanPhone.slice(1);
+      if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) cleanPhone = cleanPhone.slice(2);
+
+      if (cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+        setCreateError('Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9 (e.g. 9885064713).');
+        return;
+      }
+      if (/^(\d)\1{9}$/.test(cleanPhone)) {
+        setCreateError('Invalid phone number. Repetitive dummy numbers (e.g. 0000000000) are not allowed.');
+        return;
+      }
+    }
+
     if (!pinVerified) {
       // Step 1: Verify PIN & Send 2FA OTP to Master Admin Email
       const pin = (createForm.secretCode || '').trim();
@@ -671,9 +686,15 @@ export default function AdminDashboardPage() {
                   <label className="block text-xs font-bold text-gray-300 uppercase mb-1">Phone Number</label>
                   <input
                     type="tel"
-                    placeholder="10-digit phone number"
+                    maxLength={10}
+                    placeholder="10-digit mobile number (e.g. 9885064713)"
                     value={createForm.phone}
-                    onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
+                    onChange={(e) => {
+                      let val = e.target.value.replace(/\D/g, '');
+                      if (val.length === 11 && val.startsWith('0')) val = val.slice(1);
+                      if (val.length === 12 && val.startsWith('91')) val = val.slice(2);
+                      setCreateForm({ ...createForm, phone: val.slice(0, 10) });
+                    }}
                     style={{ WebkitBoxShadow: '0 0 0px 1000px #08080A inset', WebkitTextFillColor: '#ffffff' }}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-white/10 text-white text-xs focus:border-amber-500 focus:outline-none"
                   />

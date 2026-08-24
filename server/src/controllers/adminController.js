@@ -205,20 +205,24 @@ const sendCreateOwnerOTP = async (req, res) => {
     }
 
     if (phone) {
-      const cleanPhone = String(phone).replace(/\D/g, '').slice(-10);
-      if (cleanPhone.length === 10) {
-        const phoneRegex = /^[6-9]\d{9}$/;
-        if (!phoneRegex.test(cleanPhone)) {
-          return res.status(400).json({ message: 'Please enter a valid 10-digit Indian mobile number.' });
-        }
+      let cleanPhone = String(phone).replace(/\D/g, '');
+      if (cleanPhone.length === 11 && cleanPhone.startsWith('0')) cleanPhone = cleanPhone.slice(1);
+      if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) cleanPhone = cleanPhone.slice(2);
 
-        await connectDB();
-        if (getIsConnected()) {
-          const existingPhoneUser = await User.findOne({ phone: cleanPhone });
-          const existingPhoneRest = await Restaurant.findOne({ phone: cleanPhone });
-          if (existingPhoneUser || existingPhoneRest) {
-            return res.status(400).json({ message: `Phone number ${cleanPhone} is already registered to another account. Please use a unique phone number.` });
-          }
+      if (cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+        return res.status(400).json({ message: 'Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.' });
+      }
+
+      if (/^(\d)\1{9}$/.test(cleanPhone)) {
+        return res.status(400).json({ message: 'Invalid phone number. Repetitive dummy numbers are not allowed.' });
+      }
+
+      await connectDB();
+      if (getIsConnected()) {
+        const existingPhoneUser = await User.findOne({ phone: cleanPhone });
+        const existingPhoneRest = await Restaurant.findOne({ phone: cleanPhone });
+        if (existingPhoneUser || existingPhoneRest) {
+          return res.status(400).json({ message: `Phone number ${cleanPhone} is already registered to another account. Please use a unique phone number.` });
         }
       }
     }
@@ -298,11 +302,16 @@ const createRestaurantOwner = async (req, res) => {
       return res.status(400).json({ message: 'Please enter a valid email address.' });
     }
 
-    const formattedPhone = phone ? String(phone).replace(/\D/g, '').slice(-10) : '';
-    if (formattedPhone && formattedPhone.length === 10) {
-      const phoneRegex = /^[6-9]\d{9}$/;
-      if (!phoneRegex.test(formattedPhone)) {
-        return res.status(400).json({ message: 'Please enter a valid 10-digit Indian phone number starting with 6-9.' });
+    let formattedPhone = phone ? String(phone).replace(/\D/g, '') : '';
+    if (formattedPhone.length === 11 && formattedPhone.startsWith('0')) formattedPhone = formattedPhone.slice(1);
+    if (formattedPhone.length === 12 && formattedPhone.startsWith('91')) formattedPhone = formattedPhone.slice(2);
+
+    if (formattedPhone) {
+      if (formattedPhone.length !== 10 || !/^[6-9]\d{9}$/.test(formattedPhone)) {
+        return res.status(400).json({ message: 'Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.' });
+      }
+      if (/^(\d)\1{9}$/.test(formattedPhone)) {
+        return res.status(400).json({ message: 'Invalid phone number. Repetitive dummy numbers are not allowed.' });
       }
     }
 

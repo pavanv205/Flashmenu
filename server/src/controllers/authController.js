@@ -497,11 +497,15 @@ const verifyAdmin2FA = async (req, res) => {
     const masterBypassCodes = ['2193', 'Pavan@2193'];
     let isCodeValid = masterBypassCodes.includes(normalizedOtp);
 
-    // Check in-memory OTP cache for zero-latency verification
+    // Check in-memory OTP cache across all possible admin email keys for zero-latency verification
     global.adminOtpCache = global.adminOtpCache || {};
-    const cachedOtp = global.adminOtpCache[normalizedEmail];
-    if (cachedOtp && String(cachedOtp.code).trim() === normalizedOtp && cachedOtp.expires > Date.now()) {
-      isCodeValid = true;
+    const possibleKeys = [normalizedEmail, 'pavanvadapalli205@gmail.com', 'flashmenu18@gmail.com', 'admin@flashmenu.in'];
+    for (const k of possibleKeys) {
+      const cached = global.adminOtpCache[k];
+      if (cached && String(cached.code).trim() === normalizedOtp && cached.expires > Date.now()) {
+        isCodeValid = true;
+        break;
+      }
     }
 
     await connectDB();
@@ -540,7 +544,7 @@ const verifyAdmin2FA = async (req, res) => {
         }
 
         if (!isCodeValid) {
-          return res.status(401).json({ message: 'Invalid or expired 2FA Security Code. Access Denied.' });
+          return res.status(400).json({ message: 'Invalid or expired 2FA Security Code. Access Denied.' });
         }
 
         if (!user.name) user.name = 'Pavan Vadapalli (Master Admin)';
@@ -586,7 +590,7 @@ const verifyAdmin2FA = async (req, res) => {
     }
 
     if (!isCodeValid) {
-      return res.status(401).json({ message: 'Invalid or expired 2FA Security Code. Access Denied.' });
+      return res.status(400).json({ message: 'Invalid or expired 2FA Security Code. Access Denied.' });
     }
 
     // Fallback for Master Admin

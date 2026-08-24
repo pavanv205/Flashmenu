@@ -20,6 +20,7 @@ export default function SubscriptionPage() {
   
   const [timeLeftSec, setTimeLeftSec] = useState(0);
   const [showExpiredModal, setShowExpiredModal] = useState(false);
+  const [hasDismissedModal, setHasDismissedModal] = useState(false);
 
   const isExpired = !isAdminUser && (
     (!isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now()) ||
@@ -30,10 +31,10 @@ export default function SubscriptionPage() {
   const currentPlan = isAdminUser ? 'premium' : isPaidAccount ? (restaurant?.subscriptionPlan || 'basic') : 'UNPAID';
 
   useEffect(() => {
-    if (isExpired && !isAdminUser) {
+    if (isExpired && !isAdminUser && !hasDismissedModal) {
       setShowExpiredModal(true);
     }
-  }, [isExpired, isAdminUser]);
+  }, [isExpired, isAdminUser, hasDismissedModal]);
 
   useEffect(() => {
     if (isLifetime || !expiresAtDate || !hasEverPaid) return;
@@ -116,8 +117,11 @@ export default function SubscriptionPage() {
             </div>
             <button
               type="button"
-              onClick={() => setShowExpiredModal(false)}
-              className="w-full py-3.5 rounded-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-black text-xs transition-all shadow-lg shadow-red-500/30 uppercase tracking-wider"
+              onClick={() => {
+                setShowExpiredModal(false);
+                setHasDismissedModal(true);
+              }}
+              className="w-full py-3.5 rounded-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-black text-xs transition-all shadow-lg shadow-red-500/30 uppercase tracking-wider cursor-pointer active:scale-95"
             >
               Select Plan & Renew Now →
             </button>

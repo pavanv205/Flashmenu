@@ -302,11 +302,22 @@ export default function SubscriptionPage() {
                   </div>
                   <button
                     type="button"
+                    disabled={currentPlan === 'basic' && !isLifetime && !isExpired}
                     onClick={() => openDemoPayment('basic', 'Basic Restaurant (4 Mins)', '4 Minutes Test', 2)}
-                    className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
+                    className={`w-full py-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center space-x-1 ${
+                      currentPlan === 'basic' && !isLifetime && !isExpired
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-default'
+                        : 'bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30'
+                    }`}
                   >
                     <CreditCard className="w-3.5 h-3.5" />
-                    <span>{isExpired && currentPlan === 'basic' ? 'Renew 4 Mins (₹2)' : currentPlan === 'basic' ? 'Extend 4 Mins (₹2)' : 'Pay 4 Mins (₹2)'}</span>
+                    <span>
+                      {currentPlan === 'basic' && !isLifetime && !isExpired
+                        ? '✓ 4-Min Plan Active'
+                        : isExpired && currentPlan === 'basic'
+                        ? 'Renew 4 Mins (₹2)'
+                        : 'Pay 4 Mins (₹2)'}
+                    </span>
                   </button>
                 </div>
 
@@ -318,11 +329,20 @@ export default function SubscriptionPage() {
                   </div>
                   <button
                     type="button"
+                    disabled={currentPlan === 'basic' && isLifetime}
                     onClick={() => openDemoPayment('basic', 'Basic Restaurant (Lifetime)', 'Lifetime Access', 2)}
-                    className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
+                    className={`w-full py-2.5 rounded-xl font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md ${
+                      currentPlan === 'basic' && isLifetime
+                        ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30 cursor-default'
+                        : 'bg-amber-500 hover:bg-amber-400 text-black'
+                    }`}
                   >
                     <CreditCard className="w-3.5 h-3.5" />
-                    <span>{isLifetime && currentPlan === 'basic' ? 'Lifetime Active (Re-Sync)' : 'Pay Lifetime (₹2)'}</span>
+                    <span>
+                      {currentPlan === 'basic' && isLifetime
+                        ? '👑 Lifetime VIP Active'
+                        : 'Pay Lifetime (₹2)'}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -389,11 +409,11 @@ export default function SubscriptionPage() {
                 </div>
                 <button
                   type="button"
-                  disabled={currentRank >= 40}
+                  disabled={currentRank >= 40 || (currentPlan === 'premium' && !isLifetime && !isExpired)}
                   onClick={() => openDemoPayment('premium', 'Premium Restaurant (4 Mins)', '4 Minutes Test', 2)}
                   className={`w-full py-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center space-x-1 ${
-                    currentRank >= 40
-                      ? 'bg-white/5 text-gray-500 border border-white/10 cursor-not-allowed opacity-60'
+                    currentRank >= 40 || (currentPlan === 'premium' && !isLifetime && !isExpired)
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-default'
                       : 'bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30'
                   }`}
                 >
@@ -401,11 +421,13 @@ export default function SubscriptionPage() {
                   <span>
                     {currentRank >= 40
                       ? '👑 Lifetime VIP Active'
+                      : (currentPlan === 'premium' && !isLifetime && !isExpired)
+                      ? '✓ Premium 4-Min Active'
                       : isExpired && currentPlan === 'premium'
                       ? 'Renew 4 Mins (₹2)'
                       : currentPlan === 'basic'
                       ? 'Upgrade to Premium 4 Mins (₹2)'
-                      : 'Extend 4 Mins (₹2)'}
+                      : 'Pay 4 Mins (₹2)'}
                   </span>
                 </button>
               </div>
@@ -422,7 +444,7 @@ export default function SubscriptionPage() {
                   onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 2)}
                   className={`w-full py-2.5 rounded-xl font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md ${
                     currentRank >= 40
-                      ? 'bg-amber-500/20 text-amber-400/70 border border-amber-500/30 cursor-not-allowed'
+                      ? 'bg-amber-500/20 text-amber-400/70 border border-amber-500/30 cursor-default'
                       : 'bg-amber-500 hover:bg-amber-400 text-black'
                   }`}
                 >

@@ -13,26 +13,42 @@ export default function SubscriptionPage() {
     user?.role === 'admin' ||
     String(user?.email || '').toLowerCase().trim() === 'pavanvadapalli205@gmail.com';
 
-  const isPaidAccount = isAdminUser || Boolean(restaurant && restaurant.isActive !== false && restaurant.subscriptionStartDate);
-  const currentPlan = isAdminUser ? 'premium' : isPaidAccount ? (restaurant?.subscriptionPlan || 'basic') : 'UNPAID';
+  const hasEverPaid = Boolean(restaurant && restaurant.subscriptionStartDate);
   const isLifetime = isAdminUser || restaurant?.subscriptionCycle === 'lifetime';
   const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
   const startDateDate = restaurant?.subscriptionStartDate ? new Date(restaurant.subscriptionStartDate) : null;
   
   const [timeLeftSec, setTimeLeftSec] = useState(0);
+  const [showExpiredModal, setShowExpiredModal] = useState(false);
+
+  const isExpired = !isAdminUser && (
+    (!isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now()) ||
+    (hasEverPaid && restaurant?.isActive === false)
+  );
+
+  const isPaidAccount = isAdminUser || (hasEverPaid && !isExpired && restaurant?.isActive !== false);
+  const currentPlan = isAdminUser ? 'premium' : isPaidAccount ? (restaurant?.subscriptionPlan || 'basic') : 'UNPAID';
 
   useEffect(() => {
-    if (isLifetime || !expiresAtDate || !isPaidAccount) return;
+    if (isExpired && !isAdminUser) {
+      setShowExpiredModal(true);
+    }
+  }, [isExpired, isAdminUser]);
+
+  useEffect(() => {
+    if (isLifetime || !expiresAtDate || !hasEverPaid) return;
     const updateTimer = () => {
       const diffMs = new Date(restaurant.subscriptionExpiresAt).getTime() - Date.now();
-      setTimeLeftSec(Math.max(0, Math.floor(diffMs / 1000)));
+      const secs = Math.max(0, Math.floor(diffMs / 1000));
+      setTimeLeftSec(secs);
+      if (secs <= 0 && !isAdminUser) {
+        setShowExpiredModal(true);
+      }
     };
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, [restaurant, isLifetime, expiresAtDate, isPaidAccount]);
-
-  const isExpired = !isPaidAccount || (!isLifetime && expiresAtDate && (expiresAtDate.getTime() <= Date.now() || timeLeftSec <= 0));
+  }, [restaurant, isLifetime, expiresAtDate, hasEverPaid, isAdminUser]);
 
   const formatTimer = (totalSec) => {
     if (totalSec > 3600) {
@@ -48,6 +64,7 @@ export default function SubscriptionPage() {
 
   const handleSelectPlan = async (updatedRestPayload) => {
     try {
+      setShowExpiredModal(false);
       if (updatedRestPayload && typeof updatedRestPayload === 'object' && updatedRestPayload._id) {
         updateRestaurantState(updatedRestPayload);
       } else {
@@ -86,33 +103,37 @@ export default function SubscriptionPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto font-sans">
-      {!isPaidAccount ? (
-        /* UNPAID / PENDING PAYMENT HERO DISPLAY */
-        <div className="text-center py-6 animate-fade-in space-y-4">
-          <div className="w-20 h-20 rounded-full bg-amber-500/10 border-2 border-amber-500/30 flex items-center justify-center mx-auto relative shadow-2xl shadow-amber-500/10">
-            <CreditCard className="w-9 h-9 text-amber-400" />
-          </div>
-
-          <div className="space-y-2">
-            <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Activation Required:
-              <span className="block text-3xl sm:text-5xl font-black text-amber-400 tracking-tight mt-1 mb-2 uppercase animate-pulse">
-                Select A Subscription Plan
-              </span>
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
-              Complete a plan payment below to activate <span className="text-white font-bold">{restaurant?.name || 'your restaurant'}</span> and unlock full dashboard access.
-            </p>
-          </div>
-
-          <div className="flex items-center justify-center space-x-4 pt-4 max-w-2xl mx-auto">
-            <div className="h-px bg-white/10 flex-1"></div>
-            <span className="text-xs font-extrabold text-amber-400 uppercase tracking-widest px-3">Available Restaurant Tiers</span>
-            <div className="h-px bg-white/10 flex-1"></div>
+    <div className="space-y-8 max-w-6xl mx-auto font-sans relative">
+      {/* EXPIRED PLAN POPUP MODAL */}
+      {showExpiredModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="bg-[#0E0E14] border-2 border-red-500/60 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl shadow-red-500/20 space-y-5">
+            <div className="w-16 h-16 rounded-full bg-red-500/10 border-2 border-red-500/40 flex items-center justify-center mx-auto text-red-500">
+              <AlertTriangle className="w-8 h-8 text-red-500 animate-bounce" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-black text-white uppercase tracking-tight">
+                Subscription Expired!
+              </h3>
+              <p className="text-xs text-gray-300 leading-relaxed">
+                Your subscription plan for <strong className="text-white">{restaurant?.name || 'your restaurant'}</strong> has ended.
+              </p>
+              <p className="text-[11px] text-amber-400/90 font-semibold bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl">
+                ⚡ Select a plan below to instantly reactivate your restaurant dashboard & QR menu.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowExpiredModal(false)}
+              className="w-full py-3.5 rounded-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-black text-xs transition-all shadow-lg shadow-red-500/30 uppercase tracking-wider"
+            >
+              Select Plan & Renew Now →
+            </button>
           </div>
         </div>
-      ) : isExpired ? (
+      )}
+
+      {isExpired ? (
         /* EXPIRED PAYWALL HERO DISPLAY */
         <div className="text-center py-6 animate-fade-in space-y-4">
           <div className="w-24 h-24 rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center mx-auto relative shadow-2xl shadow-red-500/10">
@@ -142,6 +163,31 @@ export default function SubscriptionPage() {
           <div className="flex items-center justify-center space-x-4 pt-6 max-w-2xl mx-auto">
             <div className="h-px bg-white/10 flex-1"></div>
             <span className="text-xs font-extrabold text-gray-400 uppercase tracking-widest px-3">Choose Your Plan</span>
+            <div className="h-px bg-white/10 flex-1"></div>
+          </div>
+        </div>
+      ) : !hasEverPaid ? (
+        /* UNPAID / PENDING PAYMENT HERO DISPLAY */
+        <div className="text-center py-6 animate-fade-in space-y-4">
+          <div className="w-20 h-20 rounded-full bg-amber-500/10 border-2 border-amber-500/30 flex items-center justify-center mx-auto relative shadow-2xl shadow-amber-500/10">
+            <CreditCard className="w-9 h-9 text-amber-400" />
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Activation Required:
+              <span className="block text-3xl sm:text-5xl font-black text-amber-400 tracking-tight mt-1 mb-2 uppercase animate-pulse">
+                Select A Subscription Plan
+              </span>
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
+              Complete a plan payment below to activate <span className="text-white font-bold">{restaurant?.name || 'your restaurant'}</span> and unlock full dashboard access.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-center space-x-4 pt-4 max-w-2xl mx-auto">
+            <div className="h-px bg-white/10 flex-1"></div>
+            <span className="text-xs font-extrabold text-amber-400 uppercase tracking-widest px-3">Available Restaurant Tiers</span>
             <div className="h-px bg-white/10 flex-1"></div>
           </div>
         </div>

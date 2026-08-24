@@ -88,18 +88,11 @@ const verifyPayment = async (req, res) => {
 
     // Update restaurant subscription plan in Database
     const { duration, title, isLifetime: reqIsLifetime } = req.body;
-    const updatedPlan = planKey === 'premium' ? 'premium' : 'basic';
-    const isShortTestPlan =
-      String(duration || '').toLowerCase().includes('min') ||
-      String(title || '').toLowerCase().includes('min') ||
-      String(duration || '').toLowerCase().includes('4') ||
-      String(duration || '').toLowerCase().includes('5');
 
     const isLifetime =
-      !isShortTestPlan &&
-      (reqIsLifetime === true ||
-        String(duration || '').toLowerCase().includes('lifetime') ||
-        String(title || '').toLowerCase().includes('lifetime'));
+      reqIsLifetime === true ||
+      String(duration || '').toLowerCase().includes('lifetime') ||
+      String(title || '').toLowerCase().includes('lifetime');
 
     const startDate = new Date();
 
@@ -115,12 +108,10 @@ const verifyPayment = async (req, res) => {
       const finalPlan = (isExistingPremium || isSelectingPremium) ? 'premium' : 'basic';
 
       const finalIsLifetime = isLifetime;
-      const finalCycle = finalIsLifetime ? 'lifetime' : isShortTestPlan ? '4min' : '1month';
+      const finalCycle = finalIsLifetime ? 'lifetime' : '4min';
       const finalExpiresAt = finalIsLifetime
         ? null
-        : isShortTestPlan
-        ? new Date(Date.now() + 4 * 60 * 1000)
-        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        : new Date(Date.now() + 4 * 60 * 1000);
 
       const updatePayload = {
         $set: {

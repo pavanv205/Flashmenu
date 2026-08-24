@@ -22,15 +22,20 @@ export default function SubscriptionPage() {
   const [showExpiredModal, setShowExpiredModal] = useState(false);
   const [hasDismissedModal, setHasDismissedModal] = useState(false);
 
+  const is4MinTest = !isLifetime && (restaurant?.subscriptionCycle === '4min' || restaurant?.subscriptionCycle === '5min' || !restaurant?.subscriptionCycle);
+  const effectiveExpiresAtDate = (is4MinTest && startDateDate)
+    ? new Date(startDateDate.getTime() + 4 * 60 * 1000)
+    : expiresAtDate;
+
   const isExpired = !isAdminUser && (
-    (!isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now()) ||
+    (!isLifetime && effectiveExpiresAtDate && effectiveExpiresAtDate.getTime() <= Date.now()) ||
     (hasEverPaid && restaurant?.isActive === false)
   );
 
   const isPaidAccount = isAdminUser || (hasEverPaid && !isExpired && restaurant?.isActive !== false);
   const currentPlan = isAdminUser ? 'premium' : isPaidAccount ? (restaurant?.subscriptionPlan || 'basic') : 'UNPAID';
 
-  const expiresAtStr = restaurant?.subscriptionExpiresAt || null;
+  const expiresAtStr = effectiveExpiresAtDate ? effectiveExpiresAtDate.toISOString() : null;
 
   useEffect(() => {
     if (isExpired && !isAdminUser && !hasDismissedModal) {
@@ -44,7 +49,8 @@ export default function SubscriptionPage() {
 
     const updateTimer = () => {
       const diffMs = expiresMs - Date.now();
-      const secs = Math.max(0, Math.floor(diffMs / 1000));
+      const rawSecs = Math.max(0, Math.floor(diffMs / 1000));
+      const secs = is4MinTest ? Math.min(240, rawSecs) : rawSecs;
       setTimeLeftSec(secs);
       if (secs <= 0 && !isAdminUser && !hasDismissedModal) {
         setShowExpiredModal(true);
@@ -53,7 +59,7 @@ export default function SubscriptionPage() {
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, [expiresAtStr, isLifetime, hasEverPaid, isAdminUser, hasDismissedModal]);
+  }, [expiresAtStr, isLifetime, hasEverPaid, isAdminUser, hasDismissedModal, is4MinTest]);
 
   const formatTimer = (totalSec) => {
     if (totalSec > 3600) {
@@ -121,92 +127,71 @@ export default function SubscriptionPage() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#0E0E14] border-2 border-red-500/60 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl shadow-red-500/20 space-y-5 cursor-default"
+            className="bg-[#0E0E14] border-2 border-red-500/60 rounded-3xl p-6 sm:p-8 max-w-md w-full text-center space-y-5 shadow-2xl relative animate-scale-up"
           >
-            <div className="w-16 h-16 rounded-full bg-red-500/10 border-2 border-red-500/40 flex items-center justify-center mx-auto text-red-500">
-              <AlertTriangle className="w-8 h-8 text-red-500 animate-bounce" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-black text-white uppercase tracking-tight">
-                Subscription Expired!
-              </h3>
-              <p className="text-xs text-gray-300 leading-relaxed">
-                Your subscription plan for <strong className="text-white">{restaurant?.name || 'your restaurant'}</strong> has ended.
-              </p>
-              <p className="text-[11px] text-amber-400/90 font-semibold bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl">
-                ⚡ Select a plan below to instantly reactivate your restaurant dashboard & QR menu.
-              </p>
-            </div>
             <button
-              type="button"
               onClick={() => {
                 setShowExpiredModal(false);
                 setHasDismissedModal(true);
               }}
-              className="w-full py-3.5 rounded-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-black text-xs transition-all shadow-lg shadow-red-500/30 uppercase tracking-wider cursor-pointer active:scale-95"
+              className="absolute top-4 right-4 text-gray-400 hover:text-white p-1"
             >
-              Select Plan & Renew Now →
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 text-red-500 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+
+            <div>
+              <h3 className="text-xl font-extrabold text-white">Your Subscription Has Expired!</h3>
+              <p className="text-xs text-gray-300 mt-2 leading-relaxed">
+                Your 4-minute test plan timer has reached <span className="text-red-400 font-bold">00:00</span>. Please choose a plan below to renew or upgrade your restaurant subscription.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowExpiredModal(false);
+                setHasDismissedModal(true);
+              }}
+              className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition-all shadow-lg flex items-center justify-center space-x-2"
+            >
+              <span>SELECT PLAN & RENEW NOW</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
       )}
 
+      {/* HEADER BANNER */}
       {isExpired ? (
-        /* EXPIRED PAYWALL HERO DISPLAY */
-        <div className="text-center py-6 animate-fade-in space-y-4">
-          <div className="w-24 h-24 rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center mx-auto relative shadow-2xl shadow-red-500/10">
-            <div className="w-12 h-14 bg-white/10 rounded-xl border border-white/20 flex flex-col justify-around p-2 space-y-1">
-              <div className="w-full h-1 bg-red-400/80 rounded"></div>
-              <div className="w-3/4 h-1 bg-red-400/60 rounded"></div>
-              <div className="w-full h-1 bg-red-400/80 rounded"></div>
-              <div className="w-1/2 h-1 bg-red-400/40 rounded"></div>
-            </div>
-            <div className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center font-black text-base border-2 border-[#08080A] shadow-lg">
-              ✕
-            </div>
+        /* EXPIRED PLAN BANNER */
+        <div className="p-6 rounded-3xl bg-red-950/40 border-2 border-red-500/50 text-center space-y-3 relative overflow-hidden shadow-2xl">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-black uppercase tracking-wider border border-red-500/30">
+            <AlertTriangle className="w-4 h-4 text-red-400" />
+            <span>SUBSCRIPTION EXPIRED</span>
           </div>
-
-          <div className="space-y-2">
-            <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Your subscription plan has
-              <span className="block text-4xl sm:text-6xl font-black text-red-500 tracking-tight mt-1 mb-2 uppercase animate-pulse">
-                EXPIRED!
-              </span>
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
-              Select a plan below to renew and continue enjoying our services.
-            </p>
-          </div>
-
-          <div className="flex items-center justify-center space-x-4 pt-6 max-w-2xl mx-auto">
-            <div className="h-px bg-white/10 flex-1"></div>
-            <span className="text-xs font-extrabold text-gray-400 uppercase tracking-widest px-3">Choose Your Plan</span>
-            <div className="h-px bg-white/10 flex-1"></div>
-          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-white">Your Subscription Plan Has EXPIRED!</h2>
+          <p className="text-xs sm:text-sm text-gray-300 max-w-lg mx-auto leading-relaxed">
+            Your restaurant (<span className="text-amber-400 font-bold">{restaurant?.name || 'My Restaurant'}</span>) subscription period has ended. Select a plan below to restore instant customer QR ordering & full dashboard features.
+          </p>
         </div>
-      ) : !hasEverPaid ? (
-        /* UNPAID / PENDING PAYMENT HERO DISPLAY */
-        <div className="text-center py-6 animate-fade-in space-y-4">
-          <div className="w-20 h-20 rounded-full bg-amber-500/10 border-2 border-amber-500/30 flex items-center justify-center mx-auto relative shadow-2xl shadow-amber-500/10">
-            <CreditCard className="w-9 h-9 text-amber-400" />
+      ) : !hasEverPaid && !isAdminUser ? (
+        /* UNPAID / ACTIVATION REQUIRED BANNER */
+        <div className="p-8 rounded-3xl bg-gradient-to-r from-amber-500/10 via-[#0E0E14] to-amber-500/10 border-2 border-amber-500/40 text-center space-y-4 shadow-2xl relative overflow-hidden">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-black uppercase tracking-wider border border-amber-500/30">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span>Activation Required</span>
           </div>
 
-          <div className="space-y-2">
-            <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Activation Required:
-              <span className="block text-3xl sm:text-5xl font-black text-amber-400 tracking-tight mt-1 mb-2 uppercase animate-pulse">
-                Select A Subscription Plan
-              </span>
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Activate Your Digital QR Menu Platform
             </h2>
             <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto leading-relaxed">
               Complete a plan payment below to activate <span className="text-white font-bold">{restaurant?.name || 'your restaurant'}</span> and unlock full dashboard access.
             </p>
-          </div>
-
-          <div className="flex items-center justify-center space-x-4 pt-4 max-w-2xl mx-auto">
-            <div className="h-px bg-white/10 flex-1"></div>
-            <span className="text-xs font-extrabold text-amber-400 uppercase tracking-widest px-3">Available Restaurant Tiers</span>
-            <div className="h-px bg-white/10 flex-1"></div>
           </div>
         </div>
       ) : (
@@ -250,10 +235,10 @@ export default function SubscriptionPage() {
                     </div>
                   )}
 
-                  {!isLifetime && expiresAtDate && (
+                  {!isLifetime && effectiveExpiresAtDate && (
                     <div className="flex items-center space-x-1.5">
                       <Clock className="w-3.5 h-3.5 text-gray-400" />
-                      <span>Expires: <strong>{expiresAtDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
+                      <span>Expires: <strong>{effectiveExpiresAtDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</strong></span>
                     </div>
                   )}
                 </div>

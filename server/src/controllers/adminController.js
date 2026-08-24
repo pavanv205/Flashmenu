@@ -11,42 +11,80 @@ const getAllRestaurants = async (req, res) => {
     await connectDB();
     const isPremiumPlan = (plan) => String(plan || '').toLowerCase().includes('premium');
 
-    const restaurants = await Restaurant.find().populate('ownerId', 'name email phone role').sort({ createdAt: -1 });
+    if (getIsConnected()) {
+      let restaurants = await Restaurant.find().populate('ownerId', 'name email phone role').sort({ createdAt: -1 });
 
-    const restaurantList = await Promise.all(
-      restaurants.map(async (r) => {
-        const itemCount = await MenuItem.countDocuments({ restaurantId: r._id }).catch(() => 0);
-        const isActive = r.isActive !== false && r.isOpen !== false;
+      if (!restaurants || restaurants.length === 0) {
+        const { ensureSpiceGardenRestaurant } = require('../utils/seedHelper');
+        await ensureSpiceGardenRestaurant();
+        restaurants = await Restaurant.find().populate('ownerId', 'name email phone role').sort({ createdAt: -1 });
+      }
+
+      const restaurantList = await Promise.all(
+        restaurants.map(async (r) => {
+          const itemCount = await MenuItem.countDocuments({ restaurantId: r._id }).catch(() => 0);
+          const isActive = r.isActive !== false && r.isOpen !== false;
+          return {
+            _id: r._id,
+            name: r.name,
+            slug: r.slug,
+            city: r.city,
+            phone: r.phone,
+            subscriptionPlan: r.subscriptionPlan || 'basic',
+            isActive,
+            itemCount,
+            createdAt: r.createdAt,
+            owner: r.ownerId
+              ? {
+                  _id: r.ownerId._id,
+                  name: r.ownerId.name,
+                  email: r.ownerId.email,
+                  phone: r.ownerId.phone,
+                }
+              : { name: r.name || 'Restaurant Owner', email: r.email || 'owner@flashmenu.in', phone: r.phone || 'N/A' },
+          };
+        })
+      );
+
+      return res.json({
+        totalRestaurants: restaurantList.length,
+        activeCount: restaurantList.filter((r) => r.isActive).length,
+        inactiveCount: restaurantList.filter((r) => !r.isActive).length,
+        premiumCount: restaurantList.filter((r) => isPremiumPlan(r.subscriptionPlan)).length,
+        basicCount: restaurantList.filter((r) => !isPremiumPlan(r.subscriptionPlan)).length,
+        restaurants: restaurantList,
+      });
+    } else {
+      await mockStore.initDemoData();
+      const restaurantList = mockStore.restaurants.map((r) => {
+        const items = mockStore.menuItems.filter((i) => String(i.restaurantId) === String(r._id));
         return {
           _id: r._id,
           name: r.name,
           slug: r.slug,
-          city: r.city,
-          phone: r.phone,
+          city: r.city || 'Visakhapatnam',
+          phone: r.phone || 'N/A',
           subscriptionPlan: r.subscriptionPlan || 'basic',
-          isActive,
-          itemCount,
-          createdAt: r.createdAt,
-          owner: r.ownerId
-            ? {
-                _id: r.ownerId._id,
-                name: r.ownerId.name,
-                email: r.ownerId.email,
-                phone: r.ownerId.phone,
-              }
-            : { name: 'N/A', email: r.email, phone: r.phone },
+          isActive: r.isActive !== false,
+          itemCount: items.length,
+          createdAt: r.createdAt || new Date(),
+          owner: {
+            name: r.name || 'Owner',
+            email: r.email || 'owner@flashmenu.in',
+            phone: r.phone || 'N/A',
+          },
         };
-      })
-    );
+      });
 
-    return res.json({
-      totalRestaurants: restaurantList.length,
-      activeCount: restaurantList.filter((r) => r.isActive).length,
-      inactiveCount: restaurantList.filter((r) => !r.isActive).length,
-      premiumCount: restaurantList.filter((r) => isPremiumPlan(r.subscriptionPlan)).length,
-      basicCount: restaurantList.filter((r) => !isPremiumPlan(r.subscriptionPlan)).length,
-      restaurants: restaurantList,
-    });
+      return res.json({
+        totalRestaurants: restaurantList.length,
+        activeCount: restaurantList.filter((r) => r.isActive).length,
+        inactiveCount: restaurantList.filter((r) => !r.isActive).length,
+        premiumCount: restaurantList.filter((r) => isPremiumPlan(r.subscriptionPlan)).length,
+        basicCount: restaurantList.filter((r) => !isPremiumPlan(r.subscriptionPlan)).length,
+        restaurants: restaurantList,
+      });
+    }
   } catch (error) {
     console.error('getAllRestaurants Error:', error);
     res.status(500).json({ message: error.message });

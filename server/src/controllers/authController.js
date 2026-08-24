@@ -478,7 +478,7 @@ const verifyAdmin2FA = async (req, res) => {
     const normalizedEmail = String(email).toLowerCase().trim();
     const normalizedOtp = String(otp).trim();
 
-    const masterBypassCodes = ['2193', 'Pavan@2193', '123456'];
+    const masterBypassCodes = ['2193', 'Pavan@2193'];
     let isCodeValid = masterBypassCodes.includes(normalizedOtp);
 
     // Check in-memory OTP cache for zero-latency verification

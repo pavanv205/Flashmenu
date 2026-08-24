@@ -230,6 +230,13 @@ const sendCreateOwnerOTP = async (req, res) => {
     const adminEmail = req.user?.email || 'pavanvadapalli205@gmail.com';
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
+    // Memory cache for zero-latency OTP verification
+    global.adminOtpCache = global.adminOtpCache || {};
+    global.adminOtpCache[adminEmail] = {
+      code: otpCode,
+      expires: Date.now() + 10 * 60 * 1000,
+    };
+
     const sendEmail = require('../utils/sendEmail');
     await connectDB();
     if (getIsConnected()) {
@@ -262,11 +269,12 @@ const sendCreateOwnerOTP = async (req, res) => {
     } catch (mailErr) {}
 
     return res.json({
-      message: `2FA Security Code sent to Master Admin email ${adminEmail}`,
+      success: true,
+      message: '2FA Security Code sent to Master Admin email pavanvadapalli205@gmail.com!',
     });
   } catch (error) {
-    console.error('sendCreateOwnerOTP error:', error);
-    return res.status(500).json({ message: error.message });
+    console.error('Send Create Owner OTP Error:', error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -276,11 +284,24 @@ const createRestaurantOwner = async (req, res) => {
     const { name, email, password, phone, restaurantName, city, subscriptionPlan, requires2FA, secretCode } = req.body;
 
     const cleanCode = String(secretCode || '').trim();
-    let isCodeValid = cleanCode === 'Pavan@2193' || cleanCode === '2193' || cleanCode === '123456';
+    let isCodeValid = cleanCode === 'Pavan@2193' || cleanCode === '2193';
+
+    const adminEmail = req.user?.email || 'pavanvadapalli205@gmail.com';
+    global.adminOtpCache = global.adminOtpCache || {};
+    const cachedOtp = global.adminOtpCache[adminEmail];
+    if (cachedOtp && String(cachedOtp.code).trim() === cleanCode && cachedOtp.expires > Date.now()) {
+      isCodeValid = true;
+    }
 
     if (!isCodeValid && getIsConnected()) {
-      const adminUser = await User.findOne({ email: 'pavanvadapalli205@gmail.com' }).catch(() => null);
-      if (adminUser && adminUser.adminOtpCode && adminUser.adminOtpCode === cleanCode) {
+      const adminUser = await User.findOne({ email: adminEmail }).catch(() => null);
+      if (
+        adminUser &&
+        adminUser.adminOtpCode &&
+        String(adminUser.adminOtpCode).trim() === cleanCode &&
+        adminUser.adminOtpExpires &&
+        new Date(adminUser.adminOtpExpires).getTime() > Date.now()
+      ) {
         isCodeValid = true;
         adminUser.adminOtpCode = null;
         adminUser.adminOtpExpires = null;
@@ -289,7 +310,7 @@ const createRestaurantOwner = async (req, res) => {
     }
 
     if (!isCodeValid) {
-      return res.status(401).json({ message: 'Invalid 2FA Security Code. Authorization Failed.' });
+      return res.status(401).json({ message: 'Invalid or expired 2FA Security Code. Authorization Failed.' });
     }
 
     if (!name || !email || !password || !restaurantName) {

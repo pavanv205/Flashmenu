@@ -104,8 +104,7 @@ const verifyPayment = async (req, res) => {
       const existingRest = await Restaurant.findOne({ ownerId: req.user._id });
 
       const isSelectingPremium = String(planKey || '').toLowerCase().includes('premium') || String(title || '').toLowerCase().includes('premium');
-      const isExistingPremium = String(existingRest?.subscriptionPlan || '').toLowerCase().includes('premium');
-      const finalPlan = (isExistingPremium || isSelectingPremium) ? 'premium' : 'basic';
+      const finalPlan = isSelectingPremium ? 'premium' : 'basic';
 
       const finalIsLifetime = isLifetime;
       const finalCycle = finalIsLifetime ? 'lifetime' : '4min';

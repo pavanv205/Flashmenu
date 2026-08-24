@@ -313,11 +313,11 @@ const createRestaurantOwner = async (req, res) => {
 
     const planVal = String(subscriptionPlan || 'basic_lifetime').toLowerCase();
     const isPremium = planVal.includes('premium');
-    const is5Min = planVal.includes('5min');
+    const is4Min = planVal.includes('4min') || planVal.includes('5min') || planVal.includes('4') || planVal.includes('5');
 
     const plan = isPremium ? 'premium' : 'basic';
-    const cycle = is5Min ? '5min' : 'lifetime';
-    const expiresAt = is5Min ? new Date(Date.now() + 5 * 60 * 1000) : null;
+    const cycle = is4Min ? '4min' : 'lifetime';
+    const expiresAt = is4Min ? new Date(Date.now() + 4 * 60 * 1000) : null;
     const enforce2FA = requires2FA !== false;
     const bcrypt = require('bcryptjs');
     const { defaultCategories } = require('../utils/defaultMenu');

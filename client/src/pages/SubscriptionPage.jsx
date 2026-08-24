@@ -243,17 +243,17 @@ export default function SubscriptionPage() {
               <div className="grid grid-cols-2 rounded-2xl bg-[#08080A] border border-white/[0.08] divide-x divide-white/[0.08] overflow-hidden">
                 <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
                   <div>
-                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">5 MINUTES</span>
+                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">4 MINUTES</span>
                     <p className="text-2xl font-black text-white mt-1">₹1</p>
-                    <span className="text-[10px] text-gray-500">Valid for 5 Mins</span>
+                    <span className="text-[10px] text-gray-500">Valid for 4 Mins</span>
                   </div>
                   <button
                     type="button"
-                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (5 Mins)', '5 Minutes Test', 1)}
+                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (4 Mins)', '4 Minutes Test', 1)}
                     className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
                   >
                     <CreditCard className="w-3.5 h-3.5" />
-                    <span>{isExpired && currentPlan === 'basic' ? 'Renew 5 Mins (₹1)' : currentPlan === 'basic' ? 'Extend 5 Mins (₹1)' : 'Pay 5 Mins (₹1)'}</span>
+                    <span>{isExpired && currentPlan === 'basic' ? 'Renew 4 Mins (₹1)' : currentPlan === 'basic' ? 'Extend 4 Mins (₹1)' : 'Pay 4 Mins (₹1)'}</span>
                   </button>
                 </div>
 
@@ -330,17 +330,17 @@ export default function SubscriptionPage() {
             <div className="grid grid-cols-2 rounded-2xl bg-[#08080A] border border-amber-500/30 divide-x divide-amber-500/30 overflow-hidden">
               <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
                 <div>
-                  <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">5 MINUTES</span>
+                  <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">4 MINUTES</span>
                   <p className="text-2xl font-black text-white mt-1">₹1</p>
-                  <span className="text-[10px] text-gray-400 font-semibold block">Valid for 5 Mins</span>
+                  <span className="text-[10px] text-gray-400 font-semibold block">Valid for 4 Mins</span>
                 </div>
                 <button
                   type="button"
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (5 Mins)', '5 Minutes Test', 1)}
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (4 Mins)', '4 Minutes Test', 1)}
                   className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>{isExpired && currentPlan === 'premium' ? 'Renew 5 Mins (₹1)' : currentPlan === 'basic' ? 'Upgrade to Premium 5 Mins (₹1)' : 'Extend 5 Mins (₹1)'}</span>
+                  <span>{isExpired && currentPlan === 'premium' ? 'Renew 4 Mins (₹1)' : currentPlan === 'basic' ? 'Upgrade to Premium 4 Mins (₹1)' : 'Extend 4 Mins (₹1)'}</span>
                 </button>
               </div>
 

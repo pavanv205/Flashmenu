@@ -108,8 +108,19 @@ const verifyPayment = async (req, res) => {
 
       const isAlreadyLifetime = existingRest?.subscriptionCycle === 'lifetime';
       const finalIsLifetime = isLifetime || isAlreadyLifetime;
-      const finalCycle = finalIsLifetime ? 'lifetime' : '1month';
-      const finalExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      const isShortTestPlan =
+        !finalIsLifetime &&
+        (String(duration || '').toLowerCase().includes('min') ||
+          String(title || '').toLowerCase().includes('min') ||
+          String(duration || '').toLowerCase().includes('4') ||
+          String(duration || '').toLowerCase().includes('5'));
+
+      const finalCycle = finalIsLifetime ? 'lifetime' : isShortTestPlan ? '4min' : '1month';
+      const finalExpiresAt = finalIsLifetime
+        ? null
+        : isShortTestPlan
+        ? new Date(Date.now() + 4 * 60 * 1000)
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
       const updatePayload = {
         $set: {

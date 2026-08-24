@@ -408,34 +408,25 @@ export default function PublicMenuPage() {
                           : 'border-red-900/40 bg-red-950/20'
                       }`}
                     >
-                      {/* Food Image */}
-                      <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-[#0A0F1D] flex-shrink-0 border border-slate-800/80 shadow-inner">
-                        {(() => {
-                          const itemImage = item.image || getCategoryFallbackImage(
-                            item.categoryId?.name,
-                            item.computedSubCategory || item.subCategory,
-                            item.name
-                          );
-                          return (
-                            <img
-                              src={itemImage}
-                              alt={item.name}
-                              loading={index < 4 ? "eager" : "lazy"}
-                              decoding="async"
-                              className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
-                            />
-                          );
-                        })()}
-
-                        {/* SOLD OUT Overlay */}
-                        {!item.isAvailable && (
-                          <div className="absolute inset-0 bg-[#0B0F17]/85 flex items-center justify-center">
-                            <span className="text-[10px] font-black text-red-400 uppercase tracking-widest border border-red-500/40 px-2 py-0.5 rounded-full bg-red-500/20">
-                              SOLD OUT
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                      {/* Food Image (Only rendered if custom owner image is uploaded) */}
+                      {item.image && !item.image.includes('/defaults/') && (
+                        <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-[#0A0F1D] flex-shrink-0 border border-slate-800/80 shadow-inner">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            loading={index < 4 ? "eager" : "lazy"}
+                            decoding="async"
+                            className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
+                          />
+                          {!item.isAvailable && (
+                            <div className="absolute inset-0 bg-[#0B0F17]/85 flex items-center justify-center">
+                              <span className="text-[10px] font-black text-red-400 uppercase tracking-widest border border-red-500/40 px-2 py-0.5 rounded-full bg-red-500/20">
+                                SOLD OUT
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {/* Details */}
                       <div className="flex-1 min-w-0 flex flex-col justify-between">
@@ -475,6 +466,11 @@ export default function PublicMenuPage() {
                               <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[9px] font-extrabold flex items-center border border-red-500/30">
                                 <Flame className="w-2.5 h-2.5 mr-0.5" />
                                 <span>Spicy</span>
+                              </span>
+                            )}
+                            {!item.isAvailable && (
+                              <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[9px] font-extrabold uppercase border border-red-500/30">
+                                SOLD OUT
                               </span>
                             )}
                           </div>

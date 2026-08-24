@@ -35,27 +35,34 @@ const getPublicMenu = async (req, res) => {
 
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
-      // Check subscription & account active status (blocks QR scan when owner account or subscription is inactive)
+      // Check subscription & account active status (blocks QR scan when owner account or subscription is inactive, but allows preview mode)
       const isSpiceGarden = normalizedSlug === 'spice-garden' || normalizedSlug.includes('demo') || normalizedSlug.includes('spice');
+      const isPreview = String(req.query.preview || '').toLowerCase() === 'true';
       const isLifetime = restaurant.subscriptionCycle === 'lifetime';
       const expiresAt = restaurant.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
       const isExpired = !isLifetime && expiresAt && expiresAt.getTime() <= Date.now();
       const isOwnerInactive = restaurant.isActive === false || (restaurant.ownerId && restaurant.ownerId.isActive === false);
-      const isInactive = !isSpiceGarden && (isOwnerInactive || isExpired);
+      const isInactive = !isSpiceGarden && !isPreview && (isOwnerInactive || isExpired);
+
+      let categories = await Category.find({ restaurantId: restaurant._id, isActive: true }).sort({ order: 1 });
+      let menuItems = await MenuItem.find({ restaurantId: restaurant._id }).sort({ order: 1 });
+
+      if (!menuItems || menuItems.length === 0) {
+        await ensureDefaultMenuForRestaurant(restaurant._id);
+        categories = await Category.find({ restaurantId: restaurant._id, isActive: true }).sort({ order: 1 });
+        menuItems = await MenuItem.find({ restaurantId: restaurant._id }).sort({ order: 1 });
+      }
 
       if (isInactive) {
         return res.json({
           restaurant: { ...restaurant.toObject(), isInactive: true, isExpired },
           isInactive: true,
           isExpired,
-          categories: [],
-          menuItems: [],
+          categories,
+          menuItems,
           tableNumber: table || null,
         });
       }
-
-      const categories = await Category.find({ restaurantId: restaurant._id, isActive: true }).sort({ order: 1 });
-      const menuItems = await MenuItem.find({ restaurantId: restaurant._id }).sort({ order: 1 });
 
       try {
         const userAgent = req.headers['user-agent'] || '';

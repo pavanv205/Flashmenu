@@ -420,7 +420,7 @@ export default function PublicMenuPage() {
                             <img
                               src={itemImage}
                               alt={item.name}
-                              loading="lazy"
+                              loading={index < 4 ? "eager" : "lazy"}
                               decoding="async"
                               className={`w-full h-full object-cover ${!item.isAvailable && 'grayscale opacity-50'}`}
                             />

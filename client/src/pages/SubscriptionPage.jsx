@@ -42,14 +42,14 @@ export default function SubscriptionPage() {
       const diffMs = new Date(restaurant.subscriptionExpiresAt).getTime() - Date.now();
       const secs = Math.max(0, Math.floor(diffMs / 1000));
       setTimeLeftSec(secs);
-      if (secs <= 0 && !isAdminUser) {
+      if (secs <= 0 && !isAdminUser && !hasDismissedModal) {
         setShowExpiredModal(true);
       }
     };
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, [restaurant, isLifetime, expiresAtDate, hasEverPaid, isAdminUser]);
+  }, [restaurant, isLifetime, expiresAtDate, hasEverPaid, isAdminUser, hasDismissedModal]);
 
   const formatTimer = (totalSec) => {
     if (totalSec > 3600) {
@@ -99,8 +99,17 @@ export default function SubscriptionPage() {
     <div className="space-y-8 max-w-6xl mx-auto font-sans relative">
       {/* EXPIRED PLAN POPUP MODAL */}
       {showExpiredModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="bg-[#0E0E14] border-2 border-red-500/60 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl shadow-red-500/20 space-y-5">
+        <div
+          onClick={() => {
+            setShowExpiredModal(false);
+            setHasDismissedModal(true);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#0E0E14] border-2 border-red-500/60 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl shadow-red-500/20 space-y-5 cursor-default"
+          >
             <div className="w-16 h-16 rounded-full bg-red-500/10 border-2 border-red-500/40 flex items-center justify-center mx-auto text-red-500">
               <AlertTriangle className="w-8 h-8 text-red-500 animate-bounce" />
             </div>

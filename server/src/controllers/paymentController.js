@@ -136,15 +136,14 @@ const verifyPayment = async (req, res) => {
     } else if (req.user?._id) {
       const r = mockStore.restaurants.find((res) => String(res.ownerId) === String(req.user._id));
       if (r) {
-        const isExistingPremium = r.subscriptionPlan === 'premium';
-        const finalPlan = isExistingPremium ? 'premium' : updatedPlan;
-        const isAlreadyLifetime = r.subscriptionCycle === 'lifetime';
-        const finalIsLifetime = isLifetime || isAlreadyLifetime;
+        const isSelectingPremium = String(planKey || '').toLowerCase().includes('premium') || String(title || '').toLowerCase().includes('premium');
+        const finalPlan = isSelectingPremium ? 'premium' : 'basic';
+        const finalIsLifetime = isLifetime;
 
         r.subscriptionPlan = finalPlan;
-        r.subscriptionCycle = finalIsLifetime ? 'lifetime' : '1month';
+        r.subscriptionCycle = finalIsLifetime ? 'lifetime' : '4min';
         r.subscriptionStartDate = startDate;
-        r.subscriptionExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        r.subscriptionExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 4 * 60 * 1000);
         r.isActive = true;
         updatedRestaurant = r;
       }

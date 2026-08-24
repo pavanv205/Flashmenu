@@ -293,7 +293,7 @@ export default function AdminDashboardPage() {
 
       try {
         setCreateLoading(true);
-        const payload = { ...createForm, secretCode: otp };
+        const payload = { ...createForm, secretCode: otp, masterPin: (createForm.secretCode || '').trim() };
         const res = await adminAPI.createOwner(payload);
         setCreateSuccess(res.data.message || 'Restaurant Owner account created successfully with Zero Fees and 2FA!');
         setTimeout(() => {

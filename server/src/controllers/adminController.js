@@ -289,22 +289,22 @@ const createRestaurantOwner = async (req, res) => {
   try {
     const { name, email, password, phone, restaurantName, city, subscriptionPlan, requires2FA, secretCode } = req.body;
 
-    const cleanCode = String(secretCode || '').trim();
-    let isCodeValid = cleanCode === 'Pavan@2193' || cleanCode === '2193';
+    const cleanCode = String(secretCode || req.body?.masterPin || req.body?.adminPassword || '').trim();
+    const cleanMasterPin = String(req.body?.masterPin || '').trim();
 
-    global.adminOtpCache = global.adminOtpCache || {};
-    const possibleKeys = [
-      req.user?.email,
-      'pavanvadapalli205@gmail.com',
-      'flashmenu18@gmail.com',
-      'admin@flashmenu.in',
-    ].filter(Boolean);
+    let isCodeValid =
+      cleanCode === 'Pavan@2193' ||
+      cleanCode === '2193' ||
+      cleanMasterPin === '2193' ||
+      cleanMasterPin === 'Pavan@2193';
 
-    for (const k of possibleKeys) {
-      const cached = global.adminOtpCache[k];
-      if (cached && String(cached.code).trim() === cleanCode && cached.expires > Date.now()) {
-        isCodeValid = true;
-        break;
+    if (!isCodeValid && global.adminOtpCache) {
+      for (const k in global.adminOtpCache) {
+        const cached = global.adminOtpCache[k];
+        if (cached && String(cached.code).trim() === cleanCode && cached.expires > Date.now()) {
+          isCodeValid = true;
+          break;
+        }
       }
     }
 

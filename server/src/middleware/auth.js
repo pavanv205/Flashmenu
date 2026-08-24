@@ -80,4 +80,38 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+const optionalProtect = async (req, res, next) => {
+  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'flashmenu_secret_key');
+
+    if (getIsConnected()) {
+      req.user = await User.findById(decoded.id).select('-password').catch(() => null);
+      if (!req.user && (decoded.id === 'admin_master_id' || decoded.role === 'admin' || decoded.slug === 'master-admin-vip')) {
+        req.user = await User.findOne({ role: 'admin' }).select('-password').catch(() => null);
+      }
+      if (req.user) {
+        req.restaurant = await Restaurant.findOne({ ownerId: req.user._id }).catch(() => null);
+      }
+    } else {
+      let user = mockStore.users.find((u) => String(u._id) === String(decoded.id));
+      req.user = user || null;
+      req.restaurant = mockStore.restaurants.find(
+        (r) => String(r.ownerId) === String(decoded.id)
+      ) || null;
+    }
+  } catch (error) {
+    // Soft ignore token error for optional endpoints
+  }
+  next();
+};
+
+module.exports = { protect, optionalProtect };

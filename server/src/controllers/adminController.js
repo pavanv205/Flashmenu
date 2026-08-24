@@ -187,7 +187,8 @@ const deleteRestaurant = async (req, res) => {
 // Send 2FA OTP Code for Restaurant Owner Creation after PIN verification & uniqueness check
 const sendCreateOwnerOTP = async (req, res) => {
   try {
-    const { secretCode, email, phone } = req.body;
+    const secretCode = req.body?.secretCode || req.body?.masterPin || req.body?.pin || req.body?.adminPassword;
+    const { email, phone } = req.body;
     const cleanSecret = String(secretCode || '').trim();
 
     if (cleanSecret !== '2193' && cleanSecret !== 'Pavan@2193') {

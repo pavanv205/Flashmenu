@@ -25,21 +25,10 @@ export default function DashboardLayout() {
 
   const isAdminRoute = location.pathname.startsWith('/dashboard/admin');
 
-  const masterAdminEmails = [
-    'pavanvadapalli205@gmail.com',
-    'flashmenu18@gmail.com',
-    'admin@flashmenu.in',
-    'pava26@gmail.com',
-    'pavanvadapalli26@gmail.com',
-    'pnvaidapkalli26@gmail.com',
-    'pjvanvadapalli26@gmail.com',
-    'pavanvkadapalli04@gmail.com',
-  ];
-
   const isAdminUser =
     isAdminRoute ||
     user?.role === 'admin' ||
-    masterAdminEmails.includes(String(user?.email || '').toLowerCase().trim());
+    String(user?.email || '').toLowerCase().trim() === 'pavanvadapalli205@gmail.com';
 
   const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
   const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;

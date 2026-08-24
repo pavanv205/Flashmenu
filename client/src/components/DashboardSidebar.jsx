@@ -30,20 +30,9 @@ export default function DashboardSidebar({ closeMobileMenu }) {
 
   const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
-  const masterAdminEmails = [
-    'pavanvadapalli205@gmail.com',
-    'flashmenu18@gmail.com',
-    'admin@flashmenu.in',
-    'pava26@gmail.com',
-    'pavanvadapalli26@gmail.com',
-    'pnvaidapkalli26@gmail.com',
-    'pjvanvadapalli26@gmail.com',
-    'pavanvkadapalli04@gmail.com',
-  ];
-
   const isMasterAdmin =
     user?.role === 'admin' ||
-    masterAdminEmails.includes(String(user?.email || '').toLowerCase().trim());
+    String(user?.email || '').toLowerCase().trim() === 'pavanvadapalli205@gmail.com';
 
   const navItems = isMasterAdmin
     ? [

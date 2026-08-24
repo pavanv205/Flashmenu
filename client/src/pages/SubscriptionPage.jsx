@@ -11,9 +11,7 @@ export default function SubscriptionPage() {
 
   const isAdminUser =
     user?.role === 'admin' ||
-    ['flashmenu18@gmail.com', 'pavanvadapalli205@gmail.com', 'admin@flashmenu.in', 'pava26@gmail.com'].includes(
-      String(user?.email || '').toLowerCase()
-    );
+    String(user?.email || '').toLowerCase().trim() === 'pavanvadapalli205@gmail.com';
 
   const isPaidAccount = isAdminUser || Boolean(restaurant && restaurant.isActive !== false && restaurant.subscriptionStartDate);
   const currentPlan = isAdminUser ? 'premium' : isPaidAccount ? (restaurant?.subscriptionPlan || 'basic') : 'UNPAID';

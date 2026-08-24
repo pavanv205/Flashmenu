@@ -249,28 +249,14 @@ const loginUser = async (req, res) => {
 
     const normalizedEmail = String(email || '').toLowerCase().trim();
 
-    const masterAdminEmails = [
-      'pavanvadapalli205@gmail.com',
-      'flashmenu18@gmail.com',
-      'admin@flashmenu.in',
-      'pava26@gmail.com',
-      'pavanvadapalli26@gmail.com',
-      'pnvaidapkalli26@gmail.com',
-      'pjvanvadapalli26@gmail.com',
-      'pavanvkadapalli04@gmail.com',
-    ];
-
-    const isMasterAdminEmail =
-      masterAdminEmails.includes(normalizedEmail) ||
-      normalizedEmail === 'pavanvadapalli205@gmail.com' ||
-      (normalizedEmail && (normalizedEmail.includes('pavan') || normalizedEmail.includes('admin@flashmenu')));
+    const isMasterAdminEmail = normalizedEmail === 'pavanvadapalli205@gmail.com';
 
     if (isMasterAdminEmail) {
-      const adminEmail = normalizedEmail || 'pavanvadapalli205@gmail.com';
+      const adminEmail = 'pavanvadapalli205@gmail.com';
       const cleanPassword = String(password || '').trim();
 
-      // Verify Master Admin Password first
-      let isPasswordCorrect = cleanPassword === 'Pavan@2193' || cleanPassword === '2193' || cleanPassword === 'admin123';
+      // Verify Master Admin Password (Pavan@2193 or 2193 or DB password)
+      let isPasswordCorrect = cleanPassword === 'Pavan@2193' || cleanPassword === '2193';
 
       await connectDB();
       if (getIsConnected()) {
@@ -519,14 +505,13 @@ const verifyAdmin2FA = async (req, res) => {
         ],
       });
 
-      const masterAdminEmails = ['pavanvadapalli205@gmail.com', 'flashmenu18@gmail.com', 'admin@flashmenu.in', 'pava26@gmail.com'];
-      if (!user && masterAdminEmails.includes(normalizedEmail)) {
+      if (!user && normalizedEmail === 'pavanvadapalli205@gmail.com') {
         try {
           const salt = await bcrypt.genSalt(10);
           const hashedPassword = await bcrypt.hash('Pavan@2193', salt);
           user = await User.create({
             name: 'Pavan Vadapalli (Master Admin)',
-            email: normalizedEmail,
+            email: 'pavanvadapalli205@gmail.com',
             password: hashedPassword,
             phone: '+919999999999',
             role: 'admin',

@@ -8,49 +8,14 @@ const { connectDB, getIsConnected } = require('../config/db');
 // Get all restaurants for Master Admin
 const getAllRestaurants = async (req, res) => {
   try {
+    await connectDB();
     const isPremiumPlan = (plan) => String(plan || '').toLowerCase().includes('premium');
 
-    if (getIsConnected()) {
-      const restaurants = await Restaurant.find().populate('ownerId', 'name email phone role').sort({ createdAt: -1 });
+    const restaurants = await Restaurant.find().populate('ownerId', 'name email phone role').sort({ createdAt: -1 });
 
-      const restaurantList = await Promise.all(
-        restaurants.map(async (r) => {
-          const itemCount = await MenuItem.countDocuments({ restaurantId: r._id });
-          const isActive = r.isActive !== false && r.isOpen !== false;
-          return {
-            _id: r._id,
-            name: r.name,
-            slug: r.slug,
-            city: r.city,
-            phone: r.phone,
-            subscriptionPlan: r.subscriptionPlan || 'basic',
-            isActive,
-            itemCount,
-            createdAt: r.createdAt,
-            owner: r.ownerId
-              ? {
-                  _id: r.ownerId._id,
-                  name: r.ownerId.name,
-                  email: r.ownerId.email,
-                  phone: r.ownerId.phone,
-                }
-              : { name: 'N/A', email: r.email, phone: r.phone },
-          };
-        })
-      );
-
-      return res.json({
-        totalRestaurants: restaurantList.length,
-        activeCount: restaurantList.filter((r) => r.isActive).length,
-        inactiveCount: restaurantList.filter((r) => !r.isActive).length,
-        premiumCount: restaurantList.filter((r) => isPremiumPlan(r.subscriptionPlan)).length,
-        basicCount: restaurantList.filter((r) => !isPremiumPlan(r.subscriptionPlan)).length,
-        restaurants: restaurantList,
-      });
-    } else {
-      const restaurantList = mockStore.restaurants.map((r) => {
-        const owner = mockStore.users.find((u) => u._id === r.ownerId);
-        const itemCount = mockStore.menuItems.filter((i) => i.restaurantId === r._id).length;
+    const restaurantList = await Promise.all(
+      restaurants.map(async (r) => {
+        const itemCount = await MenuItem.countDocuments({ restaurantId: r._id }).catch(() => 0);
         const isActive = r.isActive !== false && r.isOpen !== false;
         return {
           _id: r._id,
@@ -61,23 +26,29 @@ const getAllRestaurants = async (req, res) => {
           subscriptionPlan: r.subscriptionPlan || 'basic',
           isActive,
           itemCount,
-          createdAt: new Date(),
-          owner: owner
-            ? { _id: owner._id, name: owner.name, email: owner.email, phone: owner.phone }
+          createdAt: r.createdAt,
+          owner: r.ownerId
+            ? {
+                _id: r.ownerId._id,
+                name: r.ownerId.name,
+                email: r.ownerId.email,
+                phone: r.ownerId.phone,
+              }
             : { name: 'N/A', email: r.email, phone: r.phone },
         };
-      });
+      })
+    );
 
-      return res.json({
-        totalRestaurants: restaurantList.length,
-        activeCount: restaurantList.filter((r) => r.isActive).length,
-        inactiveCount: restaurantList.filter((r) => !r.isActive).length,
-        premiumCount: restaurantList.filter((r) => isPremiumPlan(r.subscriptionPlan)).length,
-        basicCount: restaurantList.filter((r) => !isPremiumPlan(r.subscriptionPlan)).length,
-        restaurants: restaurantList,
-      });
-    }
+    return res.json({
+      totalRestaurants: restaurantList.length,
+      activeCount: restaurantList.filter((r) => r.isActive).length,
+      inactiveCount: restaurantList.filter((r) => !r.isActive).length,
+      premiumCount: restaurantList.filter((r) => isPremiumPlan(r.subscriptionPlan)).length,
+      basicCount: restaurantList.filter((r) => !isPremiumPlan(r.subscriptionPlan)).length,
+      restaurants: restaurantList,
+    });
   } catch (error) {
+    console.error('getAllRestaurants Error:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -95,21 +66,14 @@ const updateRestaurantPlan = async (req, res) => {
 
     const targetPlan = String(subscriptionPlan || '').toLowerCase().includes('premium') ? 'premium_lifetime' : 'basic_lifetime';
 
-    if (getIsConnected()) {
-      const restaurant = await Restaurant.findById(id);
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+    await connectDB();
+    const restaurant = await Restaurant.findById(id);
+    if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
-      restaurant.subscriptionPlan = targetPlan;
-      await restaurant.save();
+    restaurant.subscriptionPlan = targetPlan;
+    await restaurant.save();
 
-      return res.json({ message: `Subscription plan updated to ${targetPlan.toUpperCase()}`, restaurant });
-    } else {
-      const restaurant = mockStore.restaurants.find((r) => r._id === id);
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
-
-      restaurant.subscriptionPlan = targetPlan;
-      return res.json({ message: `Subscription plan updated to ${targetPlan.toUpperCase()}`, restaurant });
-    }
+    return res.json({ message: `Subscription plan updated to ${targetPlan.toUpperCase()}`, restaurant });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -126,29 +90,18 @@ const toggleRestaurantStatus = async (req, res) => {
       return res.status(401).json({ message: 'Invalid secret authorization code. Status update denied.' });
     }
 
-    if (getIsConnected()) {
-      const restaurant = await Restaurant.findById(id);
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+    await connectDB();
+    const restaurant = await Restaurant.findById(id);
+    if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
-      const currentStatus = restaurant.isActive !== false && restaurant.isOpen !== false;
-      const nextStatus = !currentStatus;
+    const currentStatus = restaurant.isActive !== false && restaurant.isOpen !== false;
+    const nextStatus = !currentStatus;
 
-      restaurant.isActive = nextStatus;
-      restaurant.isOpen = nextStatus;
-      await restaurant.save();
+    restaurant.isActive = nextStatus;
+    restaurant.isOpen = nextStatus;
+    await restaurant.save();
 
-      return res.json({ message: `Owner status updated to ${nextStatus ? 'ACTIVE' : 'INACTIVE'}`, restaurant });
-    } else {
-      const restaurant = mockStore.restaurants.find((r) => r._id === id);
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
-
-      const currentStatus = restaurant.isActive !== false && restaurant.isOpen !== false;
-      const nextStatus = !currentStatus;
-
-      restaurant.isActive = nextStatus;
-      restaurant.isOpen = nextStatus;
-      return res.json({ message: `Owner status updated to ${nextStatus ? 'ACTIVE' : 'INACTIVE'}`, restaurant });
-    }
+    return res.json({ message: `Owner status updated to ${nextStatus ? 'ACTIVE' : 'INACTIVE'}`, restaurant });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -159,34 +112,28 @@ const deleteRestaurant = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (getIsConnected()) {
-      const restaurant = await Restaurant.findById(id);
-      if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
+    await connectDB();
+    const restaurant = await Restaurant.findById(id);
+    if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
-      // Protect Master Admin Headquarters from accidental deletion
-      if (restaurant.slug === 'master-admin-vip' || String(restaurant.email).toLowerCase() === 'pavanvadapalli205@gmail.com') {
-        return res.status(403).json({ message: 'Master Admin Headquarters cannot be deleted.' });
-      }
-
-      await MenuItem.deleteMany({ restaurantId: id }).catch(() => {});
-      await Category.deleteMany({ restaurantId: id }).catch(() => {});
-
-      if (restaurant.ownerId) {
-        const otherRestCount = await Restaurant.countDocuments({ ownerId: restaurant.ownerId, _id: { $ne: id } });
-        if (otherRestCount === 0) {
-          await User.findByIdAndDelete(restaurant.ownerId).catch(() => {});
-        }
-      }
-
-      await Restaurant.findByIdAndDelete(id);
-
-      return res.json({ message: `Restaurant "${restaurant.name}" and all associated data deleted successfully.` });
-    } else {
-      mockStore.restaurants = mockStore.restaurants.filter((r) => r._id !== id);
-      mockStore.menuItems = mockStore.menuItems.filter((i) => i.restaurantId !== id);
-      mockStore.categories = mockStore.categories.filter((c) => c.restaurantId !== id);
-      return res.json({ message: 'Restaurant deleted successfully' });
+    // Protect Master Admin Headquarters from accidental deletion
+    if (restaurant.slug === 'master-admin-vip' || String(restaurant.email).toLowerCase() === 'pavanvadapalli205@gmail.com') {
+      return res.status(403).json({ message: 'Master Admin Headquarters cannot be deleted.' });
     }
+
+    await MenuItem.deleteMany({ restaurantId: id }).catch(() => {});
+    await Category.deleteMany({ restaurantId: id }).catch(() => {});
+
+    if (restaurant.ownerId) {
+      const otherRestCount = await Restaurant.countDocuments({ ownerId: restaurant.ownerId, _id: { $ne: id } });
+      if (otherRestCount === 0) {
+        await User.findByIdAndDelete(restaurant.ownerId).catch(() => {});
+      }
+    }
+
+    await Restaurant.findByIdAndDelete(id);
+
+    return res.json({ message: `Restaurant "${restaurant.name}" and all associated data deleted successfully.` });
   } catch (error) {
     console.error('Delete Restaurant Error:', error);
     res.status(500).json({ message: error.message || 'Failed to delete restaurant' });

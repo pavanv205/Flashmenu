@@ -78,21 +78,13 @@ export default function SubscriptionPage() {
     }
   };
 
-  const getPlanScore = (planKey, isLife, isExp) => {
-    if (isExp) return 0;
-    const pScore = planKey === 'premium' ? 20 : 10;
-    const cScore = isLife ? 2 : 1;
-    return pScore + cScore;
-  };
-
-  const currentScore = getPlanScore(currentPlan, isLifetime, !isPaidAccount || isExpired);
-
   const openDemoPayment = (planKey, title, duration, amount) => {
-    const isSelectingLifetime = String(duration || '').toLowerCase().includes('lifetime');
-    const targetScore = getPlanScore(planKey, isSelectingLifetime, false);
+    const isSelectingPremium = String(planKey || '').toLowerCase().includes('premium');
+    const isCurrentPremium = String(currentPlan || '').toLowerCase().includes('premium');
 
-    if (isPaidAccount && !isExpired && targetScore < currentScore) {
-      alert('Downgrading subscription is not allowed. You can only upgrade your subscription plan.');
+    // Only block downgrading from Premium to Basic while Premium is active
+    if (isPaidAccount && !isExpired && isCurrentPremium && !isSelectingPremium) {
+      alert('Downgrading from Premium to Basic plan is not allowed while your Premium subscription is active.');
       return;
     }
 

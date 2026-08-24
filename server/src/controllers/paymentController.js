@@ -110,8 +110,9 @@ const verifyPayment = async (req, res) => {
     if (getIsConnected() && req.user?._id) {
       const existingRest = await Restaurant.findOne({ ownerId: req.user._id });
 
-      const isExistingPremium = existingRest?.subscriptionPlan === 'premium';
-      const finalPlan = isExistingPremium ? 'premium' : updatedPlan;
+      const isSelectingPremium = String(planKey || '').toLowerCase().includes('premium') || String(title || '').toLowerCase().includes('premium');
+      const isExistingPremium = String(existingRest?.subscriptionPlan || '').toLowerCase().includes('premium');
+      const finalPlan = (isExistingPremium || isSelectingPremium) ? 'premium' : 'basic';
 
       const finalIsLifetime = isLifetime;
       const finalCycle = finalIsLifetime ? 'lifetime' : isShortTestPlan ? '4min' : '1month';

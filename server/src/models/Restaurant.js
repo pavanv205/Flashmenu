@@ -23,7 +23,7 @@ const restaurantSchema = new mongoose.Schema(
     currency: { type: String, default: '₹' },
     tableCount: { type: Number, default: 25 },
     subscriptionPlan: { type: String, enum: ['basic', 'premium'], default: 'basic' },
-    subscriptionCycle: { type: String, enum: ['1month', '6months', 'lifetime'], default: '1month' },
+    subscriptionCycle: { type: String, enum: ['4min', '5min', '1month', '6months', 'lifetime'], default: '1month' },
     subscriptionStartDate: { type: Date, default: null },
     subscriptionExpiresAt: { type: Date, default: null },
     isPaid: { type: Boolean, default: false },

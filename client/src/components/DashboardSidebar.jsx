@@ -50,7 +50,6 @@ export default function DashboardSidebar({ closeMobileMenu }) {
   const navItems = isMasterAdmin
     ? [
         { name: 'Master Admin Control Panel', path: '/dashboard/admin', icon: ShieldCheck, badge: 'SUPER' },
-        { name: 'Single Restaurant View', path: '/dashboard', icon: LayoutDashboard, exact: true },
       ]
     : [
         { name: 'Overview', path: '/dashboard', icon: LayoutDashboard, exact: true },

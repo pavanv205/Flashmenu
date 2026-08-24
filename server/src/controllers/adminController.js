@@ -8,6 +8,8 @@ const { connectDB, getIsConnected } = require('../config/db');
 // Get all restaurants for Master Admin
 const getAllRestaurants = async (req, res) => {
   try {
+    const isPremiumPlan = (plan) => String(plan || '').toLowerCase().includes('premium');
+
     if (getIsConnected()) {
       const restaurants = await Restaurant.find().populate('ownerId', 'name email phone role').sort({ createdAt: -1 });
 
@@ -41,8 +43,8 @@ const getAllRestaurants = async (req, res) => {
         totalRestaurants: restaurantList.length,
         activeCount: restaurantList.filter((r) => r.isActive).length,
         inactiveCount: restaurantList.filter((r) => !r.isActive).length,
-        premiumCount: restaurantList.filter((r) => r.subscriptionPlan === 'premium').length,
-        basicCount: restaurantList.filter((r) => r.subscriptionPlan !== 'premium').length,
+        premiumCount: restaurantList.filter((r) => isPremiumPlan(r.subscriptionPlan)).length,
+        basicCount: restaurantList.filter((r) => !isPremiumPlan(r.subscriptionPlan)).length,
         restaurants: restaurantList,
       });
     } else {
@@ -70,8 +72,8 @@ const getAllRestaurants = async (req, res) => {
         totalRestaurants: restaurantList.length,
         activeCount: restaurantList.filter((r) => r.isActive).length,
         inactiveCount: restaurantList.filter((r) => !r.isActive).length,
-        premiumCount: restaurantList.filter((r) => r.subscriptionPlan === 'premium').length,
-        basicCount: restaurantList.filter((r) => r.subscriptionPlan !== 'premium').length,
+        premiumCount: restaurantList.filter((r) => isPremiumPlan(r.subscriptionPlan)).length,
+        basicCount: restaurantList.filter((r) => !isPremiumPlan(r.subscriptionPlan)).length,
         restaurants: restaurantList,
       });
     }
@@ -87,26 +89,26 @@ const updateRestaurantPlan = async (req, res) => {
     const { subscriptionPlan, secretCode, adminPassword } = req.body;
 
     const cleanCode = String(secretCode || adminPassword || '').trim();
-    if (cleanCode !== 'Pavan@2193' && cleanCode.toLowerCase() !== 'pavan@2193') {
+    if (cleanCode !== 'Pavan@2193' && cleanCode !== '2193') {
       return res.status(401).json({ message: 'Invalid secret authorization code. Plan update denied.' });
     }
 
-    const plan = subscriptionPlan === 'premium' ? 'premium' : 'basic';
+    const targetPlan = String(subscriptionPlan || '').toLowerCase().includes('premium') ? 'premium_lifetime' : 'basic_lifetime';
 
     if (getIsConnected()) {
       const restaurant = await Restaurant.findById(id);
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
-      restaurant.subscriptionPlan = plan;
+      restaurant.subscriptionPlan = targetPlan;
       await restaurant.save();
 
-      return res.json({ message: `Subscription plan updated to ${plan.toUpperCase()}`, restaurant });
+      return res.json({ message: `Subscription plan updated to ${targetPlan.toUpperCase()}`, restaurant });
     } else {
       const restaurant = mockStore.restaurants.find((r) => r._id === id);
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
-      restaurant.subscriptionPlan = plan;
-      return res.json({ message: `Subscription plan updated to ${plan.toUpperCase()}`, restaurant });
+      restaurant.subscriptionPlan = targetPlan;
+      return res.json({ message: `Subscription plan updated to ${targetPlan.toUpperCase()}`, restaurant });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -120,7 +122,7 @@ const toggleRestaurantStatus = async (req, res) => {
     const { secretCode, adminPassword } = req.body;
 
     const cleanCode = String(secretCode || adminPassword || '').trim();
-    if (cleanCode !== 'Pavan@2193' && cleanCode.toLowerCase() !== 'pavan@2193') {
+    if (cleanCode !== 'Pavan@2193' && cleanCode !== '2193') {
       return res.status(401).json({ message: 'Invalid secret authorization code. Status update denied.' });
     }
 

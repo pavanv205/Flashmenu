@@ -99,11 +99,13 @@ export default function AdminDashboardPage() {
       r.owner?.name?.toLowerCase().includes(search.toLowerCase()) ||
       (r.city || '').toLowerCase().includes(search.toLowerCase());
 
+    const isPremium = String(r.subscriptionPlan || '').toLowerCase().includes('premium');
+
     let matchesFilter = true;
     if (filterTab === 'active') matchesFilter = r.isActive;
     if (filterTab === 'inactive') matchesFilter = !r.isActive;
-    if (filterTab === 'premium') matchesFilter = r.subscriptionPlan === 'premium';
-    if (filterTab === 'basic') matchesFilter = r.subscriptionPlan === 'basic' || !r.subscriptionPlan;
+    if (filterTab === 'premium') matchesFilter = isPremium;
+    if (filterTab === 'basic') matchesFilter = !isPremium;
 
     return matchesSearch && matchesFilter;
   });
@@ -174,7 +176,8 @@ export default function AdminDashboardPage() {
 
       setUpdatingId(modalTarget.restaurant._id);
       if (modalTarget.action === 'plan') {
-        const newPlan = modalTarget.restaurant.subscriptionPlan === 'premium' ? 'basic' : 'premium';
+        const isCurrentPremium = String(modalTarget.restaurant.subscriptionPlan || '').toLowerCase().includes('premium');
+        const newPlan = isCurrentPremium ? 'basic_lifetime' : 'premium_lifetime';
         await adminAPI.updatePlan(modalTarget.restaurant._id, newPlan, secretCodeInput);
       } else {
         await adminAPI.toggleStatus(modalTarget.restaurant._id, secretCodeInput);
@@ -451,19 +454,24 @@ export default function AdminDashboardPage() {
                       </div>
                     </td>
                     <td className="p-4">
-                      <button
-                        onClick={() => handleOpenModal(resItem, 'plan')}
-                        disabled={updatingId === resItem._id}
-                        className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all flex items-center space-x-1.5 border ${
-                          resItem.subscriptionPlan === 'premium'
-                            ? 'bg-amber-500/20 text-amber-400 border-amber-500/40 hover:bg-amber-500/30'
-                            : 'bg-dark-base text-gray-400 border-dark-border hover:bg-gray-800 hover:text-white'
-                        }`}
-                      >
-                        <Crown className="w-3 h-3 text-amber-400" />
-                        <span>{resItem.subscriptionPlan === 'premium' ? 'PREMIUM' : 'BASIC'}</span>
-                        <KeyRound className="w-3 h-3 text-amber-400 ml-1" />
-                      </button>
+                      {(() => {
+                        const isPrem = String(resItem.subscriptionPlan || '').toLowerCase().includes('premium');
+                        return (
+                          <button
+                            onClick={() => handleOpenModal(resItem, 'plan')}
+                            disabled={updatingId === resItem._id}
+                            className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider transition-all flex items-center space-x-1.5 border ${
+                              isPrem
+                                ? 'bg-amber-500/20 text-amber-400 border-amber-500/40 hover:bg-amber-500/30'
+                                : 'bg-dark-base text-gray-400 border-dark-border hover:bg-gray-800 hover:text-white'
+                            }`}
+                          >
+                            <Crown className="w-3 h-3 text-amber-400" />
+                            <span>{isPrem ? 'PREMIUM' : 'BASIC'}</span>
+                            <KeyRound className="w-3 h-3 text-amber-400 ml-1" />
+                          </button>
+                        );
+                      })()}
                     </td>
                     <td className="p-4">
                       <button

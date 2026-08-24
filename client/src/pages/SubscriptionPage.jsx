@@ -30,6 +30,8 @@ export default function SubscriptionPage() {
   const isPaidAccount = isAdminUser || (hasEverPaid && !isExpired && restaurant?.isActive !== false);
   const currentPlan = isAdminUser ? 'premium' : isPaidAccount ? (restaurant?.subscriptionPlan || 'basic') : 'UNPAID';
 
+  const expiresAtStr = restaurant?.subscriptionExpiresAt || null;
+
   useEffect(() => {
     if (isExpired && !isAdminUser && !hasDismissedModal) {
       setShowExpiredModal(true);
@@ -37,9 +39,11 @@ export default function SubscriptionPage() {
   }, [isExpired, isAdminUser, hasDismissedModal]);
 
   useEffect(() => {
-    if (isLifetime || !expiresAtDate || !hasEverPaid) return;
+    if (isLifetime || !expiresAtStr || !hasEverPaid) return;
+    const expiresMs = new Date(expiresAtStr).getTime();
+
     const updateTimer = () => {
-      const diffMs = new Date(restaurant.subscriptionExpiresAt).getTime() - Date.now();
+      const diffMs = expiresMs - Date.now();
       const secs = Math.max(0, Math.floor(diffMs / 1000));
       setTimeLeftSec(secs);
       if (secs <= 0 && !isAdminUser && !hasDismissedModal) {
@@ -49,7 +53,7 @@ export default function SubscriptionPage() {
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, [restaurant, isLifetime, expiresAtDate, hasEverPaid, isAdminUser, hasDismissedModal]);
+  }, [expiresAtStr, isLifetime, hasEverPaid, isAdminUser, hasDismissedModal]);
 
   const formatTimer = (totalSec) => {
     if (totalSec > 3600) {

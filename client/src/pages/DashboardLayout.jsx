@@ -23,6 +23,8 @@ export default function DashboardLayout() {
     return <Navigate to="/login" replace />;
   }
 
+  const [now, setNow] = React.useState(Date.now());
+
   const isAdminRoute = location.pathname.startsWith('/dashboard/admin');
 
   const isAdminUser =
@@ -31,9 +33,15 @@ export default function DashboardLayout() {
     String(user?.email || '').toLowerCase().trim() === 'pavanvadapalli205@gmail.com';
 
   const isLifetime = restaurant?.subscriptionCycle === 'lifetime';
-  const expiresAtDate = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt) : null;
-  const isExpired = !isLifetime && expiresAtDate && expiresAtDate.getTime() <= Date.now();
-  const isUnpaid = !restaurant || restaurant.isActive === false || !restaurant.subscriptionStartDate;
+  const expiresAtMs = restaurant?.subscriptionExpiresAt ? new Date(restaurant.subscriptionExpiresAt).getTime() : 0;
+  const isExpired = !isAdminUser && !isLifetime && expiresAtMs > 0 && expiresAtMs <= now;
+  const isUnpaid = !isAdminUser && (!restaurant || restaurant.isActive === false || !restaurant.subscriptionStartDate);
+
+  React.useEffect(() => {
+    if (isAdminUser || isLifetime || !restaurant?.subscriptionExpiresAt) return;
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [isAdminUser, isLifetime, restaurant?.subscriptionExpiresAt]);
 
   // If subscription is EXPIRED or UNPAID (and user is NOT an Admin): lock screen to full-page Paywall!
   if (!isAdminUser && (isExpired || isUnpaid)) {

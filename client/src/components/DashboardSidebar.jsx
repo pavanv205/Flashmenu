@@ -30,21 +30,40 @@ export default function DashboardSidebar({ closeMobileMenu }) {
 
   const isBasicPlan = !restaurant?.subscriptionPlan || restaurant?.subscriptionPlan === 'basic' || restaurant?.subscriptionPlan !== 'premium';
 
-  const navItems =
-    user?.role === 'admin'
-      ? [{ name: 'Master Admin Panel', path: '/dashboard/admin', icon: ShieldCheck, badge: 'SUPER' }]
-      : [
-          { name: 'Overview', path: '/dashboard', icon: LayoutDashboard, exact: true },
-          { name: 'Menu Items', path: '/dashboard/items', icon: UtensilsCrossed },
-          { name: 'Categories', path: '/dashboard/categories', icon: FolderTree },
-          { name: 'QR Codes', path: '/dashboard/qrcodes', icon: QrCode },
-          { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3 },
-          { name: 'Feedback & Calls', path: '/dashboard/feedback', icon: MessageSquare, badge: isBasicPlan ? 'PRO' : null },
-          { name: 'Orders', path: '/dashboard/orders', icon: ShoppingBag, badge: isBasicPlan ? 'PRO' : null },
-          { name: 'Order History', path: '/dashboard/order-history', icon: History, badge: isBasicPlan ? 'PRO' : null },
-          { name: 'Profile & Branding', path: '/dashboard/profile', icon: Store },
-          { name: 'Subscription', path: '/dashboard/subscription', icon: CreditCard },
-        ];
+  const masterAdminEmails = [
+    'pavanvadapalli205@gmail.com',
+    'flashmenu18@gmail.com',
+    'admin@flashmenu.in',
+    'pava26@gmail.com',
+    'pavanvadapalli26@gmail.com',
+    'pnvaidapkalli26@gmail.com',
+    'pjvanvadapalli26@gmail.com',
+    'pavanvkadapalli04@gmail.com',
+  ];
+
+  const isMasterAdmin =
+    user?.role === 'admin' ||
+    masterAdminEmails.includes(String(user?.email || '').toLowerCase().trim()) ||
+    String(user?.email || '').toLowerCase().includes('pavan') ||
+    String(user?.email || '').toLowerCase().includes('admin');
+
+  const navItems = isMasterAdmin
+    ? [
+        { name: 'Master Admin Control Panel', path: '/dashboard/admin', icon: ShieldCheck, badge: 'SUPER' },
+        { name: 'Single Restaurant View', path: '/dashboard', icon: LayoutDashboard, exact: true },
+      ]
+    : [
+        { name: 'Overview', path: '/dashboard', icon: LayoutDashboard, exact: true },
+        { name: 'Menu Items', path: '/dashboard/items', icon: UtensilsCrossed },
+        { name: 'Categories', path: '/dashboard/categories', icon: FolderTree },
+        { name: 'QR Codes', path: '/dashboard/qrcodes', icon: QrCode },
+        { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3 },
+        { name: 'Feedback & Calls', path: '/dashboard/feedback', icon: MessageSquare, badge: isBasicPlan ? 'PRO' : null },
+        { name: 'Orders', path: '/dashboard/orders', icon: ShoppingBag, badge: isBasicPlan ? 'PRO' : null },
+        { name: 'Order History', path: '/dashboard/order-history', icon: History, badge: isBasicPlan ? 'PRO' : null },
+        { name: 'Profile & Branding', path: '/dashboard/profile', icon: Store },
+        { name: 'Subscription', path: '/dashboard/subscription', icon: CreditCard },
+      ];
 
   return (
     <aside className="w-64 bg-[#08080A] border-r border-white/[0.08] flex flex-col h-full">

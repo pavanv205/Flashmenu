@@ -100,41 +100,54 @@ const verifyPayment = async (req, res) => {
 
     let updatedRestaurant = null;
 
-    if (getIsConnected() && req.user?._id) {
-      const existingRest = await Restaurant.findOne({ ownerId: req.user._id });
+    if (getIsConnected()) {
+      let targetRest = null;
 
-      const isSelectingPremium = String(planKey || '').toLowerCase().includes('premium') || String(title || '').toLowerCase().includes('premium');
-      const finalPlan = isSelectingPremium ? 'premium' : 'basic';
-
-      const finalIsLifetime = isLifetime;
-      const finalCycle = finalIsLifetime ? 'lifetime' : '6months';
-      const finalExpiresAt = finalIsLifetime
-        ? null
-        : new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
-
-      const updatePayload = {
-        $set: {
-          subscriptionPlan: finalPlan,
-          subscriptionCycle: finalCycle,
-          subscriptionStartDate: startDate,
-          isActive: true,
-        },
-      };
-
-      if (finalIsLifetime) {
-        updatePayload.$set.subscriptionExpiresAt = null;
-        updatePayload.$unset = { subscriptionExpiresAt: 1 };
-      } else {
-        updatePayload.$set.subscriptionExpiresAt = finalExpiresAt;
+      if (req.user?._id) {
+        targetRest = await Restaurant.findOne({ ownerId: req.user._id });
       }
 
-      updatedRestaurant = await Restaurant.findOneAndUpdate(
-        { ownerId: req.user._id },
-        updatePayload,
-        { new: true }
+      const searchEmail = (req.user?.email || req.body?.email || '').toLowerCase().trim();
+      if (!targetRest && searchEmail) {
+        targetRest = await Restaurant.findOne({ email: searchEmail });
+      }
+
+      if (!targetRest && req.body?.restaurantId) {
+        targetRest = await Restaurant.findById(req.body.restaurantId).catch(() => null);
+      }
+
+      if (!targetRest && req.body?.slug) {
+        targetRest = await Restaurant.findOne({ slug: req.body.slug });
+      }
+
+      if (targetRest) {
+        const isSelectingPremium = String(planKey || '').toLowerCase().includes('premium') || String(title || '').toLowerCase().includes('premium');
+        const finalPlan = isSelectingPremium ? 'premium' : 'basic';
+        const finalIsLifetime = isLifetime;
+        const finalCycle = finalIsLifetime ? 'lifetime' : '6months';
+        const finalExpiresAt = finalIsLifetime
+          ? null
+          : new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
+
+        targetRest.subscriptionPlan = finalPlan;
+        targetRest.subscriptionCycle = finalCycle;
+        targetRest.subscriptionStartDate = startDate;
+        targetRest.subscriptionExpiresAt = finalExpiresAt;
+        targetRest.isActive = true;
+        targetRest.isPaid = true;
+
+        updatedRestaurant = await targetRest.save();
+
+        if (targetRest.ownerId) {
+          await User.findByIdAndUpdate(targetRest.ownerId, { isActive: true }).catch(() => {});
+        }
+      }
+    } else if (req.user?._id || req.body?.email) {
+      const searchEmail = (req.user?.email || req.body?.email || '').toLowerCase().trim();
+      const r = mockStore.restaurants.find((res) => 
+        (req.user?._id && String(res.ownerId) === String(req.user._id)) ||
+        (searchEmail && res.email && String(res.email).toLowerCase().trim() === searchEmail)
       );
-    } else if (req.user?._id) {
-      const r = mockStore.restaurants.find((res) => String(res.ownerId) === String(req.user._id));
       if (r) {
         const isSelectingPremium = String(planKey || '').toLowerCase().includes('premium') || String(title || '').toLowerCase().includes('premium');
         const finalPlan = isSelectingPremium ? 'premium' : 'basic';
@@ -145,6 +158,7 @@ const verifyPayment = async (req, res) => {
         r.subscriptionStartDate = startDate;
         r.subscriptionExpiresAt = finalIsLifetime ? null : new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
         r.isActive = true;
+        r.isPaid = true;
         updatedRestaurant = r;
       }
     }

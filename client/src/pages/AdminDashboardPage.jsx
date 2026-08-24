@@ -795,9 +795,9 @@ export default function AdminDashboardPage() {
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#08080A] border border-amber-500/40 text-amber-400 font-bold text-xs focus:border-amber-500 focus:outline-none"
                   >
                     <option value="basic_lifetime">BASIC PLAN (Zero Fees - Lifetime Access)</option>
-                    <option value="basic_4min">BASIC PLAN (Zero Fees - 4 Mins Test)</option>
+                    <option value="basic_6months">BASIC PLAN (Zero Fees - 6 Months Plan)</option>
                     <option value="premium_lifetime">PREMIUM VIP PLAN (Zero Fees - Lifetime Access)</option>
-                    <option value="premium_4min">PREMIUM VIP PLAN (Zero Fees - 4 Mins VIP Test)</option>
+                    <option value="premium_6months">PREMIUM VIP PLAN (Zero Fees - 6 Months VIP Plan)</option>
                   </select>
                 </div>
 

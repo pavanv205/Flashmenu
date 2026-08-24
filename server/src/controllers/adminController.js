@@ -351,11 +351,11 @@ const createRestaurantOwner = async (req, res) => {
 
     const planVal = String(subscriptionPlan || 'basic_lifetime').toLowerCase();
     const isPremium = planVal.includes('premium');
-    const is4Min = planVal.includes('4min') || planVal.includes('5min') || planVal.includes('4') || planVal.includes('5');
+    const is6Month = planVal.includes('6month') || planVal.includes('6') || planVal.includes('month') || planVal.includes('4min');
 
     const plan = isPremium ? 'premium' : 'basic';
-    const cycle = is4Min ? '4min' : 'lifetime';
-    const expiresAt = is4Min ? new Date(Date.now() + 4 * 60 * 1000) : null;
+    const cycle = is6Month ? '6months' : 'lifetime';
+    const expiresAt = is6Month ? new Date(Date.now() + 180 * 24 * 60 * 60 * 1000) : null;
     const enforce2FA = requires2FA !== false;
     const bcrypt = require('bcryptjs');
     const { defaultCategories } = require('../utils/defaultMenu');

@@ -351,11 +351,11 @@ const loginUser = async (req, res) => {
 
     // 1. Check MongoDB Atlas for User Account
     try {
-      await connectDB();
-      if (getIsConnected()) {
-        let user = await User.findOne({ email: normalizedEmail });
+      const isConnected = await connectDB();
+      if (isConnected || mongoose.connection.readyState === 1 || process.env.MONGODB_URI) {
+        let user = await User.findOne({ email: normalizedEmail }).catch(() => null);
         if (!user) {
-          user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
+          user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } }).catch(() => null);
         }
 
         if (user) {

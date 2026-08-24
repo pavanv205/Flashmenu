@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Zap, Mail, Lock, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Zap, Mail, Lock, ArrowRight, Loader2, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import FlashLogoBadge from '../components/FlashLogoBadge';
 
@@ -14,9 +14,38 @@ export default function LoginPage() {
   const [twoFACode, setTwoFACode] = useState('');
   const [twoFAEmail, setTwoFAEmail] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resendLoading, setResendLoading] = useState(false);
 
   const { user, login, verifyAdmin2FA } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let timer;
+    if (resendCooldown > 0) {
+      timer = setInterval(() => {
+        setResendCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
+
+  const handleResendLogin2FA = async () => {
+    if (resendCooldown > 0 || resendLoading) return;
+    setError('');
+    setSuccessMsg('');
+    setResendLoading(true);
+    try {
+      const targetEmail = twoFAEmail || email.trim().toLowerCase();
+      const resData = await login(targetEmail, password || 'Pavan@2193');
+      setSuccessMsg(resData?.message || 'Fresh 2FA Security Code sent to your email!');
+      setResendCooldown(30);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to resend 2FA Security Code.');
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -117,9 +146,24 @@ export default function LoginPage() {
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#08080A] border border-amber-500/50 text-amber-400 text-base font-mono font-black tracking-widest text-center focus:outline-none focus:border-amber-400"
                 />
               </div>
-              <p className="text-[11px] text-gray-400 mt-1.5 text-center">
-                Security code sent to <span className="text-amber-400 font-bold">{twoFAEmail}</span>
-              </p>
+              <div className="flex items-center justify-between mt-2 px-1">
+                <span className="text-[11px] text-gray-400">Sent to <span className="text-amber-400 font-bold">{twoFAEmail}</span></span>
+                <button
+                  type="button"
+                  disabled={resendCooldown > 0 || resendLoading}
+                  onClick={handleResendLogin2FA}
+                  className="text-xs text-amber-400 font-bold hover:underline disabled:opacity-50 disabled:no-underline flex items-center space-x-1"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${resendLoading ? 'animate-spin' : ''}`} />
+                  <span>
+                    {resendLoading
+                      ? 'Resending...'
+                      : resendCooldown > 0
+                      ? `Resend in ${resendCooldown}s`
+                      : 'Resend Code'}
+                  </span>
+                </button>
+              </div>
             </div>
 
             <button

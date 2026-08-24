@@ -59,6 +59,35 @@ export default function AdminDashboardPage() {
   const [createSuccess, setCreateSuccess] = useState('');
   const [createLoading, setCreateLoading] = useState(false);
   const [showOwnerPassword, setShowOwnerPassword] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resendLoading, setResendLoading] = useState(false);
+
+  useEffect(() => {
+    let timer;
+    if (resendCooldown > 0) {
+      timer = setInterval(() => {
+        setResendCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
+
+  const handleResendOwnerOTP = async () => {
+    if (resendCooldown > 0 || resendLoading) return;
+    setCreateError('');
+    setCreateSuccess('');
+    setResendLoading(true);
+    try {
+      const pin = (createForm.secretCode || '2193').trim();
+      const res = await adminAPI.sendCreateOwnerOTP(pin, createForm.email, createForm.phone);
+      setCreateSuccess(res.data.message || 'Fresh 2FA Security Code sent to Master Admin email!');
+      setResendCooldown(30);
+    } catch (err) {
+      setCreateError(err.response?.data?.message || 'Failed to resend 2FA Security Code.');
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   const fetchRestaurants = async () => {
     try {
@@ -818,6 +847,24 @@ export default function AdminDashboardPage() {
                     style={{ WebkitBoxShadow: '0 0 0px 1000px #08080A inset', WebkitTextFillColor: '#ffffff' }}
                     className="w-full px-4 py-3 rounded-xl bg-[#08080A] border border-amber-500/50 text-amber-400 text-base font-mono font-black text-center focus:border-amber-500 focus:outline-none"
                   />
+                  <div className="flex items-center justify-between mt-2 px-1">
+                    <span className="text-[11px] text-gray-400">Didn't receive 2FA code?</span>
+                    <button
+                      type="button"
+                      disabled={resendCooldown > 0 || resendLoading}
+                      onClick={handleResendOwnerOTP}
+                      className="text-xs text-amber-400 font-bold hover:underline disabled:opacity-50 disabled:no-underline flex items-center space-x-1"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${resendLoading ? 'animate-spin' : ''}`} />
+                      <span>
+                        {resendLoading
+                          ? 'Resending...'
+                          : resendCooldown > 0
+                          ? `Resend Code in ${resendCooldown}s`
+                          : 'Resend 2FA Code'}
+                      </span>
+                    </button>
+                  </div>
                 </div>
               )}
 

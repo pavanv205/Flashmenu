@@ -163,12 +163,24 @@ const deleteRestaurant = async (req, res) => {
       const restaurant = await Restaurant.findById(id);
       if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
 
-      await MenuItem.deleteMany({ restaurantId: id });
-      await Category.deleteMany({ restaurantId: id });
-      await User.findByIdAndDelete(restaurant.ownerId);
+      // Protect Master Admin Headquarters from accidental deletion
+      if (restaurant.slug === 'master-admin-vip' || String(restaurant.email).toLowerCase() === 'pavanvadapalli205@gmail.com') {
+        return res.status(403).json({ message: 'Master Admin Headquarters cannot be deleted.' });
+      }
+
+      await MenuItem.deleteMany({ restaurantId: id }).catch(() => {});
+      await Category.deleteMany({ restaurantId: id }).catch(() => {});
+
+      if (restaurant.ownerId) {
+        const otherRestCount = await Restaurant.countDocuments({ ownerId: restaurant.ownerId, _id: { $ne: id } });
+        if (otherRestCount === 0) {
+          await User.findByIdAndDelete(restaurant.ownerId).catch(() => {});
+        }
+      }
+
       await Restaurant.findByIdAndDelete(id);
 
-      return res.json({ message: 'Restaurant and all associated customer data deleted successfully' });
+      return res.json({ message: `Restaurant "${restaurant.name}" and all associated data deleted successfully.` });
     } else {
       mockStore.restaurants = mockStore.restaurants.filter((r) => r._id !== id);
       mockStore.menuItems = mockStore.menuItems.filter((i) => i.restaurantId !== id);
@@ -176,7 +188,8 @@ const deleteRestaurant = async (req, res) => {
       return res.json({ message: 'Restaurant deleted successfully' });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Delete Restaurant Error:', error);
+    res.status(500).json({ message: error.message || 'Failed to delete restaurant' });
   }
 };
 

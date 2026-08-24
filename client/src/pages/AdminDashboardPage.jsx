@@ -77,6 +77,11 @@ export default function AdminDashboardPage() {
   }, []);
 
   const handleDeleteRestaurant = async (restaurant) => {
+    if (restaurant.slug === 'master-admin-vip') {
+      alert('Master Admin Headquarters cannot be deleted.');
+      return;
+    }
+
     if (
       !window.confirm(
         `Are you sure you want to permanently delete "${restaurant.name}" and all associated menu items, categories, and customer data?`
@@ -85,10 +90,14 @@ export default function AdminDashboardPage() {
       return;
 
     try {
-      await adminAPI.deleteRestaurant(restaurant._id);
+      setUpdatingId(restaurant._id);
+      const res = await adminAPI.deleteRestaurant(restaurant._id);
       await fetchRestaurants();
+      alert(res.data?.message || `Restaurant "${restaurant.name}" deleted successfully.`);
     } catch (error) {
-      alert('Failed to delete restaurant');
+      alert(error.response?.data?.message || 'Failed to delete restaurant');
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -489,13 +498,24 @@ export default function AdminDashboardPage() {
                       </button>
                     </td>
                     <td className="p-4 text-right">
-                      <button
-                        onClick={() => handleDeleteRestaurant(resItem)}
-                        className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 transition-colors"
-                        title="Delete Restaurant"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {resItem.slug === 'master-admin-vip' ? (
+                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider px-2.5 py-1 bg-white/5 rounded-lg border border-white/10">
+                          Protected
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleDeleteRestaurant(resItem)}
+                          disabled={updatingId === resItem._id}
+                          className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 transition-colors disabled:opacity-50"
+                          title="Delete Restaurant"
+                        >
+                          {updatingId === resItem._id ? (
+                            <RefreshCw className="w-4 h-4 animate-spin text-red-400" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))

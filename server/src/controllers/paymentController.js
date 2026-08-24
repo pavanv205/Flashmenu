@@ -89,10 +89,17 @@ const verifyPayment = async (req, res) => {
     // Update restaurant subscription plan in Database
     const { duration, title, isLifetime: reqIsLifetime } = req.body;
     const updatedPlan = planKey === 'premium' ? 'premium' : 'basic';
+    const isShortTestPlan =
+      String(duration || '').toLowerCase().includes('min') ||
+      String(title || '').toLowerCase().includes('min') ||
+      String(duration || '').toLowerCase().includes('4') ||
+      String(duration || '').toLowerCase().includes('5');
+
     const isLifetime =
-      reqIsLifetime === true ||
-      String(duration || '').toLowerCase().includes('lifetime') ||
-      String(title || '').toLowerCase().includes('lifetime');
+      !isShortTestPlan &&
+      (reqIsLifetime === true ||
+        String(duration || '').toLowerCase().includes('lifetime') ||
+        String(title || '').toLowerCase().includes('lifetime'));
 
     const startDate = new Date();
 
@@ -106,15 +113,7 @@ const verifyPayment = async (req, res) => {
       const isExistingPremium = existingRest?.subscriptionPlan === 'premium';
       const finalPlan = isExistingPremium ? 'premium' : updatedPlan;
 
-      const isAlreadyLifetime = existingRest?.subscriptionCycle === 'lifetime';
-      const finalIsLifetime = isLifetime || isAlreadyLifetime;
-      const isShortTestPlan =
-        !finalIsLifetime &&
-        (String(duration || '').toLowerCase().includes('min') ||
-          String(title || '').toLowerCase().includes('min') ||
-          String(duration || '').toLowerCase().includes('4') ||
-          String(duration || '').toLowerCase().includes('5'));
-
+      const finalIsLifetime = isLifetime;
       const finalCycle = finalIsLifetime ? 'lifetime' : isShortTestPlan ? '4min' : '1month';
       const finalExpiresAt = finalIsLifetime
         ? null

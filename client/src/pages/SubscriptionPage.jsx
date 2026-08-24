@@ -35,6 +35,12 @@ export default function SubscriptionPage() {
   const isExpired = !isPaidAccount || (!isLifetime && expiresAtDate && (expiresAtDate.getTime() <= Date.now() || timeLeftSec <= 0));
 
   const formatTimer = (totalSec) => {
+    if (totalSec > 3600) {
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
     const m = Math.floor(totalSec / 60);
     const s = totalSec % 60;
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
@@ -167,7 +173,7 @@ export default function SubscriptionPage() {
                     <span>Current Plan:</span>
                     <span className="text-amber-400 uppercase font-black">{currentPlan} RESTAURANT</span>
                     <span className="text-amber-300 text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40">
-                      {isAdminUser ? '👑 Master Admin Lifetime VIP' : isLifetime ? 'Lifetime Access' : '5 Minutes Test Plan'}
+                      {isAdminUser ? '👑 Master Admin Lifetime VIP' : isLifetime ? 'Lifetime Access' : '4 Minutes Test Plan'}
                     </span>
                   </h2>
                 </div>

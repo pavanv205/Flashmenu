@@ -519,13 +519,14 @@ const verifyAdmin2FA = async (req, res) => {
         ],
       });
 
-      if (!user && (normalizedEmail === 'pavanvadapalli205@gmail.com' || normalizedEmail.includes('pavan') || normalizedEmail.includes('admin'))) {
+      const masterAdminEmails = ['pavanvadapalli205@gmail.com', 'flashmenu18@gmail.com', 'admin@flashmenu.in', 'pava26@gmail.com'];
+      if (!user && masterAdminEmails.includes(normalizedEmail)) {
         try {
           const salt = await bcrypt.genSalt(10);
           const hashedPassword = await bcrypt.hash('Pavan@2193', salt);
           user = await User.create({
             name: 'Pavan Vadapalli (Master Admin)',
-            email: normalizedEmail.includes('@') ? normalizedEmail : 'pavanvadapalli205@gmail.com',
+            email: normalizedEmail,
             password: hashedPassword,
             phone: '+919999999999',
             role: 'admin',

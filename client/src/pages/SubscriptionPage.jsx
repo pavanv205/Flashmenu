@@ -297,13 +297,13 @@ export default function SubscriptionPage() {
                 <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
                   <div>
                     <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block">4 MINUTES</span>
-                    <p className="text-2xl font-black text-white mt-1">₹2</p>
+                    <p className="text-2xl font-black text-white mt-1">₹1</p>
                     <span className="text-[10px] text-gray-500">Valid for 4 Mins</span>
                   </div>
                   <button
                     type="button"
                     disabled={currentPlan === 'basic' && !isLifetime && !isExpired}
-                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (4 Mins)', '4 Minutes Test', 2)}
+                    onClick={() => openDemoPayment('basic', 'Basic Restaurant (4 Mins)', '4 Minutes Test', 1)}
                     className={`w-full py-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center space-x-1 ${
                       currentPlan === 'basic' && !isLifetime && !isExpired
                         ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-default'
@@ -315,8 +315,8 @@ export default function SubscriptionPage() {
                       {currentPlan === 'basic' && !isLifetime && !isExpired
                         ? '✓ 4-Min Plan Active'
                         : isExpired && currentPlan === 'basic'
-                        ? 'Renew 4 Mins (₹2)'
-                        : 'Pay 4 Mins (₹2)'}
+                        ? 'Renew 4 Mins (₹1)'
+                        : 'Pay 4 Mins (₹1)'}
                     </span>
                   </button>
                 </div>
@@ -404,13 +404,13 @@ export default function SubscriptionPage() {
               <div className="p-4 flex flex-col justify-between space-y-3 text-center hover:bg-white/[0.02] transition-colors">
                 <div>
                   <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block">4 MINUTES</span>
-                  <p className="text-2xl font-black text-white mt-1">₹2</p>
+                  <p className="text-2xl font-black text-white mt-1">₹1</p>
                   <span className="text-[10px] text-gray-400 font-semibold block">Valid for 4 Mins</span>
                 </div>
                 <button
                   type="button"
                   disabled={currentRank >= 40 || (currentPlan === 'premium' && !isLifetime && !isExpired)}
-                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (4 Mins)', '4 Minutes Test', 2)}
+                  onClick={() => openDemoPayment('premium', 'Premium Restaurant (4 Mins)', '4 Minutes Test', 1)}
                   className={`w-full py-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center space-x-1 ${
                     currentRank >= 40 || (currentPlan === 'premium' && !isLifetime && !isExpired)
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-default'
@@ -424,10 +424,10 @@ export default function SubscriptionPage() {
                       : (currentPlan === 'premium' && !isLifetime && !isExpired)
                       ? '✓ Premium 4-Min Active'
                       : isExpired && currentPlan === 'premium'
-                      ? 'Renew 4 Mins (₹2)'
+                      ? 'Renew 4 Mins (₹1)'
                       : currentPlan === 'basic'
-                      ? 'Upgrade to Premium 4 Mins (₹2)'
-                      : 'Pay 4 Mins (₹2)'}
+                      ? 'Upgrade to Premium 4 Mins (₹1)'
+                      : 'Pay 4 Mins (₹1)'}
                   </span>
                 </button>
               </div>

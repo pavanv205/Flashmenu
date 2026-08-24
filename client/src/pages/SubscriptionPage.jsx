@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { restaurantAPI } from '../services/api';
-import { Check, Sparkles, Zap, Crown, Store, CreditCard, Clock, Calendar, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Check, Sparkles, Zap, Crown, Store, CreditCard, Clock, Calendar, AlertTriangle, CheckCircle2, X, ArrowRight } from 'lucide-react';
 import DemoPaymentModal from '../components/DemoPaymentModal';
 
 export default function SubscriptionPage() {

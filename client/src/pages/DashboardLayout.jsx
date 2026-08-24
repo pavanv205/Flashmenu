@@ -9,21 +9,8 @@ import SubscriptionPage from './SubscriptionPage';
 export default function DashboardLayout() {
   const { user, restaurant, loading } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [now, setNow] = useState(Date.now());
   const location = useLocation();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  const [now, setNow] = React.useState(Date.now());
 
   const isAdminRoute = location.pathname.startsWith('/dashboard/admin');
 
@@ -42,6 +29,18 @@ export default function DashboardLayout() {
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
   }, [isAdminUser, isLifetime, restaurant?.subscriptionExpiresAt]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   // If subscription is EXPIRED or UNPAID (and user is NOT an Admin): lock screen to full-page Paywall!
   if (!isAdminUser && (isExpired || isUnpaid)) {

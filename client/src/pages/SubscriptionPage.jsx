@@ -79,13 +79,22 @@ export default function SubscriptionPage() {
     }
   };
 
-  const openDemoPayment = (planKey, title, duration, amount) => {
-    const isSelectingPremium = String(planKey || '').toLowerCase().includes('premium');
-    const isCurrentPremium = String(currentPlan || '').toLowerCase().includes('premium');
+  const getPlanRank = (planKey, isLife) => {
+    const isPrem = String(planKey || '').toLowerCase().includes('premium');
+    if (isPrem && isLife) return 40;
+    if (isPrem && !isLife) return 30;
+    if (!isPrem && isLife) return 20;
+    return 10;
+  };
 
-    // Only block downgrading from Premium to Basic while Premium is active
-    if (isPaidAccount && !isExpired && isCurrentPremium && !isSelectingPremium) {
-      alert('Downgrading from Premium to Basic plan is not allowed while your Premium subscription is active.');
+  const currentRank = (!isPaidAccount || isExpired) ? 0 : getPlanRank(currentPlan, isLifetime);
+
+  const openDemoPayment = (planKey, title, duration, amount) => {
+    const isSelectingLifetime = String(duration || '').toLowerCase().includes('lifetime');
+    const targetRank = getPlanRank(planKey, isSelectingLifetime);
+
+    if (isPaidAccount && !isExpired && targetRank < currentRank) {
+      alert('Downgrading subscription is not allowed. You can only upgrade your subscription plan.');
       return;
     }
 
@@ -391,11 +400,24 @@ export default function SubscriptionPage() {
                 </div>
                 <button
                   type="button"
+                  disabled={currentRank >= 40}
                   onClick={() => openDemoPayment('premium', 'Premium Restaurant (4 Mins)', '4 Minutes Test', 1)}
-                  className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black font-extrabold text-[11px] transition-all border border-amber-500/30 flex items-center justify-center space-x-1"
+                  className={`w-full py-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center space-x-1 ${
+                    currentRank >= 40
+                      ? 'bg-white/5 text-gray-500 border border-white/10 cursor-not-allowed opacity-60'
+                      : 'bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30'
+                  }`}
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>{isExpired && currentPlan === 'premium' ? 'Renew 4 Mins (₹1)' : currentPlan === 'basic' ? 'Upgrade to Premium 4 Mins (₹1)' : 'Extend 4 Mins (₹1)'}</span>
+                  <span>
+                    {currentRank >= 40
+                      ? '👑 Lifetime VIP Active'
+                      : isExpired && currentPlan === 'premium'
+                      ? 'Renew 4 Mins (₹1)'
+                      : currentPlan === 'basic'
+                      ? 'Upgrade to Premium 4 Mins (₹1)'
+                      : 'Extend 4 Mins (₹1)'}
+                  </span>
                 </button>
               </div>
 
@@ -407,11 +429,16 @@ export default function SubscriptionPage() {
                 </div>
                 <button
                   type="button"
+                  disabled={currentRank >= 40}
                   onClick={() => openDemoPayment('premium', 'Premium Restaurant (Lifetime)', 'Lifetime Access', 1)}
-                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md"
+                  className={`w-full py-2.5 rounded-xl font-black text-[11px] transition-all flex items-center justify-center space-x-1 shadow-md ${
+                    currentRank >= 40
+                      ? 'bg-amber-500/20 text-amber-400/70 border border-amber-500/30 cursor-not-allowed'
+                      : 'bg-amber-500 hover:bg-amber-400 text-black'
+                  }`}
                 >
                   <CreditCard className="w-3.5 h-3.5" />
-                  <span>{isLifetime && currentPlan === 'premium' ? 'Premium Lifetime Active (Re-Sync)' : 'Upgrade to Premium Lifetime (₹1)'}</span>
+                  <span>{currentRank >= 40 ? '👑 Premium Lifetime Active' : 'Upgrade to Premium Lifetime (₹1)'}</span>
                 </button>
               </div>
             </div>

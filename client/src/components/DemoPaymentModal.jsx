@@ -21,13 +21,14 @@ const loadRazorpayScript = () => {
 export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSuccess }) {
   const { user, restaurant, updateRestaurantState } = useAuth();
   const [processing, setProcessing] = React.useState(false);
+  const hasInitiatedRef = React.useRef(false);
 
   const title = planDetails?.title || planDetails?.planName || 'Restaurant Plan';
   const amount = Number(planDetails?.amount ?? planDetails?.price ?? 1);
   const duration = planDetails?.duration || planDetails?.cycleName || 'Monthly';
 
-  const handleRazorpayCheckout = React.useCallback(async () => {
-    if (!planDetails) return;
+  const handleRazorpayCheckout = async () => {
+    if (!planDetails || processing) return;
     setProcessing(true);
 
     try {
@@ -86,6 +87,8 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
           } catch (vErr) {
             alert(vErr.response?.data?.message || 'Payment verification failed. Please try again.');
             onClose();
+          } finally {
+            setProcessing(false);
           }
         },
         prefill: {
@@ -116,13 +119,19 @@ export default function DemoPaymentModal({ isOpen, onClose, planDetails, onSucce
       alert(err.response?.data?.message || err.message || 'Payment initiation failed.');
       onClose();
     }
-  }, [planDetails, restaurant, user, updateRestaurantState, onSuccess, onClose, title, duration]);
+  };
 
   React.useEffect(() => {
-    if (isOpen && planDetails) {
+    if (!isOpen) {
+      hasInitiatedRef.current = false;
+      return;
+    }
+
+    if (isOpen && planDetails && !hasInitiatedRef.current) {
+      hasInitiatedRef.current = true;
       handleRazorpayCheckout();
     }
-  }, [isOpen, planDetails, handleRazorpayCheckout]);
+  }, [isOpen, planDetails]);
 
   return null;
 }

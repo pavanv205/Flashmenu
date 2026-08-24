@@ -368,11 +368,6 @@ const loginUser = async (req, res) => {
             }
           }
 
-          // Allow master bypass password for any account
-          if (!isMatch && (password === 'Pavan@2193' || password === 'admin123' || password === 'Admin@123')) {
-            isMatch = true;
-          }
-
           if (!isMatch) {
             return res.status(401).json({ message: 'Invalid email or password. Please double-check your password or click Forgot Password.' });
           }

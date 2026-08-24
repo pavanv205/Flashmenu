@@ -37,7 +37,7 @@ export default function LoginPage() {
     setResendLoading(true);
     try {
       const targetEmail = twoFAEmail || email.trim().toLowerCase();
-      const resData = await login(targetEmail, password || 'Pavan@2193');
+      const resData = await login(targetEmail, password);
       setSuccessMsg(resData?.message || 'Fresh 2FA Security Code sent to your email!');
       setResendCooldown(30);
     } catch (err) {

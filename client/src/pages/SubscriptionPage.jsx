@@ -299,17 +299,21 @@ export default function SubscriptionPage() {
                   </div>
                   <button
                     type="button"
-                    disabled={currentPlan === 'basic' && !isLifetime && !isExpired}
+                    disabled={currentRank >= 20 || (currentPlan === 'basic' && !isExpired)}
                     onClick={() => openDemoPayment('basic', 'Basic Restaurant (6 Months)', '6 Months Access', 1)}
                     className={`w-full py-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center space-x-1 ${
-                      currentPlan === 'basic' && !isLifetime && !isExpired
+                      currentRank >= 20 || (currentPlan === 'basic' && !isExpired)
                         ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 cursor-default'
                         : 'bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-black border border-amber-500/30'
                     }`}
                   >
                     <CreditCard className="w-3.5 h-3.5" />
                     <span>
-                      {currentPlan === 'basic' && !isLifetime && !isExpired
+                      {currentPlan === 'basic' && isLifetime
+                        ? '✓ Included in Lifetime'
+                        : currentRank > 20
+                        ? '✓ Included in Premium'
+                        : currentPlan === 'basic' && !isLifetime && !isExpired
                         ? '✓ 6-Month Plan Active'
                         : isExpired && currentPlan === 'basic'
                         ? 'Renew 6 Months (₹1)'

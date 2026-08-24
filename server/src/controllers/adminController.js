@@ -61,7 +61,7 @@ const updateRestaurantPlan = async (req, res) => {
 
     const cleanCode = String(secretCode || adminPassword || '').trim();
     if (cleanCode !== 'Pavan@2193' && cleanCode !== '2193') {
-      return res.status(401).json({ message: 'Invalid secret authorization code. Plan update denied.' });
+      return res.status(400).json({ message: 'Invalid secret authorization code. Plan update denied.' });
     }
 
     const targetPlan = String(subscriptionPlan || '').toLowerCase().includes('premium') ? 'premium_lifetime' : 'basic_lifetime';
@@ -87,7 +87,7 @@ const toggleRestaurantStatus = async (req, res) => {
 
     const cleanCode = String(secretCode || adminPassword || '').trim();
     if (cleanCode !== 'Pavan@2193' && cleanCode !== '2193') {
-      return res.status(401).json({ message: 'Invalid secret authorization code. Status update denied.' });
+      return res.status(400).json({ message: 'Invalid secret authorization code. Status update denied.' });
     }
 
     await connectDB();
@@ -147,7 +147,7 @@ const sendCreateOwnerOTP = async (req, res) => {
     const cleanSecret = String(secretCode || '').trim();
 
     if (cleanSecret !== '2193' && cleanSecret !== 'Pavan@2193') {
-      return res.status(401).json({ message: 'Invalid Master Security PIN Key. Access Denied.' });
+      return res.status(400).json({ message: 'Invalid Master Security PIN Key. Access Denied.' });
     }
 
     if (email) {
@@ -272,7 +272,7 @@ const createRestaurantOwner = async (req, res) => {
     }
 
     if (!isCodeValid) {
-      return res.status(401).json({ message: 'Invalid or expired 2FA Security Code. Authorization Failed.' });
+      return res.status(400).json({ message: 'Invalid or expired 2FA Security Code. Authorization Failed.' });
     }
 
     if (!name || !email || !password || !restaurantName) {

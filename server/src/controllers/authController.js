@@ -382,7 +382,11 @@ const loginUser = async (req, res) => {
           let isMatch = false;
           if (user.password && typeof user.password === 'string') {
             try {
-              isMatch = await bcrypt.compare(String(password), String(user.password));
+              const cleanPassword = String(password || '').trim();
+              isMatch = await bcrypt.compare(cleanPassword, String(user.password));
+              if (!isMatch) {
+                isMatch = await bcrypt.compare(String(password), String(user.password));
+              }
             } catch (bErr) {
               isMatch = false;
             }

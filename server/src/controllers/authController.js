@@ -356,7 +356,7 @@ const loginUser = async (req, res) => {
     // 1. Check MongoDB Atlas for User Account (By Email OR Phone Number)
     try {
       const isConnected = await connectDB();
-      if (isConnected || mongoose.connection.readyState === 1 || process.env.MONGODB_URI) {
+      if (isConnected || mongoose.connection.readyState === 1) {
         let user = null;
 
         if (normalizedInput.includes('@')) {

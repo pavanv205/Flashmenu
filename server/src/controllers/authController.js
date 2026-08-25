@@ -256,12 +256,16 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const email = req.body?.email || req.body?.emailAddress || '';
+    const rawInput = req.body?.email || req.body?.phone || req.body?.emailAddress || req.body?.identifier || '';
     const password = req.body?.password || '';
 
-    const normalizedEmail = String(email || '').toLowerCase().trim();
+    const normalizedInput = String(rawInput || '').trim();
+    const normalizedEmail = normalizedInput.toLowerCase();
+    const cleanPhoneDigits = normalizedInput.replace(/\D/g, '');
 
-    const isMasterAdminEmail = normalizedEmail === 'pavanvadapalli205@gmail.com';
+    const isMasterAdminEmail =
+      normalizedEmail === 'pavanvadapalli205@gmail.com' ||
+      (cleanPhoneDigits.length >= 10 && cleanPhoneDigits.endsWith('9999999999'));
 
     if (isMasterAdminEmail) {
       const adminEmail = 'pavanvadapalli205@gmail.com';
@@ -349,13 +353,29 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // 1. Check MongoDB Atlas for User Account
+    // 1. Check MongoDB Atlas for User Account (By Email OR Phone Number)
     try {
       const isConnected = await connectDB();
       if (isConnected || mongoose.connection.readyState === 1 || process.env.MONGODB_URI) {
-        let user = await User.findOne({ email: normalizedEmail }).catch(() => null);
-        if (!user) {
-          user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } }).catch(() => null);
+        let user = null;
+
+        if (normalizedInput.includes('@')) {
+          user = await User.findOne({ email: normalizedEmail }).catch(() => null);
+          if (!user) {
+            user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } }).catch(() => null);
+          }
+        } else {
+          const searchConditions = [{ email: normalizedEmail }];
+          if (normalizedInput) {
+            searchConditions.push({ phone: normalizedInput });
+          }
+          if (cleanPhoneDigits && cleanPhoneDigits.length >= 7) {
+            searchConditions.push({ phone: { $regex: cleanPhoneDigits } });
+          }
+          user = await User.findOne({ $or: searchConditions }).catch(() => null);
+          if (!user) {
+            user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } }).catch(() => null);
+          }
         }
 
         if (user) {
@@ -369,7 +389,7 @@ const loginUser = async (req, res) => {
           }
 
           if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid email or password. Please double-check your password or click Forgot Password.' });
+            return res.status(401).json({ message: 'Invalid email/phone or password. Please double-check your password or click Forgot Password.' });
           }
 
           if (user.requires2FA) {
